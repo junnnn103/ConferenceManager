@@ -106,6 +106,7 @@ manual이 필요한 것은 홀수해의 ASRU뿐이다.
       "grade": "최우수",
       "ai_specialist": true,
       "field": "CV",
+      "homepage": "https://cvpr.thecvf.com/",
       "editions": [
         {
           "year": 2026,
@@ -140,17 +141,30 @@ manual이 필요한 것은 홀수해의 ASRU뿐이다.
 
 ### 컬럼
 
-| 학회 ⇅ | 분야 ⇅ | 등급 ⇅ | 개최일 ▲ | 장소 ⇅ | 제출마감 ⇅ |
+| 학회 ⇅ | 분야 ⇅ | 등급 ⇅ | 개최일 ▲ | 장소 ⇅ | 제출마감 ⇅ | 링크 |
 
-- **학회** — 약어(굵게) + full name(작게). 클릭 시 공식 CFP 링크. AI Specialist 해당 시 배지
+- **학회** — 약어(굵게) + full name(작게). 약어 클릭 시 공식 홈페이지로 이동.
+  AI Specialist 해당 시 배지
 - **분야** — 색상 배지 (레퍼런스1 스타일)
 - **등급** — 최우수(금) / 우수(은) 배지. 정렬 시 최우수 > 우수
-- **개최일** — `Oct 24-29, 2026`. 기본 정렬 키(오름차순)
+- **개최일** — `Oct 24-29, 2026`. **기본 정렬 키**
 - **장소** — `Budapest Hungary`
 - **제출마감** — 날짜 + 아래 D-day.
   - 미래: `D-42`, 강조색
   - 과거: 취소선 + `D+106`, 회색
   - 미상: `미정` + `(전년: Oct 4 2025)` 회색 소자
+- **링크** — 아이콘 두 개. `홈` = 학회 공식 홈페이지(`registry.yaml`의 `homepage`,
+  연차와 무관하게 안정적), `CFP` = 해당 회차의 논문 모집 공고(소스가 준 `link`).
+  둘 다 새 탭으로 연다. CFP 링크가 없는 회차는 아이콘을 흐리게 비활성 처리
+
+### 기본 정렬
+
+**오늘 날짜 기준으로 개최일이 가까운 순(오름차순)이 기본값**이다.
+이미 지난 회차(`status: past`)는 정렬 키와 무관하게 목록 **하단으로 밀어** 배치한다 —
+가까운 미래가 항상 맨 위에 오게 하기 위함이다. 그 아래에 "일정 미확인" 섹션이 온다.
+
+정렬은 클라이언트에서 브라우저의 현재 날짜로 매번 다시 계산하므로,
+빌드가 며칠 밀려도 순서가 어긋나지 않는다.
 
 ### 필터 · 정렬
 
@@ -173,14 +187,15 @@ manual이 필요한 것은 홀수해의 ASRU뿐이다.
 
 ```
 ConferenceManager/
-├─ 학술연수 학회 리스트/          # 원본 엑셀 (빌드 입력, 그대로 유지)
-├─ data/
-│  ├─ fields.yaml               # 분야 정의 + 학회→분야 매핑 + enabled 플래그
-│  ├─ aliases.yaml              # 약어 → ai-deadlines id / ccfddl id
-│  └─ manual.yaml               # 수기 일정 (HRI, ASRU, Humanoids)
+├─ 학술연수 학회 리스트/          # 원본 엑셀 — gitignore, 로컬에만 존재
+├─ data/                         # 커밋됨. 여기가 빌드의 입력 전부
+│  ├─ registry.yaml             # 학회 99개: 약어·full name·등급·AI Specialist·분야
+│  │                            #   ·homepage·소스 id 매핑
+│  ├─ fields.yaml               # 분야 정의(라벨·색상) + enabled 플래그
+│  └─ manual.yaml               # 수기 일정 (HRI, Humanoids, 홀수해 ASRU)
 ├─ scripts/
+│  ├─ bootstrap_registry.py     # 엑셀 2개 → registry.yaml (수동 실행, 빌드 아님)
 │  ├─ build.py                  # 엔트리포인트
-│  ├─ registry.py               # 엑셀 2개 → 학회 레지스트리
 │  ├─ merge.py                  # 소스 병합 + 회차 선택
 │  └─ sources/
 │     ├─ aideadlines.py
@@ -197,17 +212,26 @@ ConferenceManager/
 └─ .github/workflows/build.yml
 ```
 
-**엑셀을 빌드마다 직접 읽는다.** 엑셀이 학회 목록·등급의 원본이고,
-`data/*.yaml`은 매핑과 수동 데이터만 갖는다. 내년 엑셀로 교체하면 사이트가 따라온다.
-매칭되지 않는 새 약어는 빌드 경고로 뜬다.
+### 엑셀은 빌드 입력이 아니다
+
+엑셀은 **1회 부트스트랩 입력**이다. `scripts/bootstrap_registry.py`가 두 엑셀을 읽어
+`data/registry.yaml`을 생성하고, 그 뒤로 빌드는 `data/`만 본다. 따라서 엑셀 원본을
+`.gitignore`에 넣어도 CI 빌드가 정상 동작한다.
+
+`registry.yaml`에는 **99개 전부**를 담는다 (비활성 분야 포함). 나중에 제외했던 분야를
+되살릴 때 엑셀 없이 `fields.yaml`의 `enabled`만 켜면 되게 하기 위함이다.
+
+내년 엑셀이 나오면 같은 스크립트를 `--diff` 모드로 돌려 신규/삭제/등급변경 학회를
+출력하고, 사람이 확인한 뒤 `registry.yaml`에 반영한다. 자동 덮어쓰기는 하지 않는다 —
+`homepage`와 소스 id 매핑은 손으로 붙인 값이라 날아가면 안 되기 때문이다.
 
 ## 8. 빌드 파이프라인
 
 `scripts/build.py`:
 
-1. 엑셀 2개 로드 → 99개 레지스트리 (약어, full name, 등급, AI Specialist 여부)
-2. `fields.yaml` 적용 → 비활성 분야 제거 → 39개
-3. `aliases.yaml`로 소스 조회, 각 소스에서 회차 목록 수집
+1. `data/registry.yaml` 로드 → 99개 레지스트리
+2. `fields.yaml`의 `enabled` 적용 → 비활성 분야 제거 → 39개
+3. registry의 소스 id로 각 소스 조회, 회차 목록 수집
 4. 병합(§3) + 회차 선택(§4)
 5. `docs/data/conferences.json` 기록
 6. 미해결 항목을 stderr와 GitHub Actions job summary에 리포트
@@ -223,9 +247,13 @@ ConferenceManager/
 
 pytest. **네트워크를 타지 않는다** — 소스 응답은 `tests/fixtures/`의 고정 YAML로 대체한다.
 
-- 엑셀 파서: 99행을 읽고, 등급 값이 `{최우수, 우수}`에 속함
-- 분야 매핑: 활성 학회 전부가 정확히 하나의 분야를 가짐 (누락·중복 없음)
-- alias 완전성: 활성 39개 전부가 소스 매핑 또는 manual 항목을 가짐
+- `registry.yaml` 무결성: 99개 항목, 약어 중복 없음, 등급이 `{최우수, 우수}`에 속함
+- 분야 매핑: 모든 학회가 `fields.yaml`에 정의된 분야를 정확히 하나 가짐
+- 소스 매핑 완전성: 활성 39개 전부가 소스 id 또는 manual 항목을 가짐
+- 부트스트랩: 엑셀 픽스처 → 기대하는 `registry.yaml`. 픽스처는 원본이 아니라
+  같은 시트 구조를 가진 **합성 xlsx 몇 행**을 `tests/fixtures/`에 커밋한다
+  (원본 엑셀은 gitignore 대상이므로 CI에서 쓸 수 없다)
+- 기본 정렬: 기준 날짜를 주입해 upcoming이 past보다 위, upcoming 내부는 개최일 오름차순
 - 소스 파서: 픽스처 → 정규화된 회차 목록
 - 병합 우선순위: manual > ai-deadlines > ccfddl, 그리고 중복 시 경고 발생
 - 회차 선택: 기준 날짜를 주입해 upcoming / past / unknown 세 분기를 각각 검증
@@ -241,8 +269,10 @@ pytest. **네트워크를 타지 않는다** — 소스 응답은 `tests/fixture
 
 ## 11. 미결 사항
 
-- **저장소 공개 범위** — GitHub Pages는 public 저장소면 URL을 아는 누구나 접근한다.
-  회사 내부 기준(우수 학회 등급, AI Specialist 인정 여부)이 사이트에 노출되므로,
-  public / private+Pages(유료) / 로컬 전용 중 선택이 필요하다.
+- ~~저장소 공개 범위~~ — **결정: public 저장소 + GitHub Pages**.
+  일반인은 "AI Specialist"가 무엇인지 알 수 없으므로 노출 위험이 낮다고 판단.
+  단 다음은 `.gitignore`로 제외한다:
+  - `학술연수 학회 리스트/` (엑셀 원본)
+  - `학술연수 파견자 처우기준/`, `학술연수 파견중 학회 참가 기준/` (사내 규정 사진, 빌드에 불필요)
 - **`Proc.` / `Poster` / `Expert` 컬럼** — 판정 기준 자료 확보 후 재논의.
 - **제외된 60개 학회** — 현재 빌드에서 제외. 필요해지면 `fields.yaml`에서 되살린다.

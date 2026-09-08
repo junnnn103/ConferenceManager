@@ -7,6 +7,7 @@
 아예 안 뜨는 것보다 낫다.
 """
 
+import argparse
 import json
 import sys
 from datetime import date, datetime, timezone
@@ -28,7 +29,7 @@ MANUAL_PATH = ROOT / "data" / "manual.yaml"
 SCRAPED_DIR = ROOT / "data" / "scraped"
 OUTPUT_PATH = ROOT / "docs" / "data" / "conferences.json"
 
-KST = timezone.utc  # 표시는 클라이언트가 하므로 생성 시각만 UTC로 남긴다
+TZ_UTC = timezone.utc  # 표시는 클라이언트가 하므로 생성 시각만 UTC로 남긴다
 
 
 def load_fields(path: Path = FIELDS_PATH) -> list[dict]:
@@ -37,6 +38,17 @@ def load_fields(path: Path = FIELDS_PATH) -> list[dict]:
 
 def enabled_field_ids(fields: list[dict]) -> set[str]:
     return {f["id"] for f in fields if f.get("enabled")}
+
+
+def _previous_conference_count(path: Path) -> int:
+    """이미 발행된 JSON의 학회 수. 읽을 수 없으면 0으로 본다."""
+    if not path.exists():
+        return 0
+    try:
+        payload = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        return 0
+    return len(payload.get("conferences") or [])
 
 
 def _gather(source_ids: dict, fetchers: dict, abbr: str) -> dict[str, list[Edition]]:
@@ -78,12 +90,17 @@ def build(
             per_member: dict[str, list[Edition]] = {}
             for member in entry["members"]:
                 by_source = _gather(member.get("sources"), fetchers, abbr_group)
-                if manual_editions:
-                    by_source["manual"] = manual_editions
                 per_member[member["display"]] = list(merge_by_year(by_source).values())
             chosen, editions = pick_member(per_member, today)
             if chosen:
                 display = chosen
+            # manual은 그룹 단위 데이터다. 구성원 선택에 개입시키면 한쪽의 회차가
+            # 다른 쪽에도 유령처럼 생겨 엉뚱한 이름이 붙는다. 선택 뒤에 합친다.
+            if manual_editions:
+                by_year = {e.year: e for e in editions}
+                for edition in manual_editions:
+                    by_year[edition.year] = edition
+                editions = list(by_year.values())
         else:
             by_source = _gather(entry.get("sources"), fetchers, abbr_group)
             if manual_editions:
@@ -91,8 +108,16 @@ def build(
             editions = list(merge_by_year(by_source).values())
 
         selected = select_editions(editions, today)
+        # 결합 행의 abbr_group("iccv/eccv")은 파일명이 될 수 없으므로 선택된
+        # 구성원 이름으로 먼저 찾고, 비결합 행을 위해 abbr_group으로 폴백한다.
+        member_key = display.lower()
         selected = [
-            apply_scraped(e, scraped.get((abbr_group, e.year), [])) for e in selected
+            apply_scraped(
+                e,
+                scraped.get((member_key, e.year))
+                or scraped.get((abbr_group, e.year), []),
+            )
+            for e in selected
         ]
 
         if not selected:
@@ -111,7 +136,7 @@ def build(
         ).to_dict())
 
     return {
-        "generated_at": datetime.now(KST).isoformat(),
+        "generated_at": datetime.now(TZ_UTC).isoformat(),
         "fields": [
             {"id": f["id"], "label": f["label"], "color": f["color"]}
             for f in fields if f.get("enabled")
@@ -123,6 +148,11 @@ def build(
 
 def main() -> int:
     import requests
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--allow-shrink", action="store_true",
+                        help="학회 수가 절반 미만으로 줄어도 기존 파일을 덮어쓴다")
+    args = parser.parse_args()
 
     session = requests.Session()
     session.headers["User-Agent"] = "conference-manager (github actions)"
@@ -144,6 +174,14 @@ def main() -> int:
     if not result["conferences"]:
         # 두 소스가 모두 죽은 경우. 기존 JSON을 덮어쓰지 않는다.
         print("학회를 하나도 만들지 못했습니다. 기존 파일을 유지합니다.", file=sys.stderr)
+        return 1
+
+    previous = _previous_conference_count(OUTPUT_PATH)
+    current = len(result["conferences"])
+    if previous and current * 2 < previous and not args.allow_shrink:
+        print(f"학회 수가 {previous}개에서 {current}개로 급감했습니다. "
+              "소스 장애로 보여 기존 파일을 유지합니다.", file=sys.stderr)
+        print("의도한 축소라면 --allow-shrink 를 붙여 다시 실행하세요.", file=sys.stderr)
         return 1
 
     OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)

@@ -1,3 +1,4 @@
+import json
 from datetime import date, datetime
 
 from scripts.build import build, enabled_field_ids
@@ -154,3 +155,128 @@ def test_combined_row_picks_member_and_uses_its_display_name():
     conf = out["conferences"][0]
     assert conf["abbr"] == "ECCV"        # 2026-01-15 기준 차기는 ECCV 2026
     assert conf["abbr_group"] == "iccv/eccv"
+
+
+def test_shrinking_conferences_below_half_is_rejected(tmp_path, monkeypatch):
+    # 기존 JSON이 많은 학회를 가지고 있을 때, 새 실행이 그것의 절반 미만을
+    # 내보내면 소스 장애로 보고 기존 파일을 유지한다.
+    import scripts.build as build_module
+
+    output_file = tmp_path / "conferences.json"
+    monkeypatch.setattr(build_module, "OUTPUT_PATH", output_file)
+    monkeypatch.setattr(build_module, "FIELDS_PATH", build_module.ROOT / "data" / "fields.yaml")
+    monkeypatch.setattr(build_module, "MANUAL_PATH", build_module.ROOT / "data" / "manual.yaml")
+    monkeypatch.setattr(build_module, "SCRAPED_DIR", build_module.ROOT / "data" / "scraped")
+
+    # 기존 파일: 40개 학회
+    existing = {
+        "generated_at": "2026-01-01T00:00:00+00:00",
+        "fields": [],
+        "conferences": [{"abbr": f"CONF{i}", "abbr_group": f"conf{i}", "editions": []}
+                        for i in range(40)],
+        "unresolved": [],
+    }
+    output_file.write_text(json.dumps(existing), encoding="utf-8")
+
+    # 새 실행: 1개만 생성 (< 20, 절반의 절반)
+    out = build(REGISTRY, FIELDS, make_fetchers(), manual={}, scraped={}, today=TODAY)
+    assert len(out["conferences"]) < 20
+
+    # main()이 거부해야 함
+    from scripts.build import main
+    monkeypatch.setattr("sys.argv", ["build"])
+    result = main()
+    assert result == 1
+    # 파일이 기존 내용 유지
+    existing_content = json.loads(output_file.read_text(encoding="utf-8"))
+    assert len(existing_content["conferences"]) == 40
+
+
+def test_allow_shrink_flag_overrides_rejection(tmp_path, monkeypatch):
+    # --allow-shrink 플래그가 있으면 학회 수 급감해도 덮어쓴다.
+    import scripts.build as build_module
+
+    output_file = tmp_path / "conferences.json"
+    monkeypatch.setattr(build_module, "OUTPUT_PATH", output_file)
+    monkeypatch.setattr(build_module, "FIELDS_PATH", build_module.ROOT / "data" / "fields.yaml")
+    monkeypatch.setattr(build_module, "MANUAL_PATH", build_module.ROOT / "data" / "manual.yaml")
+    monkeypatch.setattr(build_module, "SCRAPED_DIR", build_module.ROOT / "data" / "scraped")
+
+    # 기존 파일: 40개
+    existing = {
+        "generated_at": "2026-01-01T00:00:00+00:00",
+        "fields": [],
+        "conferences": [{"abbr": f"CONF{i}", "abbr_group": f"conf{i}", "editions": []}
+                        for i in range(40)],
+        "unresolved": [],
+    }
+    output_file.write_text(json.dumps(existing), encoding="utf-8")
+
+    # main()에 --allow-shrink
+    from scripts.build import main
+    monkeypatch.setattr("sys.argv", ["build", "--allow-shrink"])
+    result = main()
+    assert result == 0
+    # 파일이 새 내용으로 덮어씀
+    new_content = json.loads(output_file.read_text(encoding="utf-8"))
+    assert len(new_content["conferences"]) < 20
+
+
+def test_manual_does_not_influence_member_selection():
+    # 결합 행에서 manual 데이터가 구성원 선택을 왜곡하면 안 된다.
+    # 소스만으로 ECCV 2026이 선택되는 상황에서, manual이
+    # ICCV 2027을 넣어도 여전히 ECCV를 선택해야 한다.
+    registry = [{
+        "abbr": "iccv/eccv", "display": "ICCV/ECCV", "full_name": "ICCV / ECCV",
+        "grade": "최우수", "ai_specialist": True, "field": "CV",
+        "homepage": None,
+        "members": [
+            {"display": "ICCV", "sources": {"ai_deadlines": "iccv", "ccfddl": "iccv"}},
+            {"display": "ECCV", "sources": {"ai_deadlines": "eccv", "ccfddl": "eccv"}},
+        ],
+        "sources": {"ai_deadlines": None, "ccfddl": None},
+    }]
+
+    # 소스: ICCV 2027, ECCV 2026 → pick_member는 ECCV 선택 (차기가 더 빠름)
+    hf = {
+        "iccv": [Edition(2027, "", date(2027, 10, 1), date(2027, 10, 6), "", None, [], "ai-deadlines")],
+        "eccv": [Edition(2026, "", date(2026, 9, 8), date(2026, 9, 13), "", None, [], "ai-deadlines")],
+    }
+
+    # manual이 ICCV 2025를 추가해도 선택 결과는 ECCV여야 함
+    manual = {"iccv/eccv": [Edition(2025, "", date(2025, 9, 1), date(2025, 9, 6), "", None, [], "manual")]}
+
+    out = build(registry, FIELDS, make_fetchers(hf=hf), manual=manual, scraped={}, today=TODAY)
+    conf = out["conferences"][0]
+    assert conf["abbr"] == "ECCV"  # ICCV에 manual 데이터가 있어도 ECCV 선택됨
+
+
+def test_scraped_by_member_name_attaches_to_combined_row():
+    # 결합 행의 scraped 데이터는 abbr_group("iccv/eccv")이 아니라
+    # 선택된 구성원 이름("eccv")으로 keyed되어야 한다.
+    registry = [{
+        "abbr": "iccv/eccv", "display": "ICCV/ECCV", "full_name": "ICCV / ECCV",
+        "grade": "최우수", "ai_specialist": True, "field": "CV",
+        "homepage": None,
+        "members": [
+            {"display": "ICCV", "sources": {"ai_deadlines": "iccv", "ccfddl": "iccv"}},
+            {"display": "ECCV", "sources": {"ai_deadlines": "eccv", "ccfddl": "eccv"}},
+        ],
+        "sources": {"ai_deadlines": None, "ccfddl": None},
+    }]
+
+    hf = {
+        "iccv": [Edition(2027, "", date(2027, 10, 1), date(2027, 10, 6), "", None, [], "ai-deadlines")],
+        "eccv": [Edition(2026, "", date(2026, 9, 8), date(2026, 9, 13), "", None, [], "ai-deadlines")],
+    }
+
+    # scraped는 "eccv" (선택된 구성원)로 keyed
+    scraped = {("eccv", 2026): [Deadline("workshop", "Workshops", datetime(2026, 8, 1),
+                                         None, "cfp-scrape", {"raw_text": "x", "url": "y"})]}
+
+    out = build(registry, FIELDS, make_fetchers(hf=hf), manual={}, scraped=scraped, today=TODAY)
+    conf = out["conferences"][0]
+    assert conf["abbr"] == "ECCV"
+    # scraped deadline이 붙음
+    types = [d["type"] for d in conf["editions"][0]["deadlines"]]
+    assert "workshop" in types

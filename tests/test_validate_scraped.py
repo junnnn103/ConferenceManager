@@ -1,7 +1,10 @@
 from datetime import date
+import json
+import sys
 
 import pytest
 
+from scripts import validate_scraped
 from scripts.validate_scraped import normalize_whitespace, validate_extraction
 
 PAGE = """
@@ -108,3 +111,132 @@ def test_processes_every_item_independently():
 
 def test_normalize_whitespace_collapses_runs():
     assert normalize_whitespace("a  b\n\tc ") == "a b c"
+
+
+def test_rejects_real_sentence_that_does_not_mention_the_claimed_date():
+    # 페이지에 실재하는 문장이라도 주장된 날짜를 언급하지 않으면 대조가 아니다.
+    # 이것이 없으면 아무 문장이나 날조된 날짜를 뒷받침한다.
+    unrelated = item(raw_text="Workshop proposals are due October 15, 2025",
+                     date="2026-03-03 23:59:59")
+    accepted, rejected = validate_extraction([unrelated], PAGE, START, TODAY)
+    assert accepted == []
+    assert rejected[0]["reject_reason"] == "date_not_in_raw_text"
+
+
+def test_accepts_iso_date_written_in_raw_text():
+    page = "Poster deadline is 2026-02-12 for all submissions."
+    iso = item(type="poster", raw_text="Poster deadline is 2026-02-12 for all submissions.",
+               date="2026-02-12 23:59:59")
+    accepted, _ = validate_extraction([iso], page, START, TODAY)
+    assert len(accepted) == 1
+
+
+def test_accepts_day_before_month_in_raw_text():
+    page = "Posters are due 12 February and cannot be extended."
+    dayfirst = item(type="poster", raw_text="Posters are due 12 February and cannot be extended.",
+                    date="2026-02-12 23:59:59")
+    accepted, _ = validate_extraction([dayfirst], page, START, TODAY)
+    assert len(accepted) == 1
+
+
+def test_existing_yaml_is_kept_when_no_items_pass(tmp_path, monkeypatch):
+    """기존 YAML이 있고 이번 실행에서 검증할 항목이 없으면 파일을 유지한다.
+
+    transient failure가 기존 데이터를 지우지 않도록 한다.
+    """
+    scraped_dir = tmp_path / "scraped"
+    scraped_dir.mkdir()
+    raw_dir = scraped_dir / "raw"
+    raw_dir.mkdir()
+
+    # 기존 YAML 파일 생성
+    existing_yaml = scraped_dir / "chi.yaml"
+    existing_yaml.write_text("abbr: chi\neditions:\n  - year: 2025\n", encoding="utf-8")
+
+    # 현재 실행에서 검증할 수 없는 JSON (모든 항목이 탈락할 raw_text)
+    raw_json = raw_dir / "chi.json"
+    raw_json.write_text(
+        json.dumps({
+            "abbr": "chi",
+            "editions": [{
+                "year": 2026,
+                "conference_start": "2026-04-13",
+                "items": [{
+                    "type": "lbw",
+                    "label": "LBW",
+                    "date": "2026-02-12 23:59:59",
+                    "confidence": "high",
+                    "raw_text": "fabricated text",
+                    "url": "http://example.com",
+                }],
+            }],
+        }),
+        encoding="utf-8",
+    )
+
+    # page.txt 파일이 없어서 page_text_missing이 될 것
+    monkeypatch.setattr(validate_scraped, "SCRAPED_DIR", scraped_dir)
+    monkeypatch.setattr(sys, "argv", ["validate_scraped.py"])
+
+    exit_code = validate_scraped.main()
+
+    # 기존 YAML이 여전히 존재해야 함
+    assert existing_yaml.exists()
+    assert existing_yaml.read_text(encoding="utf-8").startswith("abbr: chi")
+
+
+def test_one_malformed_json_does_not_stop_next_file(tmp_path, monkeypatch):
+    """한 파일이 손상되어도 다음 파일은 처리된다."""
+    scraped_dir = tmp_path / "scraped"
+    scraped_dir.mkdir()
+    raw_dir = scraped_dir / "raw"
+    raw_dir.mkdir()
+
+    # 첫 번째 파일: conference_start가 잘못된 형식
+    bad_json = raw_dir / "aaa_bad.json"
+    bad_json.write_text(
+        json.dumps({
+            "abbr": "bad",
+            "editions": [{
+                "year": 2026,
+                "conference_start": "not-a-date",  # 잘못된 형식
+                "items": [],
+            }],
+        }),
+        encoding="utf-8",
+    )
+
+    # 두 번째 파일: 정상적인 파일
+    good_json = raw_dir / "zzz_good.json"
+    page_text = "Poster deadline is 2026-02-12."
+    good_json.write_text(
+        json.dumps({
+            "abbr": "good",
+            "editions": [{
+                "year": 2026,
+                "conference_start": "2026-04-13",
+                "items": [{
+                    "type": "poster",
+                    "label": "Poster",
+                    "date": "2026-02-12 23:59:59",
+                    "confidence": "high",
+                    "raw_text": "Poster deadline is 2026-02-12",
+                    "url": "http://example.com",
+                }],
+            }],
+        }),
+        encoding="utf-8",
+    )
+    (raw_dir / "zzz_good.txt").write_text(page_text, encoding="utf-8")
+
+    monkeypatch.setattr(validate_scraped, "SCRAPED_DIR", scraped_dir)
+    monkeypatch.setattr(sys, "argv", ["validate_scraped.py"])
+
+    exit_code = validate_scraped.main()
+
+    # 좋은 파일의 YAML이 생성되어야 함
+    good_yaml = scraped_dir / "zzz_good.yaml"
+    assert good_yaml.exists()
+    content = good_yaml.read_text(encoding="utf-8")
+    assert "abbr: good" in content
+    assert "2026-02-12" in content

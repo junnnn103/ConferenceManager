@@ -29,6 +29,18 @@ MAX_LEAD = timedelta(days=548)  # 약 18개월
 
 _TIME_FORMATS = ("%Y-%m-%d %H:%M:%S", "%Y-%m-%d %H:%M", "%Y-%m-%d")
 
+_MONTH_NUMBERS = {
+    "jan": 1, "feb": 2, "mar": 3, "apr": 4, "may": 5, "jun": 6,
+    "jul": 7, "aug": 8, "sep": 9, "oct": 10, "nov": 11, "dec": 12,
+}
+
+_DATE_IN_TEXT = re.compile(
+    r"(?P<month>jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)[a-z]*\.?\s+(?P<day>\d{1,2})"
+    r"|(?P<day2>\d{1,2})\s+(?P<month2>jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)[a-z]*\.?"
+    r"|(?P<iso>\d{4}-\d{2}-\d{2})",
+    re.I,
+)
+
 
 def normalize_whitespace(text: str) -> str:
     """연속 공백·개행·탭을 공백 하나로 접는다.
@@ -51,6 +63,28 @@ def _parse_datetime(value) -> datetime | None:
         except ValueError:
             continue
     return None
+
+
+def mentions_date(text: str, when: datetime) -> bool:
+    """raw_text가 주장된 날짜를 실제로 언급하는지 확인한다.
+
+    부분 문자열 검사만으로는 페이지에 실재하는 아무 문장이나 날조된 날짜를
+    뒷받침할 수 있다. 문장 안에 그 날짜가 적혀 있어야 대조가 성립한다.
+    연도는 요구하지 않는다 - CFP는 "February 12"만 쓰고 연도는 제목에 두는 일이 흔하다.
+    """
+    for m in _DATE_IN_TEXT.finditer(text or ""):
+        if m.group("iso"):
+            try:
+                if date.fromisoformat(m.group("iso")) == when.date():
+                    return True
+            except ValueError:
+                pass
+            continue
+        month = (m.group("month") or m.group("month2") or "").lower()[:3]
+        day = m.group("day") or m.group("day2")
+        if _MONTH_NUMBERS.get(month) == when.month and int(day) == when.day:
+            return True
+    return False
 
 
 def validate_extraction(
@@ -99,6 +133,10 @@ def validate_extraction(
                 reject(item, "deadline_too_early")
                 continue
 
+        if not mentions_date(raw_text, when):
+            reject(item, "date_not_in_raw_text")
+            continue
+
         accepted.append({
             "type": track,
             "label": str(item.get("label") or track.replace("_", " ").title()),
@@ -119,10 +157,24 @@ def _validate_one(raw_json: Path, today: date) -> tuple[dict | None, list[dict]]
     payload = json.loads(raw_json.read_text(encoding="utf-8"))
     abbr = payload["abbr"]
     page_path = raw_json.with_suffix(".txt")
-    page_text = page_path.read_text(encoding="utf-8") if page_path.exists() else ""
 
     editions = []
     all_rejected: list[dict] = []
+
+    # 페이지 텍스트 파일이 없으면 모든 항목을 page_text_missing 사유로 탈락시킨다.
+    if not page_path.exists():
+        for entry in payload.get("editions") or []:
+            for item in entry.get("items") or []:
+                all_rejected.append({
+                    **item,
+                    "reject_reason": "page_text_missing",
+                    "abbr": abbr,
+                    "year": entry.get("year")
+                })
+        return None, all_rejected
+
+    page_text = page_path.read_text(encoding="utf-8")
+
     for entry in payload.get("editions") or []:
         start = entry.get("conference_start")
         start_date = date.fromisoformat(start) if start else None
@@ -155,11 +207,18 @@ def main() -> int:
     total_rejected: list[dict] = []
 
     for raw_json in sorted(raw_dir.glob("*.json")):
-        document, rejected = _validate_one(raw_json, today)
+        try:
+            document, rejected = _validate_one(raw_json, today)
+        except Exception as e:
+            print(f"경고: {raw_json.stem} 처리 중 오류, 건너뜀: {e}", file=sys.stderr)
+            continue
+
         total_rejected.extend(rejected)
         out_path = SCRAPED_DIR / f"{raw_json.stem}.yaml"
         if document is None:
-            out_path.unlink(missing_ok=True)
+            if out_path.exists():
+                print(f"경고: {out_path}가 유지됨 (이번 실행에서 검증할 항목이 없음)",
+                      file=sys.stderr)
             continue
         out_path.write_text(
             yaml.safe_dump(document, allow_unicode=True, sort_keys=False),

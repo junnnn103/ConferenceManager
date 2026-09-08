@@ -1,0 +1,49 @@
+- title: CVPR
+  year: 2026
+  id: cvpr26
+  full_name: IEEE/CVF Conference on Computer Vision and Pattern Recognition
+  link: https://cvpr.thecvf.com/Conferences/2026/CallForPapers
+  deadline: '2025-11-13 23:59:59'
+  date: June 3-7, 2026
+  start: 2026-06-03
+  end: 2026-06-07
+  tags:
+    - computer-vision
+    - machine-learning
+  deadlines:
+    - type: abstract
+      label: Abstract Submission
+      date: '2025-11-07 23:59:59'
+      timezone: AoE
+    - type: paper
+      label: Paper Submission
+      date: '2025-11-13 23:59:59'
+      timezone: AoE
+    - type: notification
+      label: Final Decisions
+      date: '2026-02-20 23:59:59'
+      timezone: AoE
+  city: Denver
+  country: USA
+  abstract_deadline: '2025-11-07 23:59:59'
+  rankings: 'CCF: A, CORE: A*, THCPL: A'
+  venue: Colorado Convention Center, Denver, USA
+- title: CVPR
+  year: 2027
+  id: cvpr27
+  link: https://cvpr.thecvf.com/
+  date: June 19-26, 2027
+  start: 2027-06-19
+  end: 2027-06-26
+  city: Seattle
+  country: USA
+  note: Submission deadlines to be announced.
+- title: CVPR
+  year: 2025
+  id: cvpr25
+  link: https://cvpr.thecvf.com/Conferences/2025/CallForPapers
+  deadline: '2024-11-14 23:59:00'
+  timezone: UTC-8
+  date: June 10-17, 2025
+  city: Nashville
+  country: Tennessee

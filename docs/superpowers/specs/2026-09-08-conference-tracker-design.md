@@ -46,6 +46,7 @@
 | `huggingface/ai-deadlines` | `src/data/conferences/<id>.yml` | 높음 | 2027년치까지, 다단계 마감·venue·tags 제공 |
 | `ccfddl/ccf-deadlines` | `conference/<cat>/<id>.yml` | 높음 | CS 전반 354개 |
 | `data/manual.yaml` | 수기 | HRI, Humanoids, ASRU(홀수해) | 두 소스 모두 미커버 |
+| CFP 페이지 파싱 | 학회 홈페이지 → LLM 추출 | poster/LBW/workshop 등 부가 트랙 | §9 참조 |
 
 **`paperswithcode/ai-deadlines`(aideadlin.es)는 사용하지 않는다.** 데이터가 2024년에
 멈춰 있고 2026년 항목이 0건이다. `huggingface/ai-deadlines`가 살아있는 후계 저장소다.
@@ -55,7 +56,12 @@
 한 학회의 **한 회차(연도)**에 대해 **소스를 통째로 하나 고른다**. 필드 단위로 섞지 않는다 —
 소스 간 값이 어긋났을 때 어느 값이 어디서 왔는지 추적이 불가능해지기 때문이다.
 
-우선순위: `manual` > `ai-deadlines` > `ccfddl`
+우선순위: `manual` > `ai-deadlines` > `ccfddl` > `cfp-scrape`
+
+**CFP 파싱 결과는 절대 상위 소스를 덮어쓰지 않는다.** 상위 소스에 없는 단계(주로
+poster/LBW/workshop)만 채운다. 상위 소스와 같은 단계에 대해 값이 다르면 덮어쓰지 않고
+빌드 경고로 남긴다 — 이 불일치는 버리지 말고 봐야 할 신호다 (CFP가 갱신됐는데 소스가
+아직 못 따라온 경우일 수 있다).
 
 `manual`이 최우선인 이유는 사람이 명시적으로 써넣은 값이기 때문이다. 다만 manual 항목은
 반드시 `year`를 지정하며, 그 연도에만 적용된다. 상위 소스가 같은 연도를 이미 제공하는데
@@ -116,8 +122,16 @@ manual이 필요한 것은 홀수해의 ASRU뿐이다.
           "place": "Denver USA",
           "link": "https://cvpr.thecvf.com/Conferences/2026/CallForPapers",
           "deadlines": [
-            {"type": "abstract", "label": "Abstract", "date": "2025-11-07T23:59:59", "timezone": "AoE"},
-            {"type": "paper",    "label": "Paper",    "date": "2025-11-13T23:59:59", "timezone": "AoE"}
+            {"type": "abstract", "label": "Abstract", "date": "2025-11-07T23:59:59",
+             "timezone": "AoE", "source": "ai-deadlines"},
+            {"type": "paper", "label": "Paper", "date": "2025-11-13T23:59:59",
+             "timezone": "AoE", "source": "ai-deadlines"},
+            {"type": "poster", "label": "Posters", "date": "2026-04-21T22:00:00",
+             "source": "cfp-scrape",
+             "evidence": {
+               "raw_text": "Posters submission deadline: April 21, 2026",
+               "url": "https://s2026.siggraph.org/posters/"
+             }}
           ],
           "primary_deadline": "2025-11-13T23:59:59",
           "source": "ai-deadlines"
@@ -131,6 +145,9 @@ manual이 필요한 것은 홀수해의 ASRU뿐이다.
 
 `primary_deadline`은 `type: paper`를 우선하고, 없으면 가장 늦은 마감을 쓴다.
 레퍼런스처럼 `(ARR)` 같은 부가 설명이 필요하면 `deadlines[].label`에 담는다.
+
+`deadlines[].source`는 `manual` / `ai-deadlines` / `ccfddl` / `cfp-scrape` 중 하나다.
+`cfp-scrape`인 항목만 `evidence`(원문 문장 + 출처 URL)를 갖고, UI가 이를 툴팁으로 노출한다.
 
 `place` 정규화: ai-deadlines는 `city` / `country` / `venue`를 따로 주고 ccfddl은
 `place` 한 줄을 준다. `"{city} {country}"` 형태로 통일하고, 둘 중 하나가 비면 있는 쪽만
@@ -156,6 +173,26 @@ manual이 필요한 것은 홀수해의 ASRU뿐이다.
 - **링크** — 아이콘 두 개. `홈` = 학회 공식 홈페이지(`registry.yaml`의 `homepage`,
   연차와 무관하게 안정적), `CFP` = 해당 회차의 논문 모집 공고(소스가 준 `link`).
   둘 다 새 탭으로 연다. CFP 링크가 없는 회차는 아이콘을 흐리게 비활성 처리
+
+### 제출마감 펼치기 토글
+
+기본 상태에서 제출마감 셀은 **주 마감(full paper) 하나**와 그 D-day만 보여준다.
+셀 오른쪽에 `▸ +6` 형태의 토글 버튼을 둔다 — 숫자는 숨겨진 부가 일정의 개수다.
+부가 일정이 없는 학회는 버튼을 렌더링하지 않는다.
+
+토글을 누르면 그 행 아래로 타임라인이 펼쳐지고, 각 단계마다 라벨·날짜·개별 D-day를 찍는다.
+단계는 두 종류로 시각적으로 구분한다:
+
+| 종류 | 예시 | 표시 |
+|---|---|---|
+| **소스 제공** | Abstract, Supplementary, Review Release, Rebuttal, Notification, Camera-ready | 실선 마커 |
+| **CFP 자동 추출** | Poster, LBW, Workshop, Demo, Tutorial | 점선 마커 + `자동 추출` 배지 |
+
+`자동 추출` 배지에 마우스를 올리면 **그 날짜를 뽑아낸 CFP 원문 문장**과 해당 페이지 링크가
+뜬다. 사람이 한 번의 클릭으로 검증할 수 있어야 하기 때문이다 (§7 참조).
+
+39개 중 24개는 소스만으로도 5~15단계를 갖고 있어 토글이 즉시 값어치를 한다.
+헤더에 `전체 펼치기 / 접기` 버튼을 둔다. 펼침 상태는 저장하지 않는다 (일회성).
 
 ### 기본 정렬
 
@@ -183,7 +220,76 @@ manual이 필요한 것은 홀수해의 ASRU뿐이다.
 
 일정을 못 구한 학회는 숨기지 않고 하단 "일정 미확인 N개" 섹션에 모아 보여준다.
 
-## 7. 저장소 구조
+## 7. CFP 페이지 자동 파싱
+
+poster/LBW/workshop 마감은 ccfddl과 ai-deadlines 어디에도 사실상 없다
+(전체 데이터에서 각각 10건·11건, 우리 39개 중 ECCV·SIGGRAPH 둘뿐).
+따라서 학회 CFP 페이지를 직접 읽어 추출한다.
+
+**이 방식의 고유 위험은 LLM이 그럴듯한 날짜를 지어내고, 그것이 사실처럼 표시되는 것이다.**
+아래 설계는 전부 그 위험을 막기 위한 것이다.
+
+### 파이프라인
+
+`scripts/scrape_cfp.py` — 메인 빌드와 **분리된 별도 단계**로, 주 1회만 돈다.
+
+1. 각 학회의 CFP 링크(회차 `link`, 없으면 `homepage`)를 가져온다
+2. `robots.txt`를 확인하고, 초당 1요청으로 제한한다
+3. `ETag` / `Last-Modified`를 캐시해 **변하지 않은 페이지는 건너뛴다** — 첫 실행 이후에는
+   대부분 스킵되므로 비용이 급감한다
+4. HTML에서 본문 텍스트만 추출한다
+5. Claude로 구조화 추출 (아래)
+6. 결과를 `data/scraped/<abbr>.yaml`에 기록하고 **커밋한다**
+
+### 추출 계약
+
+모델은 `claude-opus-5`, structured outputs(`output_config.format`)로 스키마를 강제한다.
+지연에 민감하지 않으므로 **Batch API**로 39건을 한 번에 보낸다 (비용 50%).
+
+각 추출 항목이 반드시 포함해야 하는 필드:
+
+| 필드 | 설명 |
+|---|---|
+| `track` | `poster` / `lbw` / `workshop` / `demo` / `tutorial` / `doctoral_consortium` / `other` |
+| `date` | ISO 8601 |
+| `raw_text` | **그 날짜가 적혀 있던 원문 문장을 글자 그대로** |
+| `confidence` | `high` / `medium` / `low` |
+
+### 검증 게이트 (환각 방지의 핵심)
+
+추출 결과는 아래를 **전부** 통과해야 채택된다. 하나라도 실패하면 그 항목은 버린다.
+
+1. **원문 대조** — `raw_text`가 실제로 가져온 페이지 텍스트의 **부분 문자열이어야 한다**.
+   모델이 문장을 지어내면 여기서 걸린다. 가장 강력하고 가장 싼 방어선이다
+2. **날짜 범위** — 마감은 개최 시작일보다 앞서야 하고, 개최일 기준 18개월 이내여야 한다
+3. **`confidence: low` 제외** — 채택하지 않고 로그에만 남긴다
+4. **상위 소스 미침범** — 이미 authoritative 소스가 가진 단계는 덮어쓰지 않는다 (§3)
+
+### 사람의 검토
+
+`data/scraped/*.yaml`을 커밋하기 때문에 **모든 변경이 git diff로 드러난다.**
+날짜가 바뀌거나 새로 생기면 커밋에서 눈에 띄고, 이상하면 되돌릴 수 있다.
+자동 스크레이핑을 쓰되 감사 가능성을 잃지 않기 위한 장치다.
+
+UI에서도 자동 추출 항목은 실선이 아닌 점선 + `자동 추출` 배지로 구분되며,
+원문 문장과 출처 링크가 툴팁으로 붙는다 (§6).
+
+### 비용
+
+39개 페이지 × 약 12K 입력 토큰 ≈ 470K 입력 토큰, 출력 약 31K.
+`claude-opus-5` 기준 회당 약 **$3**, Batch API 적용 시 약 **$1.6**.
+주 1회 + ETag 스킵을 감안하면 월 **$2~7** 수준이다.
+더 낮추고 싶으면 `claude-haiku-4-5`로 바꿔 회당 약 $0.6까지 내려갈 수 있으나,
+CFP 페이지는 표현이 제각각이라 추출 품질이 떨어질 수 있다.
+
+### 실패 시 동작
+
+- `ANTHROPIC_API_KEY`가 없으면 스크레이핑 단계를 **통째로 건너뛴다**.
+  빌드는 커밋된 `data/scraped/`를 그대로 써서 정상 동작한다
+- 개별 페이지 fetch/추출 실패 → 그 학회만 이전 캐시 유지, 나머지 진행
+- 즉 이 단계는 **전적으로 선택적**이며, 죽어도 사이트는 멀쩡하다
+
+## 8. 저장소 구조
 
 ```
 ConferenceManager/
@@ -192,15 +298,19 @@ ConferenceManager/
 │  ├─ registry.yaml             # 학회 99개: 약어·full name·등급·AI Specialist·분야
 │  │                            #   ·homepage·소스 id 매핑
 │  ├─ fields.yaml               # 분야 정의(라벨·색상) + enabled 플래그
-│  └─ manual.yaml               # 수기 일정 (HRI, Humanoids, 홀수해 ASRU)
+│  ├─ manual.yaml               # 수기 일정 (HRI, Humanoids, 홀수해 ASRU)
+│  └─ scraped/                  # CFP 파싱 결과 캐시, 학회별 1파일. 커밋됨
+│     └─ <abbr>.yaml            #   git diff로 변경을 사람이 검토
 ├─ scripts/
 │  ├─ bootstrap_registry.py     # 엑셀 2개 → registry.yaml (수동 실행, 빌드 아님)
+│  ├─ scrape_cfp.py             # CFP 페이지 → data/scraped/ (주 1회, 빌드와 분리)
 │  ├─ build.py                  # 엔트리포인트
 │  ├─ merge.py                  # 소스 병합 + 회차 선택
 │  └─ sources/
 │     ├─ aideadlines.py
 │     ├─ ccfddl.py
-│     └─ manual.py
+│     ├─ manual.py
+│     └─ scraped.py
 ├─ tests/
 │  ├─ fixtures/                 # 고정 YAML 픽스처 (네트워크 없음)
 │  └─ test_*.py
@@ -225,13 +335,14 @@ ConferenceManager/
 출력하고, 사람이 확인한 뒤 `registry.yaml`에 반영한다. 자동 덮어쓰기는 하지 않는다 —
 `homepage`와 소스 id 매핑은 손으로 붙인 값이라 날아가면 안 되기 때문이다.
 
-## 8. 빌드 파이프라인
+## 9. 빌드 파이프라인
 
 `scripts/build.py`:
 
 1. `data/registry.yaml` 로드 → 99개 레지스트리
 2. `fields.yaml`의 `enabled` 적용 → 비활성 분야 제거 → 39개
 3. registry의 소스 id로 각 소스 조회, 회차 목록 수집
+   (`data/scraped/`는 네트워크 없이 로컬 파일로 읽는다 — 스크레이핑은 별도 단계)
 4. 병합(§3) + 회차 선택(§4)
 5. `docs/data/conferences.json` 기록
 6. 미해결 항목을 stderr와 GitHub Actions job summary에 리포트
@@ -243,7 +354,7 @@ ConferenceManager/
   사이트는 어제 데이터로 계속 뜨고, Actions만 빨간불이 된다
 - 개별 학회 파싱 실패 → 그 학회만 `unresolved`로 보내고 빌드는 계속
 
-## 9. 테스트
+## 10. 테스트
 
 pytest. **네트워크를 타지 않는다** — 소스 응답은 `tests/fixtures/`의 고정 YAML로 대체한다.
 
@@ -258,16 +369,33 @@ pytest. **네트워크를 타지 않는다** — 소스 응답은 `tests/fixture
 - 병합 우선순위: manual > ai-deadlines > ccfddl, 그리고 중복 시 경고 발생
 - 회차 선택: 기준 날짜를 주입해 upcoming / past / unknown 세 분기를 각각 검증
 - 출력 JSON이 §5 스키마를 만족
+- **CFP 검증 게이트** — 이 프로젝트에서 가장 중요한 테스트다:
+  - `raw_text`가 페이지 텍스트에 없으면 항목이 버려진다 (환각 시나리오)
+  - 개최일 이후 마감, 18개월을 넘는 마감이 버려진다
+  - `confidence: low`가 채택되지 않는다
+  - 상위 소스가 이미 가진 단계를 `cfp-scrape`가 덮어쓰지 못한다
+  - LLM 응답은 고정 픽스처로 대체한다 — 테스트는 API를 호출하지 않는다
 
-## 10. 배포
+## 11. 배포
 
 `.github/workflows/build.yml`
 
+워크플로 두 개를 나눈다 — 하나는 매일 돌고 공짜, 다른 하나는 주 1회 돌고 돈이 든다.
+
+**`build.yml`** — 매일
 - 트리거: `schedule` (`0 21 * * *` UTC = 06:00 KST) + `workflow_dispatch` + `push`
 - 단계: pytest → build → `conferences.json`이 변경됐으면 커밋 & 푸시
-- Pages는 `docs/` 폴더에서 서빙
+- 시크릿 불필요
 
-## 11. 미결 사항
+**`scrape.yml`** — 주 1회 (일요일)
+- 트리거: `schedule` + `workflow_dispatch`
+- 단계: `scrape_cfp.py` → `data/scraped/` 변경분 커밋 & 푸시 → `build.yml` 트리거
+- `ANTHROPIC_API_KEY`를 저장소 시크릿으로 등록해야 한다.
+  없으면 이 워크플로만 스킵되고 사이트는 기존 캐시로 계속 동작한다
+
+Pages는 `docs/` 폴더에서 서빙한다.
+
+## 12. 미결 사항
 
 - ~~저장소 공개 범위~~ — **결정: public 저장소 + GitHub Pages**.
   일반인은 "AI Specialist"가 무엇인지 알 수 없으므로 노출 위험이 낮다고 판단.
@@ -275,4 +403,7 @@ pytest. **네트워크를 타지 않는다** — 소스 응답은 `tests/fixture
   - `학술연수 학회 리스트/` (엑셀 원본)
   - `학술연수 파견자 처우기준/`, `학술연수 파견중 학회 참가 기준/` (사내 규정 사진, 빌드에 불필요)
 - **`Proc.` / `Poster` / `Expert` 컬럼** — 판정 기준 자료 확보 후 재논의.
+- **CFP 파싱 모델** — `claude-opus-5`로 시작한다. 몇 주 돌려보고 추출 품질이 충분히
+  안정적이면 `claude-haiku-4-5`로 낮춰 비용을 1/5로 줄일 여지가 있다.
+  판단 근거는 검증 게이트에서 버려지는 항목의 비율이다.
 - **제외된 60개 학회** — 현재 빌드에서 제외. 필요해지면 `fields.yaml`에서 되살린다.

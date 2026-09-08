@@ -74,6 +74,19 @@ def test_conference_carries_registry_metadata():
     assert conf["editions"][0]["primary_deadline"] == "2025-11-13T23:59:59"
 
 
+def test_only_the_adjacent_editions_survive():
+    # build는 회차를 직전 1개 + 차기 1개로 줄인다. 전부 내보내면 JSON이 부풀고
+    # 브라우저가 고르지 말아야 할 오래된 회차까지 후보로 받는다.
+    many = [
+        Edition(year, "", date(year, 6, 1), date(year, 6, 5), "X", None, [], "ai-deadlines")
+        for year in (2023, 2024, 2025, 2026, 2027)
+    ]
+    out = build(REGISTRY, FIELDS, make_fetchers(hf={"cvpr": many}),
+                manual={}, scraped={}, today=TODAY)
+    years = [e["year"] for e in out["conferences"][0]["editions"]]
+    assert years == [2025, 2026]
+
+
 def test_conference_without_any_edition_goes_to_unresolved():
     out = build(REGISTRY, FIELDS, make_fetchers(), manual={}, scraped={}, today=TODAY)
     assert out["conferences"] == []

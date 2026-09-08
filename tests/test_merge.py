@@ -84,6 +84,22 @@ def test_apply_scraped_with_no_extra_returns_equivalent_edition():
     assert apply_scraped(base, []).deadlines == base.deadlines
 
 
+def test_apply_scraped_does_not_mutate_the_input_edition():
+    # 같은 Edition 객체가 빌드 중 여러 곳에서 도달 가능하므로, 원본을 건드리면
+    # 엉뚱한 곳에 cfp-scrape 단계가 섞인다. replace로 새 객체를 만들어야 한다.
+    base = ed(2026, "ai-deadlines",
+              deadlines=[dl("paper", datetime(2025, 9, 11), "ai-deadlines")])
+    before = list(base.deadlines)
+    extra = [Deadline("lbw", "LBW", datetime(2026, 2, 12), None, "cfp-scrape")]
+
+    result = apply_scraped(base, extra)
+
+    assert base.deadlines == before
+    assert result is not base
+    assert result.deadlines is not base.deadlines
+    assert [d.type for d in result.deadlines] == ["paper", "lbw"]
+
+
 def test_edition_status_upcoming_when_end_is_today_or_later():
     assert edition_status(ed(2026, "x", end=date(2026, 4, 17)), date(2026, 4, 17)) == "upcoming"
     assert edition_status(ed(2026, "x", end=date(2026, 4, 17)), date(2026, 1, 1)) == "upcoming"

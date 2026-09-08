@@ -229,22 +229,34 @@ poster/LBW/workshop 마감은 ccfddl과 ai-deadlines 어디에도 사실상 없�
 **이 방식의 고유 위험은 LLM이 그럴듯한 날짜를 지어내고, 그것이 사실처럼 표시되는 것이다.**
 아래 설계는 전부 그 위험을 막기 위한 것이다.
 
-### 파이프라인
+### 추출과 검증의 분리 (설계의 핵심)
 
-`scripts/scrape_cfp.py` — 메인 빌드와 **분리된 별도 단계**로, 주 1회만 돈다.
+추출은 모델이 하고, **채택 여부는 코드가 정한다.** 두 단계를 파일로 갈라놓는다:
+
+```
+[추출]  CFP 페이지 → data/scraped/raw/<abbr>.json
+          Claude Code가 수행. 모델이 바뀌든 사람이 손으로 채우든 상관없다
+
+[검증]  scripts/validate_scraped.py
+          항상 코드가 실행. 게이트를 통과한 항목만 남긴다
+        → data/scraped/<abbr>.yaml
+```
+
+이 분리 덕분에 **추출 주체를 바꿔도 안전장치가 약해지지 않는다.**
+나중에 API 호출이나 다른 모델로 갈아타고 싶으면 추출 단계만 교체하면 된다.
+
+### 추출 단계
+
+**Claude Code가 주 1회 예약 실행으로 수행한다.** 별도 API 키나 종량 과금이 없고,
+기존 Claude Code 플랜 안에서 동작한다.
 
 1. 각 학회의 CFP 링크(회차 `link`, 없으면 `homepage`)를 가져온다
 2. `robots.txt`를 확인하고, 초당 1요청으로 제한한다
-3. `ETag` / `Last-Modified`를 캐시해 **변하지 않은 페이지는 건너뛴다** — 첫 실행 이후에는
-   대부분 스킵되므로 비용이 급감한다
-4. HTML에서 본문 텍스트만 추출한다
-5. Claude로 구조화 추출 (아래)
-6. 결과를 `data/scraped/<abbr>.yaml`에 기록하고 **커밋한다**
-
-### 추출 계약
-
-모델은 `claude-opus-5`, structured outputs(`output_config.format`)로 스키마를 강제한다.
-지연에 민감하지 않으므로 **Batch API**로 39건을 한 번에 보낸다 (비용 50%).
+3. `ETag` / `Last-Modified`를 `data/scraped/.cache.json`에 기록해
+   **변하지 않은 페이지는 건너뛴다** — 첫 실행 이후에는 대부분 스킵된다
+4. 페이지 본문 텍스트를 `data/scraped/raw/<abbr>.txt`에 그대로 저장한다.
+   검증 단계가 원문 대조에 쓰므로 반드시 남겨야 한다
+5. 추출 결과를 `data/scraped/raw/<abbr>.json`에 기록한다
 
 각 추출 항목이 반드시 포함해야 하는 필드:
 
@@ -255,38 +267,48 @@ poster/LBW/workshop 마감은 ccfddl과 ai-deadlines 어디에도 사실상 없�
 | `raw_text` | **그 날짜가 적혀 있던 원문 문장을 글자 그대로** |
 | `confidence` | `high` / `medium` / `low` |
 
+추출 절차와 스키마는 `.claude/commands/scrape-cfp.md`에 프롬프트로 고정해,
+예약 실행과 수동 실행이 같은 규칙을 따르게 한다.
+
 ### 검증 게이트 (환각 방지의 핵심)
 
-추출 결과는 아래를 **전부** 통과해야 채택된다. 하나라도 실패하면 그 항목은 버린다.
+`scripts/validate_scraped.py`가 아래를 **전부** 검사한다.
+하나라도 실패하면 그 항목은 버리고, 사유를 리포트에 남긴다.
 
-1. **원문 대조** — `raw_text`가 실제로 가져온 페이지 텍스트의 **부분 문자열이어야 한다**.
-   모델이 문장을 지어내면 여기서 걸린다. 가장 강력하고 가장 싼 방어선이다
+1. **원문 대조** — `raw_text`가 `raw/<abbr>.txt`의 **부분 문자열이어야 한다**
+   (공백 정규화 후 비교). 모델이 문장을 지어내면 여기서 걸린다.
+   가장 강력하고 가장 싼 방어선이다
 2. **날짜 범위** — 마감은 개최 시작일보다 앞서야 하고, 개최일 기준 18개월 이내여야 한다
 3. **`confidence: low` 제외** — 채택하지 않고 로그에만 남긴다
 4. **상위 소스 미침범** — 이미 authoritative 소스가 가진 단계는 덮어쓰지 않는다 (§3)
 
+이 스크립트는 **네트워크도 모델도 쓰지 않는다.** 순수 함수라 테스트하기 쉽고,
+CI에서 매 빌드마다 다시 돌려 커밋된 데이터가 여전히 게이트를 통과하는지 확인한다.
+
 ### 사람의 검토
 
-`data/scraped/*.yaml`을 커밋하기 때문에 **모든 변경이 git diff로 드러난다.**
+`data/scraped/`를 통째로 커밋하기 때문에 **모든 변경이 git diff로 드러난다.**
 날짜가 바뀌거나 새로 생기면 커밋에서 눈에 띄고, 이상하면 되돌릴 수 있다.
-자동 스크레이핑을 쓰되 감사 가능성을 잃지 않기 위한 장치다.
+자동 추출을 쓰되 감사 가능성을 잃지 않기 위한 장치다.
 
 UI에서도 자동 추출 항목은 실선이 아닌 점선 + `자동 추출` 배지로 구분되며,
 원문 문장과 출처 링크가 툴팁으로 붙는다 (§6).
 
-### 비용
+### 단계적 도입
 
-39개 페이지 × 약 12K 입력 토큰 ≈ 470K 입력 토큰, 출력 약 31K.
-`claude-opus-5` 기준 회당 약 **$3**, Batch API 적용 시 약 **$1.6**.
-주 1회 + ETag 스킵을 감안하면 월 **$2~7** 수준이다.
-더 낮추고 싶으면 `claude-haiku-4-5`로 바꿔 회당 약 $0.6까지 내려갈 수 있으나,
-CFP 페이지는 표현이 제각각이라 추출 품질이 떨어질 수 있다.
+CFP 페이지에 poster/LBW 일정이 실제로 적혀 있는지는 학회마다 다르고,
+돌려보기 전에는 알 수 없다. 따라서 한 번에 39개로 가지 않는다.
+
+1. **1차** — CHI, UIST, SIGGRAPH, ACM MM, ISMAR 5개로 시험 실행.
+   게이트 통과율과 실제로 잡힌 트랙을 확인한다
+2. **판단** — 통과율이 낮거나 원하는 트랙이 안 잡히면, 그 학회는 `manual.yaml`로 돌린다.
+   자동화가 안 되는 것을 억지로 자동화하지 않는다
+3. **확대** — 시험 결과가 쓸 만하면 나머지로 넓힌다
 
 ### 실패 시 동작
 
-- `ANTHROPIC_API_KEY`가 없으면 스크레이핑 단계를 **통째로 건너뛴다**.
-  빌드는 커밋된 `data/scraped/`를 그대로 써서 정상 동작한다
-- 개별 페이지 fetch/추출 실패 → 그 학회만 이전 캐시 유지, 나머지 진행
+- 예약 실행이 안 돌거나 실패해도 빌드는 **커밋된 `data/scraped/`를 그대로 쓴다**
+- 개별 페이지 fetch/추출 실패 → 그 학회만 이전 결과 유지, 나머지 진행
 - 즉 이 단계는 **전적으로 선택적**이며, 죽어도 사이트는 멀쩡하다
 
 ## 8. 저장소 구조
@@ -299,11 +321,16 @@ ConferenceManager/
 │  │                            #   ·homepage·소스 id 매핑
 │  ├─ fields.yaml               # 분야 정의(라벨·색상) + enabled 플래그
 │  ├─ manual.yaml               # 수기 일정 (HRI, Humanoids, 홀수해 ASRU)
-│  └─ scraped/                  # CFP 파싱 결과 캐시, 학회별 1파일. 커밋됨
-│     └─ <abbr>.yaml            #   git diff로 변경을 사람이 검토
+│  └─ scraped/                  # 커밋됨. git diff로 변경을 사람이 검토
+│     ├─ raw/<abbr>.txt         #   가져온 페이지 본문 (원문 대조용)
+│     ├─ raw/<abbr>.json        #   추출 결과 (검증 전)
+│     ├─ .cache.json            #   ETag / Last-Modified
+│     └─ <abbr>.yaml            #   게이트 통과분 (빌드가 읽는 것)
+├─ .claude/commands/
+│  └─ scrape-cfp.md             # 추출 절차·스키마 프롬프트. 예약/수동 공용
 ├─ scripts/
 │  ├─ bootstrap_registry.py     # 엑셀 2개 → registry.yaml (수동 실행, 빌드 아님)
-│  ├─ scrape_cfp.py             # CFP 페이지 → data/scraped/ (주 1회, 빌드와 분리)
+│  ├─ validate_scraped.py       # raw/ → scraped/*.yaml. 네트워크·모델 안 씀
 │  ├─ build.py                  # 엔트리포인트
 │  ├─ merge.py                  # 소스 병합 + 회차 선택
 │  └─ sources/
@@ -347,6 +374,10 @@ ConferenceManager/
 5. `docs/data/conferences.json` 기록
 6. 미해결 항목을 stderr와 GitHub Actions job summary에 리포트
 
+빌드 전에 `validate_scraped.py`를 다시 돌려, 커밋된 CFP 데이터가 여전히 게이트를
+통과하는지 확인한다. 네트워크를 타지 않으므로 비용이 없고, 손으로 편집된 값이
+게이트를 우회하는 것을 막는다.
+
 ### 실패 처리
 
 - 한 소스 fetch 실패 → 해당 소스만 건너뛰고 나머지로 빌드, 경고
@@ -380,18 +411,17 @@ pytest. **네트워크를 타지 않는다** — 소스 응답은 `tests/fixture
 
 `.github/workflows/build.yml`
 
-워크플로 두 개를 나눈다 — 하나는 매일 돌고 공짜, 다른 하나는 주 1회 돌고 돈이 든다.
-
-**`build.yml`** — 매일
+**`build.yml`** (GitHub Actions) — 매일
 - 트리거: `schedule` (`0 21 * * *` UTC = 06:00 KST) + `workflow_dispatch` + `push`
-- 단계: pytest → build → `conferences.json`이 변경됐으면 커밋 & 푸시
-- 시크릿 불필요
+- 단계: pytest → `validate_scraped.py` → `build.py` →
+  `conferences.json`이 변경됐으면 커밋 & 푸시
+- **시크릿이 전혀 필요 없다.** 네트워크는 ccfddl·ai-deadlines의 공개 raw 파일만 탄다
 
-**`scrape.yml`** — 주 1회 (일요일)
-- 트리거: `schedule` + `workflow_dispatch`
-- 단계: `scrape_cfp.py` → `data/scraped/` 변경분 커밋 & 푸시 → `build.yml` 트리거
-- `ANTHROPIC_API_KEY`를 저장소 시크릿으로 등록해야 한다.
-  없으면 이 워크플로만 스킵되고 사이트는 기존 캐시로 계속 동작한다
+**CFP 추출** — 주 1회, Claude Code 예약 실행
+- GitHub Actions가 아니라 Claude Code의 `schedule`(routine)로 돌린다
+- `.claude/commands/scrape-cfp.md`를 실행해 `data/scraped/`를 갱신하고 커밋한다
+- 푸시가 `build.yml`을 깨우므로 사이트가 자동으로 따라온다
+- 별도 API 키·종량 과금 없음. 예약이 안 돌아도 빌드는 기존 캐시로 정상 동작한다
 
 Pages는 `docs/` 폴더에서 서빙한다.
 
@@ -403,7 +433,8 @@ Pages는 `docs/` 폴더에서 서빙한다.
   - `학술연수 학회 리스트/` (엑셀 원본)
   - `학술연수 파견자 처우기준/`, `학술연수 파견중 학회 참가 기준/` (사내 규정 사진, 빌드에 불필요)
 - **`Proc.` / `Poster` / `Expert` 컬럼** — 판정 기준 자료 확보 후 재논의.
-- **CFP 파싱 모델** — `claude-opus-5`로 시작한다. 몇 주 돌려보고 추출 품질이 충분히
-  안정적이면 `claude-haiku-4-5`로 낮춰 비용을 1/5로 줄일 여지가 있다.
-  판단 근거는 검증 게이트에서 버려지는 항목의 비율이다.
+- **CFP 추출 대상 학회** — 1차 5개(CHI, UIST, SIGGRAPH, ACM MM, ISMAR) 시험 결과를 보고
+  확대 여부를 정한다 (§7). 통과율이 낮은 학회는 자동화를 포기하고 `manual.yaml`로 돌린다.
+- **추출 주체** — 현재는 Claude Code 예약 실행. 추출/검증이 분리돼 있으므로,
+  나중에 완전 무인 CI가 필요해지면 추출 단계만 API 호출로 교체하면 된다.
 - **제외된 60개 학회** — 현재 빌드에서 제외. 필요해지면 `fields.yaml`에서 되살린다.

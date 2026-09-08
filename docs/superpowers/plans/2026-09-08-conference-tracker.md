@@ -2584,6 +2584,22 @@ def test_apply_scraped_with_no_extra_returns_equivalent_edition():
     assert apply_scraped(base, []).deadlines == base.deadlines
 
 
+def test_apply_scraped_does_not_mutate_the_input_edition():
+    # 같은 Edition 객체가 빌드 중 여러 곳에서 도달 가능하므로, 원본을 건드리면
+    # 엉뚱한 곳에 cfp-scrape 단계가 섞인다. replace로 새 객체를 만들어야 한다.
+    base = ed(2026, "ai-deadlines",
+              deadlines=[dl("paper", datetime(2025, 9, 11), "ai-deadlines")])
+    before = list(base.deadlines)
+    extra = [Deadline("lbw", "LBW", datetime(2026, 2, 12), None, "cfp-scrape")]
+
+    result = apply_scraped(base, extra)
+
+    assert base.deadlines == before
+    assert result is not base
+    assert result.deadlines is not base.deadlines
+    assert [d.type for d in result.deadlines] == ["paper", "lbw"]
+
+
 def test_edition_status_upcoming_when_end_is_today_or_later():
     assert edition_status(ed(2026, "x", end=date(2026, 4, 17)), date(2026, 4, 17)) == "upcoming"
     assert edition_status(ed(2026, "x", end=date(2026, 4, 17)), date(2026, 1, 1)) == "upcoming"
@@ -2641,6 +2657,18 @@ def test_pick_member_prefers_the_one_actually_upcoming():
     }
     name, _ = pick_member(members, date(2026, 1, 1))
     assert name == "eccv"
+
+
+def test_pick_member_with_no_upcoming_prefers_the_most_recently_held():
+    # 둘 다 차기 회차가 없을 때는 가장 최근에 열린 쪽이 대표가 되어야 한다.
+    # pick_member의 -toordinal 부호가 이 비교를 뒤집는 장치다.
+    members = {
+        "iccv": [ed(2023, "ccfddl", start=date(2023, 10, 1), end=date(2023, 10, 6))],
+        "eccv": [ed(2024, "ccfddl", start=date(2024, 9, 29), end=date(2024, 10, 4))],
+    }
+    name, editions = pick_member(members, date(2026, 9, 20))
+    assert name == "eccv"
+    assert [e.year for e in editions] == [2024]
 
 
 def test_pick_member_with_no_data_returns_none():
@@ -2770,7 +2798,7 @@ def pick_member(
 - [ ] **Step 4: 테스트 통과 확인**
 
 Run: `python -m pytest tests/test_merge.py -v`
-Expected: PASS — 18 passed
+Expected: PASS — 20 passed
 
 - [ ] **Step 5: 커밋**
 

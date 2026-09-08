@@ -2899,7 +2899,6 @@ def test_enabled_field_ids():
 def test_disabled_field_conferences_are_excluded():
     out = build(REGISTRY, FIELDS, make_fetchers(hf={"cvpr": [cvpr_edition()]}),
                 manual={}, scraped={}, today=TODAY)
-    # build()는 Conference.abbr에 registry의 display를 넣는다. 원본 약어는 abbr_group에 남는다.
     assert [c["abbr"] for c in out["conferences"]] == ["CVPR"]
     assert "infocom" not in str(out)
 
@@ -2914,6 +2913,19 @@ def test_conference_carries_registry_metadata():
     assert conf["ai_specialist"] is True
     assert conf["homepage"] == "https://cvpr.thecvf.com/"
     assert conf["editions"][0]["primary_deadline"] == "2025-11-13T23:59:59"
+
+
+def test_only_the_adjacent_editions_survive():
+    # build는 회차를 직전 1개 + 차기 1개로 줄인다. 전부 내보내면 JSON이 부풀고
+    # 브라우저가 고르지 말아야 할 오래된 회차까지 후보로 받는다.
+    many = [
+        Edition(year, "", date(year, 6, 1), date(year, 6, 5), "X", None, [], "ai-deadlines")
+        for year in (2023, 2024, 2025, 2026, 2027)
+    ]
+    out = build(REGISTRY, FIELDS, make_fetchers(hf={"cvpr": many}),
+                manual={}, scraped={}, today=TODAY)
+    years = [e["year"] for e in out["conferences"][0]["editions"]]
+    assert years == [2025, 2026]
 
 
 def test_conference_without_any_edition_goes_to_unresolved():
@@ -3160,7 +3172,7 @@ if __name__ == "__main__":
 - [ ] **Step 4: 테스트 통과 확인**
 
 Run: `python -m pytest tests/test_build.py -v`
-Expected: PASS — 10 passed
+Expected: PASS — 11 passed
 
 - [ ] **Step 5: 전체 테스트 실행**
 

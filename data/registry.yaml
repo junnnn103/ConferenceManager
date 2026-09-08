@@ -1,0 +1,1112 @@
+conferences:
+- abbr: cvpr
+  display: cvpr
+  full_name: Computer Vision and Pattern Recognition
+  grade: 최우수
+  ai_specialist: true
+  field: CV
+  homepage: null
+  members: null
+  sources:
+    ai_deadlines: null
+    ccfddl: null
+- abbr: nips
+  display: nips
+  full_name: Neural Information Processing Systems
+  grade: 최우수
+  ai_specialist: false
+  field: ML
+  homepage: null
+  members: null
+  sources:
+    ai_deadlines: null
+    ccfddl: null
+- abbr: iclr
+  display: iclr
+  full_name: International Conference on Learning Representations
+  grade: 최우수
+  ai_specialist: true
+  field: ML
+  homepage: null
+  members: null
+  sources:
+    ai_deadlines: null
+    ccfddl: null
+- abbr: iccv/eccv
+  display: iccv/eccv
+  full_name: International Conference on Computer Vision / European Conference on
+    Computer Vision
+  grade: 최우수
+  ai_specialist: true
+  field: CV
+  homepage: null
+  members:
+  - display: iccv
+    sources:
+      ai_deadlines: null
+      ccfddl: null
+  - display: eccv
+    sources:
+      ai_deadlines: null
+      ccfddl: null
+  sources:
+    ai_deadlines: null
+    ccfddl: null
+- abbr: icml
+  display: icml
+  full_name: International Conference on Machine Learning
+  grade: 최우수
+  ai_specialist: true
+  field: ML
+  homepage: null
+  members: null
+  sources:
+    ai_deadlines: null
+    ccfddl: null
+- abbr: aaai
+  display: aaai
+  full_name: AAAI Conference on Artificial Intelligence
+  grade: 최우수
+  ai_specialist: true
+  field: ML
+  homepage: null
+  members: null
+  sources:
+    ai_deadlines: null
+    ccfddl: null
+- abbr: acl
+  display: acl
+  full_name: Association for Computational Linguistics
+  grade: 최우수
+  ai_specialist: true
+  field: NLP
+  homepage: null
+  members: null
+  sources:
+    ai_deadlines: null
+    ccfddl: null
+- abbr: emnlp
+  display: emnlp
+  full_name: Conference on Empirical Methods in Natural Language Processing
+  grade: 최우수
+  ai_specialist: true
+  field: NLP
+  homepage: null
+  members: null
+  sources:
+    ai_deadlines: null
+    ccfddl: null
+- abbr: ijcai
+  display: ijcai
+  full_name: International Joint Conference on Artificial Intelligence
+  grade: 우수
+  ai_specialist: true
+  field: ML
+  homepage: null
+  members: null
+  sources:
+    ai_deadlines: null
+    ccfddl: null
+- abbr: naacl
+  display: naacl
+  full_name: North American Chapter of the Association for Computational Linguistics
+  grade: 우수
+  ai_specialist: true
+  field: NLP
+  homepage: null
+  members: null
+  sources:
+    ai_deadlines: null
+    ccfddl: null
+- abbr: chi
+  display: chi
+  full_name: International Conference on Human Factors in Computing Systems
+  grade: 최우수
+  ai_specialist: true
+  field: HCI
+  homepage: null
+  members: null
+  sources:
+    ai_deadlines: null
+    ccfddl: null
+- abbr: icassp
+  display: icassp
+  full_name: International Conference on Acoustics, Speech, and Signal Processing
+  grade: 최우수
+  ai_specialist: true
+  field: Speech
+  homepage: null
+  members: null
+  sources:
+    ai_deadlines: null
+    ccfddl: null
+- abbr: kdd
+  display: kdd
+  full_name: ACM SIGKDD Conference on Knowledge Discovery and Data Mining
+  grade: 최우수
+  ai_specialist: false
+  field: DM/IR
+  homepage: null
+  members: null
+  sources:
+    ai_deadlines: null
+    ccfddl: null
+- abbr: icra
+  display: icra
+  full_name: IEEE International Conference on Robotics and Automation
+  grade: 최우수
+  ai_specialist: true
+  field: Robotics
+  homepage: null
+  members: null
+  sources:
+    ai_deadlines: null
+    ccfddl: null
+- abbr: sp
+  display: sp
+  full_name: IEEE Symposium on Security and Privacy
+  grade: 최우수
+  ai_specialist: false
+  field: Security
+  homepage: null
+  members: null
+  sources:
+    ai_deadlines: null
+    ccfddl: null
+- abbr: www
+  display: www
+  full_name: World Wide Web Conference Series
+  grade: 최우수
+  ai_specialist: true
+  field: DM/IR
+  homepage: null
+  members: null
+  sources:
+    ai_deadlines: null
+    ccfddl: null
+- abbr: interspeech
+  display: interspeech
+  full_name: Annual Conference of the International Speech Communication Association
+  grade: 최우수
+  ai_specialist: true
+  field: Speech
+  homepage: null
+  members: null
+  sources:
+    ai_deadlines: null
+    ccfddl: null
+- abbr: wacv
+  display: wacv
+  full_name: IEEE Winter Conference on Applications of Computer Vision
+  grade: 우수
+  ai_specialist: true
+  field: CV
+  homepage: null
+  members: null
+  sources:
+    ai_deadlines: null
+    ccfddl: null
+- abbr: uss
+  display: uss
+  full_name: USENIX Security Symposium
+  grade: 최우수
+  ai_specialist: false
+  field: Security
+  homepage: null
+  members: null
+  sources:
+    ai_deadlines: null
+    ccfddl: null
+- abbr: siggraph
+  display: siggraph
+  full_name: ACM SIGGRAPH Conference
+  grade: 최우수
+  ai_specialist: true
+  field: Graphics
+  homepage: null
+  members: null
+  sources:
+    ai_deadlines: null
+    ccfddl: null
+- abbr: sigir
+  display: sigir
+  full_name: Research and Development in Information Retrieval
+  grade: 최우수
+  ai_specialist: true
+  field: DM/IR
+  homepage: null
+  members: null
+  sources:
+    ai_deadlines: null
+    ccfddl: null
+- abbr: mm
+  display: mm
+  full_name: ACM International Conference on Multimedia
+  grade: 최우수
+  ai_specialist: false
+  field: Multimedia
+  homepage: null
+  members: null
+  sources:
+    ai_deadlines: null
+    ccfddl: null
+- abbr: miccai
+  display: miccai
+  full_name: Medical Image Computing and Computer Assisted Intervention
+  grade: 최우수
+  ai_specialist: true
+  field: Medical
+  homepage: null
+  members: null
+  sources:
+    ai_deadlines: null
+    ccfddl: null
+- abbr: ccs
+  display: ccs
+  full_name: ACM Symposium on Computer and Communications Security
+  grade: 최우수
+  ai_specialist: false
+  field: Security
+  homepage: null
+  members: null
+  sources:
+    ai_deadlines: null
+    ccfddl: null
+- abbr: cikm
+  display: cikm
+  full_name: International Conference on Information and Knowledge Management
+  grade: 최우수
+  ai_specialist: true
+  field: DM/IR
+  homepage: null
+  members: null
+  sources:
+    ai_deadlines: null
+    ccfddl: null
+- abbr: corl
+  display: corl
+  full_name: Conference on Robot Learning
+  grade: 최우수
+  ai_specialist: true
+  field: Robotics
+  homepage: null
+  members: null
+  sources:
+    ai_deadlines: null
+    ccfddl: null
+- abbr: iros
+  display: iros
+  full_name: IEEE/RSJ International Conference on Intelligent Robots and Systems
+  grade: 최우수
+  ai_specialist: true
+  field: Robotics
+  homepage: null
+  members: null
+  sources:
+    ai_deadlines: null
+    ccfddl: null
+- abbr: icse
+  display: icse
+  full_name: International Conference on Software Engineering
+  grade: 최우수
+  ai_specialist: true
+  field: SE/PL
+  homepage: null
+  members: null
+  sources:
+    ai_deadlines: null
+    ccfddl: null
+- abbr: infocom
+  display: infocom
+  full_name: IEEE Conference on Computer Communications
+  grade: 최우수
+  ai_specialist: true
+  field: Network
+  homepage: null
+  members: null
+  sources:
+    ai_deadlines: null
+    ccfddl: null
+- abbr: wsdm
+  display: wsdm
+  full_name: ACM International Conference on Web Search and Data Mining
+  grade: 우수
+  ai_specialist: true
+  field: DM/IR
+  homepage: null
+  members: null
+  sources:
+    ai_deadlines: null
+    ccfddl: null
+- abbr: icc
+  display: icc
+  full_name: IEEE International Conference on Communications
+  grade: 최우수
+  ai_specialist: true
+  field: Network
+  homepage: null
+  members: null
+  sources:
+    ai_deadlines: null
+    ccfddl: null
+- abbr: vldb
+  display: vldb
+  full_name: Very Large Data Bases Conference
+  grade: 우수
+  ai_specialist: true
+  field: DB
+  homepage: null
+  members: null
+  sources:
+    ai_deadlines: null
+    ccfddl: null
+- abbr: ndss
+  display: ndss
+  full_name: Network and Distributed System Security Symposium
+  grade: 우수
+  ai_specialist: false
+  field: Security
+  homepage: null
+  members: null
+  sources:
+    ai_deadlines: null
+    ccfddl: null
+- abbr: sigmod
+  display: sigmod
+  full_name: International Conference on Management of Data
+  grade: 우수
+  ai_specialist: true
+  field: DB
+  homepage: null
+  members: null
+  sources:
+    ai_deadlines: null
+    ccfddl: null
+- abbr: asplos
+  display: asplos
+  full_name: Architectural Support for Programming Languages and Operating Systems
+  grade: 최우수
+  ai_specialist: true
+  field: Architecture
+  homepage: null
+  members: null
+  sources:
+    ai_deadlines: null
+    ccfddl: null
+- abbr: icde
+  display: icde
+  full_name: International Conference on Data Engineering
+  grade: 우수
+  ai_specialist: true
+  field: DB
+  homepage: null
+  members: null
+  sources:
+    ai_deadlines: null
+    ccfddl: null
+- abbr: isscc
+  display: isscc
+  full_name: IEEE International Solid-State Circuits Conference
+  grade: 최우수
+  ai_specialist: true
+  field: Circuits
+  homepage: null
+  members: null
+  sources:
+    ai_deadlines: null
+    ccfddl: null
+- abbr: rss
+  display: rss
+  full_name: 'Robotics: Science and Systems Conference'
+  grade: 우수
+  ai_specialist: true
+  field: Robotics
+  homepage: null
+  members: null
+  sources:
+    ai_deadlines: null
+    ccfddl: null
+- abbr: icip
+  display: icip
+  full_name: IEEE International Conference on Image Processing
+  grade: 우수
+  ai_specialist: true
+  field: CV
+  homepage: null
+  members: null
+  sources:
+    ai_deadlines: null
+    ccfddl: null
+- abbr: sigcomm
+  display: sigcomm
+  full_name: ACM Conference on Applications, Technologies, Architectures, and Protocols
+    for Computer Communication
+  grade: 최우수
+  ai_specialist: true
+  field: Network
+  homepage: null
+  members: null
+  sources:
+    ai_deadlines: null
+    ccfddl: null
+- abbr: globecom
+  display: globecom
+  full_name: IEEE Global Communications Conference
+  grade: 최우수
+  ai_specialist: true
+  field: Network
+  homepage: null
+  members: null
+  sources:
+    ai_deadlines: null
+    ccfddl: null
+- abbr: eurocrypt
+  display: eurocrypt
+  full_name: Theory and Application of Cryptographic Techniques
+  grade: 우수
+  ai_specialist: false
+  field: Security
+  homepage: null
+  members: null
+  sources:
+    ai_deadlines: null
+    ccfddl: null
+- abbr: isca
+  display: isca
+  full_name: International Symposium on Computer Architecture
+  grade: 최우수
+  ai_specialist: true
+  field: Architecture
+  homepage: null
+  members: null
+  sources:
+    ai_deadlines: null
+    ccfddl: null
+- abbr: nsdi
+  display: nsdi
+  full_name: USENIX Networked Systems Design and Implementation
+  grade: 최우수
+  ai_specialist: false
+  field: Network
+  homepage: null
+  members: null
+  sources:
+    ai_deadlines: null
+    ccfddl: null
+- abbr: fse
+  display: fse
+  full_name: ACM SIGSOFT Conference on the Foundations of Software Engineering
+  grade: 우수
+  ai_specialist: true
+  field: SE/PL
+  homepage: null
+  members: null
+  sources:
+    ai_deadlines: null
+    ccfddl: null
+- abbr: crypto
+  display: crypto
+  full_name: International Cryptology Conference
+  grade: 우수
+  ai_specialist: false
+  field: Security
+  homepage: null
+  members: null
+  sources:
+    ai_deadlines: null
+    ccfddl: null
+- abbr: micro
+  display: micro
+  full_name: International Symposium on Microarchitecture
+  grade: 최우수
+  ai_specialist: true
+  field: Architecture
+  homepage: null
+  members: null
+  sources:
+    ai_deadlines: null
+    ccfddl: null
+- abbr: mlsys
+  display: mlsys
+  full_name: Conference on Machine Learning and Systems
+  grade: 최우수
+  ai_specialist: false
+  field: ML
+  homepage: null
+  members: null
+  sources:
+    ai_deadlines: null
+    ccfddl: null
+- abbr: isit
+  display: isit
+  full_name: IEEE International Symposium on Information Theory
+  grade: 우수
+  ai_specialist: true
+  field: InfoTheory
+  homepage: null
+  members: null
+  sources:
+    ai_deadlines: null
+    ccfddl: null
+- abbr: ase
+  display: ase
+  full_name: International Conference on Automated Software Engineering / Knowledge-Based
+    Software Engineering Conference
+  grade: 우수
+  ai_specialist: true
+  field: SE/PL
+  homepage: null
+  members: null
+  sources:
+    ai_deadlines: null
+    ccfddl: null
+- abbr: hri
+  display: hri
+  full_name: ACM/IEEE International Conference on Human Robot Interaction
+  grade: 우수
+  ai_specialist: true
+  field: Robotics
+  homepage: null
+  members: null
+  sources:
+    ai_deadlines: null
+    ccfddl: null
+- abbr: osdi
+  display: osdi
+  full_name: USENIX Symposium on Operating Systems Design and Implementation (OSDI)
+  grade: 우수
+  ai_specialist: false
+  field: OS/HPC
+  homepage: null
+  members: null
+  sources:
+    ai_deadlines: null
+    ccfddl: null
+- abbr: bigdataconf
+  display: bigdataconf
+  full_name: IEEE International Conference on Big Data
+  grade: 우수
+  ai_specialist: false
+  field: DM/IR
+  homepage: null
+  members: null
+  sources:
+    ai_deadlines: null
+    ccfddl: null
+- abbr: UbiComp
+  display: UbiComp
+  full_name: ACM International Conference on Ubiquitous Computing
+  grade: 우수
+  ai_specialist: true
+  field: HCI
+  homepage: null
+  members: null
+  sources:
+    ai_deadlines: null
+    ccfddl: null
+- abbr: recsys
+  display: recsys
+  full_name: ACM Conference on Recommender Systems
+  grade: 우수
+  ai_specialist: true
+  field: DM/IR
+  homepage: null
+  members: null
+  sources:
+    ai_deadlines: null
+    ccfddl: null
+- abbr: iui
+  display: iui
+  full_name: Intelligent User Interfaces
+  grade: 우수
+  ai_specialist: true
+  field: HCI
+  homepage: null
+  members: null
+  sources:
+    ai_deadlines: null
+    ccfddl: null
+- abbr: dac
+  display: dac
+  full_name: Design Automation Conference
+  grade: 우수
+  ai_specialist: true
+  field: Architecture
+  homepage: null
+  members: null
+  sources:
+    ai_deadlines: null
+    ccfddl: null
+- abbr: pldi
+  display: pldi
+  full_name: SIGPLAN Conference on Programming Language Design and Implementation
+  grade: 우수
+  ai_specialist: true
+  field: SE/PL
+  homepage: null
+  members: null
+  sources:
+    ai_deadlines: null
+    ccfddl: null
+- abbr: uist
+  display: uist
+  full_name: User Interface Software and Technology
+  grade: 우수
+  ai_specialist: true
+  field: HCI
+  homepage: null
+  members: null
+  sources:
+    ai_deadlines: null
+    ccfddl: null
+- abbr: hpca
+  display: hpca
+  full_name: International Symposium on High-Performance Computer Architecture
+  grade: 우수
+  ai_specialist: true
+  field: Architecture
+  homepage: null
+  members: null
+  sources:
+    ai_deadlines: null
+    ccfddl: null
+- abbr: sc
+  display: sc
+  full_name: ACM/IEEE International Conference for High Performance Computing, Networking,
+    Storage and Analysis
+  grade: 우수
+  ai_specialist: true
+  field: OS/HPC
+  homepage: null
+  members: null
+  sources:
+    ai_deadlines: null
+    ccfddl: null
+- abbr: icdcs
+  display: icdcs
+  full_name: International Conference on Distributed Computing Systems
+  grade: 우수
+  ai_specialist: true
+  field: OS/HPC
+  homepage: null
+  members: null
+  sources:
+    ai_deadlines: null
+    ccfddl: null
+- abbr: embc
+  display: embc
+  full_name: Engineering in Medicine and Biology Conference
+  grade: 우수
+  ai_specialist: true
+  field: Medical
+  homepage: null
+  members: null
+  sources:
+    ai_deadlines: null
+    ccfddl: null
+- abbr: eurosys
+  display: eurosys
+  full_name: European Conference on Computer Systems
+  grade: 우수
+  ai_specialist: true
+  field: OS/HPC
+  homepage: null
+  members: null
+  sources:
+    ai_deadlines: null
+    ccfddl: null
+- abbr: ICME
+  display: ICME
+  full_name: IEEE International Conference on Multimedia and Expo
+  grade: 우수
+  ai_specialist: true
+  field: Multimedia
+  homepage: null
+  members: null
+  sources:
+    ai_deadlines: null
+    ccfddl: null
+- abbr: vtc
+  display: vtc
+  full_name: IEEE Vehicular Technology Conference, VTC
+  grade: 우수
+  ai_specialist: true
+  field: Network
+  homepage: null
+  members: null
+  sources:
+    ai_deadlines: null
+    ccfddl: null
+- abbr: issta
+  display: issta
+  full_name: ACM International Symposium on Software Testing and Analysis
+  grade: 우수
+  ai_specialist: true
+  field: SE/PL
+  homepage: null
+  members: null
+  sources:
+    ai_deadlines: null
+    ccfddl: null
+- abbr: asru/slt
+  display: asru/slt
+  full_name: IEEE Workshop on Automatic Speech Recognition & Understanding / IEEE
+    Spoken Language Technology Workshop
+  grade: 우수
+  ai_specialist: true
+  field: Speech
+  homepage: null
+  members:
+  - display: asru
+    sources:
+      ai_deadlines: null
+      ccfddl: null
+  - display: slt
+    sources:
+      ai_deadlines: null
+      ccfddl: null
+  sources:
+    ai_deadlines: null
+    ccfddl: null
+- abbr: vr
+  display: vr
+  full_name: IEEE Virtual Reality Conference
+  grade: 우수
+  ai_specialist: true
+  field: AR/VR
+  homepage: null
+  members: null
+  sources:
+    ai_deadlines: null
+    ccfddl: null
+- abbr: vlsi
+  display: vlsi
+  full_name: IEEE Symposium on VLSI Circuits and Technology
+  grade: 우수
+  ai_specialist: true
+  field: Circuits
+  homepage: null
+  members: null
+  sources:
+    ai_deadlines: null
+    ccfddl: null
+- abbr: fpga
+  display: fpga
+  full_name: International Symposium on Field Programmable Gate Arrays
+  grade: 우수
+  ai_specialist: true
+  field: Architecture
+  homepage: null
+  members: null
+  sources:
+    ai_deadlines: null
+    ccfddl: null
+- abbr: sigmetrics
+  display: sigmetrics
+  full_name: ACM SIGMETRICS Measurement and Modeling of Computer Systems
+  grade: 우수
+  ai_specialist: true
+  field: OS/HPC
+  homepage: null
+  members: null
+  sources:
+    ai_deadlines: null
+    ccfddl: null
+- abbr: sosp
+  display: sosp
+  full_name: ACM Symposium on Operating Systems Principles
+  grade: 우수
+  ai_specialist: true
+  field: OS/HPC
+  homepage: null
+  members: null
+  sources:
+    ai_deadlines: null
+    ccfddl: null
+- abbr: sensys
+  display: sensys
+  full_name: ACM Conference On Embedded Networked Sensor Systems
+  grade: 우수
+  ai_specialist: true
+  field: Network
+  homepage: null
+  members: null
+  sources:
+    ai_deadlines: null
+    ccfddl: null
+- abbr: mobisys
+  display: mobisys
+  full_name: International Conference on Mobile Systems, Applications, and Services
+  grade: 우수
+  ai_specialist: true
+  field: Network
+  homepage: null
+  members: null
+  sources:
+    ai_deadlines: null
+    ccfddl: null
+- abbr: cav
+  display: cav
+  full_name: International Conference on Computer-Aided Verification
+  grade: 우수
+  ai_specialist: true
+  field: SE/PL
+  homepage: null
+  members: null
+  sources:
+    ai_deadlines: null
+    ccfddl: null
+- abbr: APEC
+  display: APEC
+  full_name: Applied Power Electronics Conference and Exposition
+  grade: 우수
+  ai_specialist: true
+  field: RF/Power
+  homepage: null
+  members: null
+  sources:
+    ai_deadlines: null
+    ccfddl: null
+- abbr: conext
+  display: conext
+  full_name: Conference on Emerging Network Experiment and Technology
+  grade: 우수
+  ai_specialist: true
+  field: Network
+  homepage: null
+  members: null
+  sources:
+    ai_deadlines: null
+    ccfddl: null
+- abbr: bibm
+  display: bibm
+  full_name: IEEE International Conference on Bioinformatics and Biomedicine
+  grade: 우수
+  ai_specialist: false
+  field: Medical
+  homepage: null
+  members: null
+  sources:
+    ai_deadlines: null
+    ccfddl: null
+- abbr: ismar
+  display: ismar
+  full_name: IEEE International Symposium on Mixed and Augmented Reality
+  grade: 우수
+  ai_specialist: false
+  field: AR/VR
+  homepage: null
+  members: null
+  sources:
+    ai_deadlines: null
+    ccfddl: null
+- abbr: EuCAP
+  display: EuCAP
+  full_name: European Conference on Antennas and Propagation
+  grade: 우수
+  ai_specialist: true
+  field: RF/Power
+  homepage: null
+  members: null
+  sources:
+    ai_deadlines: null
+    ccfddl: null
+- abbr: mmsys
+  display: mmsys
+  full_name: ACM Multimedia Systems Conference
+  grade: 우수
+  ai_specialist: true
+  field: Network
+  homepage: null
+  members: null
+  sources:
+    ai_deadlines: null
+    ccfddl: null
+- abbr: ccnc
+  display: ccnc
+  full_name: IEEE Consumer Communications and Networking Conference
+  grade: 우수
+  ai_specialist: true
+  field: Network
+  homepage: null
+  members: null
+  sources:
+    ai_deadlines: null
+    ccfddl: null
+- abbr: IMS
+  display: IMS
+  full_name: IEEE International Microwave Symposium
+  grade: 우수
+  ai_specialist: true
+  field: RF/Power
+  homepage: null
+  members: null
+  sources:
+    ai_deadlines: null
+    ccfddl: null
+- abbr: humanoids
+  display: humanoids
+  full_name: IEEE International Conference on Humanoid Robots
+  grade: 우수
+  ai_specialist: false
+  field: Robotics
+  homepage: null
+  members: null
+  sources:
+    ai_deadlines: null
+    ccfddl: null
+- abbr: mobicom
+  display: mobicom
+  full_name: ACM International Conference on Mobile Computing and Networking
+  grade: 우수
+  ai_specialist: true
+  field: Network
+  homepage: null
+  members: null
+  sources:
+    ai_deadlines: null
+    ccfddl: null
+- abbr: RFIC
+  display: RFIC
+  full_name: Radio Frequency Integrated Circuit Symposia
+  grade: 우수
+  ai_specialist: true
+  field: Circuits
+  homepage: null
+  members: null
+  sources:
+    ai_deadlines: null
+    ccfddl: null
+- abbr: siggrapha
+  display: siggrapha
+  full_name: ACM SIGGRAPH Conference in Asia
+  grade: 우수
+  ai_specialist: false
+  field: Graphics
+  homepage: null
+  members: null
+  sources:
+    ai_deadlines: null
+    ccfddl: null
+- abbr: SID
+  display: SID
+  full_name: SID DISPLAYWEEK
+  grade: 우수
+  ai_specialist: true
+  field: Display/Optics
+  homepage: null
+  members: null
+  sources:
+    ai_deadlines: null
+    ccfddl: null
+- abbr: iTherm
+  display: iTherm
+  full_name: Int. Conf. on Thermal and Thermomechanical Phenomena in Electronic Systems
+    (iTherm)
+  grade: 우수
+  ai_specialist: false
+  field: Thermal
+  homepage: null
+  members: null
+  sources:
+    ai_deadlines: null
+    ccfddl: null
+- abbr: SPIEarvrmr
+  display: SPIEarvrmr
+  full_name: SPIE ARVRMR
+  grade: 우수
+  ai_specialist: false
+  field: Display/Optics
+  homepage: null
+  members: null
+  sources:
+    ai_deadlines: null
+    ccfddl: null
+- abbr: SPIEopto
+  display: SPIEopto
+  full_name: SPIE PhotonicWest
+  grade: 우수
+  ai_specialist: false
+  field: Display/Optics
+  homepage: null
+  members: null
+  sources:
+    ai_deadlines: null
+    ccfddl: null
+- abbr: ACS
+  display: ACS
+  full_name: ACS Meeting (Spring / Fall)
+  grade: 우수
+  ai_specialist: false
+  field: Materials
+  homepage: null
+  members: null
+  sources:
+    ai_deadlines: null
+    ccfddl: null
+- abbr: APS
+  display: APS
+  full_name: American Physical Society Meeting
+  grade: 우수
+  ai_specialist: false
+  field: Materials
+  homepage: null
+  members: null
+  sources:
+    ai_deadlines: null
+    ccfddl: null
+- abbr: EFFT
+  display: EFFT
+  full_name: European Federation of Food Science and Technology International conference
+  grade: 우수
+  ai_specialist: false
+  field: Food
+  homepage: null
+  members: null
+  sources:
+    ai_deadlines: null
+    ccfddl: null
+- abbr: ict
+  display: ict
+  full_name: International Conference on Thermoelectrics
+  grade: 우수
+  ai_specialist: false
+  field: Thermal
+  homepage: null
+  members: null
+  sources:
+    ai_deadlines: null
+    ccfddl: null
+- abbr: IIR
+  display: IIR
+  full_name: International Institute of Refrigeration Conference
+  grade: 우수
+  ai_specialist: false
+  field: Thermal
+  homepage: null
+  members: null
+  sources:
+    ai_deadlines: null
+    ccfddl: null
+- abbr: MRS
+  display: MRS
+  full_name: Materials Research Society Meeting
+  grade: 우수
+  ai_specialist: false
+  field: Materials
+  homepage: null
+  members: null
+  sources:
+    ai_deadlines: null
+    ccfddl: null
+- abbr: IFT
+  display: IFT
+  full_name: IFT FIRST Annual Event and Expo
+  grade: 우수
+  ai_specialist: false
+  field: Food
+  homepage: null
+  members: null
+  sources:
+    ai_deadlines: null
+    ccfddl: null

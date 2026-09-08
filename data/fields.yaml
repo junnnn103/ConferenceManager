@@ -1,0 +1,99 @@
+# 분야 정의. enabled: false인 분야의 학회는 빌드 결과에서 제외된다.
+# 되살리려면 enabled만 true로 바꾸면 된다 (엑셀 불필요).
+fields:
+  - id: ML
+    label: ML
+    color: "#a855f7"
+    enabled: true
+  - id: CV
+    label: CV
+    color: "#3b82f6"
+    enabled: true
+  - id: NLP
+    label: NLP
+    color: "#22c55e"
+    enabled: true
+  - id: Speech
+    label: Speech
+    color: "#14b8a6"
+    enabled: true
+  - id: Robotics
+    label: Robotics
+    color: "#f97316"
+    enabled: true
+  - id: DM/IR
+    label: DM/IR
+    color: "#eab308"
+    enabled: true
+  - id: HCI
+    label: HCI
+    color: "#ec4899"
+    enabled: true
+  - id: Graphics
+    label: Graphics
+    color: "#8b5cf6"
+    enabled: true
+  - id: Multimedia
+    label: Multimedia
+    color: "#06b6d4"
+    enabled: true
+  - id: AR/VR
+    label: AR/VR
+    color: "#f43f5e"
+    enabled: true
+  - id: DB
+    label: DB
+    color: "#64748b"
+    enabled: false
+  - id: Security
+    label: Security
+    color: "#64748b"
+    enabled: false
+  - id: SE/PL
+    label: SE/PL
+    color: "#64748b"
+    enabled: false
+  - id: OS/HPC
+    label: OS/HPC
+    color: "#64748b"
+    enabled: false
+  - id: Architecture
+    label: Architecture
+    color: "#64748b"
+    enabled: false
+  - id: Network
+    label: Network
+    color: "#64748b"
+    enabled: false
+  - id: Medical
+    label: Medical
+    color: "#64748b"
+    enabled: false
+  - id: InfoTheory
+    label: Info Theory
+    color: "#64748b"
+    enabled: false
+  - id: Circuits
+    label: 회로/반도체
+    color: "#64748b"
+    enabled: false
+  - id: RF/Power
+    label: RF/전력
+    color: "#64748b"
+    enabled: false
+  - id: Display/Optics
+    label: 디스플레이/광학
+    color: "#64748b"
+    enabled: false
+  - id: Materials
+    label: 소재/화학/물리
+    color: "#64748b"
+    enabled: false
+  - id: Thermal
+    label: 열/에너지
+    color: "#64748b"
+    enabled: false
+  - id: Food
+    label: 식품
+    color: "#64748b"
+    enabled: false

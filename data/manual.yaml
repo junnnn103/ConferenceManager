@@ -1,0 +1,16 @@
+# 두 공개 소스가 다루지 않는 학회의 일정. 최우선 소스다.
+# year를 반드시 명시하며, 그 연차에만 적용된다.
+conferences:
+  hri:
+    editions:
+      - year: 2026
+        date_text: "March 9-12, 2026"
+        start: 2026-03-09
+        end: 2026-03-12
+        place: "Christchurch New Zealand"
+        link: "https://humanrobotinteraction.org/2026/"
+        deadlines:
+          - type: paper
+            label: "Full Paper"
+            date: "2025-10-01 23:59:59"
+            timezone: AoE

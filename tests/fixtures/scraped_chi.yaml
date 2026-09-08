@@ -1,0 +1,16 @@
+abbr: chi
+editions:
+  - year: 2026
+    deadlines:
+      - type: lbw
+        label: "Late-Breaking Work"
+        date: "2026-02-12 23:59:59"
+        evidence:
+          raw_text: "Late-Breaking Work submission deadline: February 12, 2026"
+          url: "https://chi2026.acm.org/lbw/"
+      - type: workshop
+        label: "Workshop Proposals"
+        date: "2025-10-15 23:59:59"
+        evidence:
+          raw_text: "Workshop proposals are due October 15, 2025"
+          url: "https://chi2026.acm.org/workshops/"

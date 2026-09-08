@@ -2899,7 +2899,8 @@ def test_enabled_field_ids():
 def test_disabled_field_conferences_are_excluded():
     out = build(REGISTRY, FIELDS, make_fetchers(hf={"cvpr": [cvpr_edition()]}),
                 manual={}, scraped={}, today=TODAY)
-    assert [c["abbr"] for c in out["conferences"]] == ["cvpr"]
+    # build()는 Conference.abbr에 registry의 display를 넣는다. 원본 약어는 abbr_group에 남는다.
+    assert [c["abbr"] for c in out["conferences"]] == ["CVPR"]
     assert "infocom" not in str(out)
 
 
@@ -3171,7 +3172,15 @@ Expected: PASS — 모든 테스트 통과
 `data/registry.yaml`의 `sources`는 아직 전부 `null`이므로 대부분 미확인으로 나온다. 이 시점의 목적은 파이프라인이 끝까지 도는지 확인하는 것이다.
 
 Run: `python -m scripts.build`
-Expected: 종료 코드 1과 "학회를 하나도 만들지 못했습니다" — `sources`를 채우기 전이므로 정상이다.
+Expected: `학회 1개, 미확인 38개` 와 종료 코드 0.
+
+`sources`가 전부 비어 있는데도 학회가 하나 나오는 이유는 Task 6에서 넣은
+`data/manual.yaml`의 HRI 항목 때문이다. manual은 소스 매핑과 무관하게 회차를 직접
+공급하므로, 활성 39개 중 HRI만 해소되고 나머지 38개가 `unresolved`로 간다.
+Task 10이 소스 매핑을 채우면 이 38개가 해소된다.
+
+이 단계에서 `main()`의 0건 검사를 약화시키지 말 것 — 지금은 발동하지 않을 뿐,
+두 소스가 모두 죽었을 때 기존 JSON을 지키는 장치로 여전히 필요하다.
 
 - [ ] **Step 7: 커밋**
 

@@ -139,6 +139,20 @@ def test_accepts_day_before_month_in_raw_text():
     assert len(accepted) == 1
 
 
+def test_year_or_id_digits_adjacent_to_a_month_do_not_corroborate():
+    # "2012 February"의 12는 연도 꼬리이지 일자가 아니다. 단어 경계가 없으면
+    # 페이지에 실재하는 아무 문장이나 2월 12일을 뒷받침하게 된다.
+    page = "The conference series started in 2012 February in Boston."
+    spurious = item(
+        type="poster",
+        raw_text="The conference series started in 2012 February in Boston.",
+        date="2026-02-12 23:59:59",
+    )
+    accepted, rejected = validate_extraction([spurious], page, START, TODAY)
+    assert accepted == []
+    assert rejected[0]["reject_reason"] == "date_not_in_raw_text"
+
+
 def test_existing_yaml_is_kept_when_no_items_pass(tmp_path, monkeypatch):
     """기존 YAML이 있고 이번 실행에서 검증할 항목이 없으면 파일을 유지한다.
 

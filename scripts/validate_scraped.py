@@ -35,9 +35,9 @@ _MONTH_NUMBERS = {
 }
 
 _DATE_IN_TEXT = re.compile(
-    r"(?P<month>jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)[a-z]*\.?\s+(?P<day>\d{1,2})"
-    r"|(?P<day2>\d{1,2})\s+(?P<month2>jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)[a-z]*\.?"
-    r"|(?P<iso>\d{4}-\d{2}-\d{2})",
+    r"(?P<month>jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)[a-z]*\.?\s+(?P<day>\d{1,2})(?:st|nd|rd|th)?\b"
+    r"|\b(?P<day2>\d{1,2})(?:st|nd|rd|th)?\s+(?P<month2>jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)[a-z]*\.?"
+    r"|\b(?P<iso>\d{4}-\d{2}-\d{2})\b",
     re.I,
 )
 

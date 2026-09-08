@@ -1940,9 +1940,12 @@ MSG
 
 ```python
 from datetime import date
+import json
+import sys
 
 import pytest
 
+from scripts import validate_scraped
 from scripts.validate_scraped import normalize_whitespace, validate_extraction
 
 PAGE = """
@@ -2049,6 +2052,149 @@ def test_processes_every_item_independently():
 
 def test_normalize_whitespace_collapses_runs():
     assert normalize_whitespace("a  b\n\tc ") == "a b c"
+
+
+def test_rejects_real_sentence_that_does_not_mention_the_claimed_date():
+    # 페이지에 실재하는 문장이라도 주장된 날짜를 언급하지 않으면 대조가 아니다.
+    # 이것이 없으면 아무 문장이나 날조된 날짜를 뒷받침한다.
+    unrelated = item(raw_text="Workshop proposals are due October 15, 2025",
+                     date="2026-03-03 23:59:59")
+    accepted, rejected = validate_extraction([unrelated], PAGE, START, TODAY)
+    assert accepted == []
+    assert rejected[0]["reject_reason"] == "date_not_in_raw_text"
+
+
+def test_accepts_iso_date_written_in_raw_text():
+    page = "Poster deadline is 2026-02-12 for all submissions."
+    iso = item(type="poster", raw_text="Poster deadline is 2026-02-12 for all submissions.",
+               date="2026-02-12 23:59:59")
+    accepted, _ = validate_extraction([iso], page, START, TODAY)
+    assert len(accepted) == 1
+
+
+def test_accepts_day_before_month_in_raw_text():
+    page = "Posters are due 12 February and cannot be extended."
+    dayfirst = item(type="poster", raw_text="Posters are due 12 February and cannot be extended.",
+                    date="2026-02-12 23:59:59")
+    accepted, _ = validate_extraction([dayfirst], page, START, TODAY)
+    assert len(accepted) == 1
+
+
+def test_year_or_id_digits_adjacent_to_a_month_do_not_corroborate():
+    # "2012 February"의 12는 연도 꼬리이지 일자가 아니다. 단어 경계가 없으면
+    # 페이지에 실재하는 아무 문장이나 2월 12일을 뒷받침하게 된다.
+    page = "The conference series started in 2012 February in Boston."
+    spurious = item(
+        type="poster",
+        raw_text="The conference series started in 2012 February in Boston.",
+        date="2026-02-12 23:59:59",
+    )
+    accepted, rejected = validate_extraction([spurious], page, START, TODAY)
+    assert accepted == []
+    assert rejected[0]["reject_reason"] == "date_not_in_raw_text"
+
+
+def test_existing_yaml_is_kept_when_no_items_pass(tmp_path, monkeypatch):
+    """기존 YAML이 있고 이번 실행에서 검증할 항목이 없으면 파일을 유지한다.
+
+    transient failure가 기존 데이터를 지우지 않도록 한다.
+    """
+    scraped_dir = tmp_path / "scraped"
+    scraped_dir.mkdir()
+    raw_dir = scraped_dir / "raw"
+    raw_dir.mkdir()
+
+    # 기존 YAML 파일 생성
+    existing_yaml = scraped_dir / "chi.yaml"
+    existing_yaml.write_text("abbr: chi\neditions:\n  - year: 2025\n", encoding="utf-8")
+
+    # 현재 실행에서 검증할 수 없는 JSON (모든 항목이 탈락할 raw_text)
+    raw_json = raw_dir / "chi.json"
+    raw_json.write_text(
+        json.dumps({
+            "abbr": "chi",
+            "editions": [{
+                "year": 2026,
+                "conference_start": "2026-04-13",
+                "items": [{
+                    "type": "lbw",
+                    "label": "LBW",
+                    "date": "2026-02-12 23:59:59",
+                    "confidence": "high",
+                    "raw_text": "fabricated text",
+                    "url": "http://example.com",
+                }],
+            }],
+        }),
+        encoding="utf-8",
+    )
+
+    # page.txt 파일이 없어서 page_text_missing이 될 것
+    monkeypatch.setattr(validate_scraped, "SCRAPED_DIR", scraped_dir)
+    monkeypatch.setattr(sys, "argv", ["validate_scraped.py"])
+
+    exit_code = validate_scraped.main()
+
+    # 기존 YAML이 여전히 존재해야 함
+    assert existing_yaml.exists()
+    assert existing_yaml.read_text(encoding="utf-8").startswith("abbr: chi")
+
+
+def test_one_malformed_json_does_not_stop_next_file(tmp_path, monkeypatch):
+    """한 파일이 손상되어도 다음 파일은 처리된다."""
+    scraped_dir = tmp_path / "scraped"
+    scraped_dir.mkdir()
+    raw_dir = scraped_dir / "raw"
+    raw_dir.mkdir()
+
+    # 첫 번째 파일: conference_start가 잘못된 형식
+    bad_json = raw_dir / "aaa_bad.json"
+    bad_json.write_text(
+        json.dumps({
+            "abbr": "bad",
+            "editions": [{
+                "year": 2026,
+                "conference_start": "not-a-date",  # 잘못된 형식
+                "items": [],
+            }],
+        }),
+        encoding="utf-8",
+    )
+
+    # 두 번째 파일: 정상적인 파일
+    good_json = raw_dir / "zzz_good.json"
+    page_text = "Poster deadline is 2026-02-12."
+    good_json.write_text(
+        json.dumps({
+            "abbr": "good",
+            "editions": [{
+                "year": 2026,
+                "conference_start": "2026-04-13",
+                "items": [{
+                    "type": "poster",
+                    "label": "Poster",
+                    "date": "2026-02-12 23:59:59",
+                    "confidence": "high",
+                    "raw_text": "Poster deadline is 2026-02-12",
+                    "url": "http://example.com",
+                }],
+            }],
+        }),
+        encoding="utf-8",
+    )
+    (raw_dir / "zzz_good.txt").write_text(page_text, encoding="utf-8")
+
+    monkeypatch.setattr(validate_scraped, "SCRAPED_DIR", scraped_dir)
+    monkeypatch.setattr(sys, "argv", ["validate_scraped.py"])
+
+    exit_code = validate_scraped.main()
+
+    # 좋은 파일의 YAML이 생성되어야 함
+    good_yaml = scraped_dir / "zzz_good.yaml"
+    assert good_yaml.exists()
+    content = good_yaml.read_text(encoding="utf-8")
+    assert "abbr: good" in content
+    assert "2026-02-12" in content
 ```
 
 - [ ] **Step 2: 테스트가 실패하는지 확인**
@@ -2092,6 +2238,18 @@ MAX_LEAD = timedelta(days=548)  # 약 18개월
 
 _TIME_FORMATS = ("%Y-%m-%d %H:%M:%S", "%Y-%m-%d %H:%M", "%Y-%m-%d")
 
+_MONTH_NUMBERS = {
+    "jan": 1, "feb": 2, "mar": 3, "apr": 4, "may": 5, "jun": 6,
+    "jul": 7, "aug": 8, "sep": 9, "oct": 10, "nov": 11, "dec": 12,
+}
+
+_DATE_IN_TEXT = re.compile(
+    r"(?P<month>jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)[a-z]*\.?\s+(?P<day>\d{1,2})(?:st|nd|rd|th)?\b"
+    r"|\b(?P<day2>\d{1,2})(?:st|nd|rd|th)?\s+(?P<month2>jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)[a-z]*\.?"
+    r"|\b(?P<iso>\d{4}-\d{2}-\d{2})\b",
+    re.I,
+)
+
 
 def normalize_whitespace(text: str) -> str:
     """연속 공백·개행·탭을 공백 하나로 접는다.
@@ -2114,6 +2272,28 @@ def _parse_datetime(value) -> datetime | None:
         except ValueError:
             continue
     return None
+
+
+def mentions_date(text: str, when: datetime) -> bool:
+    """raw_text가 주장된 날짜를 실제로 언급하는지 확인한다.
+
+    부분 문자열 검사만으로는 페이지에 실재하는 아무 문장이나 날조된 날짜를
+    뒷받침할 수 있다. 문장 안에 그 날짜가 적혀 있어야 대조가 성립한다.
+    연도는 요구하지 않는다 - CFP는 "February 12"만 쓰고 연도는 제목에 두는 일이 흔하다.
+    """
+    for m in _DATE_IN_TEXT.finditer(text or ""):
+        if m.group("iso"):
+            try:
+                if date.fromisoformat(m.group("iso")) == when.date():
+                    return True
+            except ValueError:
+                pass
+            continue
+        month = (m.group("month") or m.group("month2") or "").lower()[:3]
+        day = m.group("day") or m.group("day2")
+        if _MONTH_NUMBERS.get(month) == when.month and int(day) == when.day:
+            return True
+    return False
 
 
 def validate_extraction(
@@ -2162,6 +2342,10 @@ def validate_extraction(
                 reject(item, "deadline_too_early")
                 continue
 
+        if not mentions_date(raw_text, when):
+            reject(item, "date_not_in_raw_text")
+            continue
+
         accepted.append({
             "type": track,
             "label": str(item.get("label") or track.replace("_", " ").title()),
@@ -2182,10 +2366,24 @@ def _validate_one(raw_json: Path, today: date) -> tuple[dict | None, list[dict]]
     payload = json.loads(raw_json.read_text(encoding="utf-8"))
     abbr = payload["abbr"]
     page_path = raw_json.with_suffix(".txt")
-    page_text = page_path.read_text(encoding="utf-8") if page_path.exists() else ""
 
     editions = []
     all_rejected: list[dict] = []
+
+    # 페이지 텍스트 파일이 없으면 모든 항목을 page_text_missing 사유로 탈락시킨다.
+    if not page_path.exists():
+        for entry in payload.get("editions") or []:
+            for item in entry.get("items") or []:
+                all_rejected.append({
+                    **item,
+                    "reject_reason": "page_text_missing",
+                    "abbr": abbr,
+                    "year": entry.get("year")
+                })
+        return None, all_rejected
+
+    page_text = page_path.read_text(encoding="utf-8")
+
     for entry in payload.get("editions") or []:
         start = entry.get("conference_start")
         start_date = date.fromisoformat(start) if start else None
@@ -2218,11 +2416,18 @@ def main() -> int:
     total_rejected: list[dict] = []
 
     for raw_json in sorted(raw_dir.glob("*.json")):
-        document, rejected = _validate_one(raw_json, today)
+        try:
+            document, rejected = _validate_one(raw_json, today)
+        except Exception as e:
+            print(f"경고: {raw_json.stem} 처리 중 오류, 건너뜀: {e}", file=sys.stderr)
+            continue
+
         total_rejected.extend(rejected)
         out_path = SCRAPED_DIR / f"{raw_json.stem}.yaml"
         if document is None:
-            out_path.unlink(missing_ok=True)
+            if out_path.exists():
+                print(f"경고: {out_path}가 유지됨 (이번 실행에서 검증할 항목이 없음)",
+                      file=sys.stderr)
             continue
         out_path.write_text(
             yaml.safe_dump(document, allow_unicode=True, sort_keys=False),
@@ -2248,7 +2453,7 @@ if __name__ == "__main__":
 - [ ] **Step 4: 테스트 통과 확인**
 
 Run: `python -m pytest tests/test_validate_scraped.py -v`
-Expected: PASS — 12 passed
+Expected: PASS — 18 passed
 
 - [ ] **Step 5: 커밋**
 

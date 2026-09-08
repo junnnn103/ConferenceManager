@@ -222,10 +222,12 @@ def test_allow_shrink_flag_overrides_rejection(tmp_path, monkeypatch):
     assert len(new_content["conferences"]) < 20
 
 
-def test_manual_does_not_influence_member_selection():
-    # 결합 행에서 manual 데이터가 구성원 선택을 왜곡하면 안 된다.
-    # 소스만으로 ECCV 2026이 선택되는 상황에서, manual이
-    # ICCV 2027을 넣어도 여전히 ECCV를 선택해야 한다.
+def test_group_keyed_manual_on_combined_row_is_skipped():
+    # 결합 행의 manual 항목이 그룹 키("iccv/eccv")로 적히면 어느 구성원의
+    # 회차인지 알 수 없다. 병합하면 엉뚱한 이름표가 붙으므로 버려야 한다.
+    # ECCV는 소스로 진짜 차기 회차를 받고, manual은 그보다 이른 날짜를
+    # 그룹 키로 제공한다 — 예전 방식(선택 후 병합)이면 이 이른 날짜가
+    # 선택을 가로채 ECCV 이름표를 달고 출력에 나타난다.
     registry = [{
         "abbr": "iccv/eccv", "display": "ICCV/ECCV", "full_name": "ICCV / ECCV",
         "grade": "최우수", "ai_specialist": True, "field": "CV",
@@ -237,18 +239,50 @@ def test_manual_does_not_influence_member_selection():
         "sources": {"ai_deadlines": None, "ccfddl": None},
     }]
 
-    # 소스: ICCV 2027, ECCV 2026 → pick_member는 ECCV 선택 (차기가 더 빠름)
+    # 소스: ECCV만 차기 회차를 가짐 (ICCV는 소스 데이터 없음)
     hf = {
-        "iccv": [Edition(2027, "", date(2027, 10, 1), date(2027, 10, 6), "", None, [], "ai-deadlines")],
         "eccv": [Edition(2026, "", date(2026, 9, 8), date(2026, 9, 13), "", None, [], "ai-deadlines")],
     }
 
-    # manual이 ICCV 2025를 추가해도 선택 결과는 ECCV여야 함
-    manual = {"iccv/eccv": [Edition(2025, "", date(2025, 9, 1), date(2025, 9, 6), "", None, [], "manual")]}
+    # manual: 그룹 키("iccv/eccv")로 적힌, ECCV보다 이른 차기 회차
+    manual = {"iccv/eccv": [Edition(2026, "", date(2026, 3, 1), date(2026, 3, 6), "", None, [], "manual")]}
 
     out = build(registry, FIELDS, make_fetchers(hf=hf), manual=manual, scraped={}, today=TODAY)
     conf = out["conferences"][0]
-    assert conf["abbr"] == "ECCV"  # ICCV에 manual 데이터가 있어도 ECCV 선택됨
+    assert conf["abbr"] == "ECCV"
+    starts = [e["start"] for e in conf["editions"]]
+    assert "2026-03-01" not in starts  # 그룹 키 manual 회차는 출력에 없어야 함
+
+
+def test_member_keyed_manual_on_combined_row_is_attributed_correctly():
+    # 결합 행의 manual 항목이 구성원 이름("iccv")으로 적히면 그 구성원의
+    # 진짜 회차로 취급되어 대표 선택에도 정당하게 참여해야 한다.
+    # ICCV는 manual로만 (소스 데이터 없음) ECCV의 소스 회차보다 이른
+    # 차기 날짜를 받으므로 ICCV가 대표로 뽑혀야 한다.
+    registry = [{
+        "abbr": "iccv/eccv", "display": "ICCV/ECCV", "full_name": "ICCV / ECCV",
+        "grade": "최우수", "ai_specialist": True, "field": "CV",
+        "homepage": None,
+        "members": [
+            {"display": "ICCV", "sources": {"ai_deadlines": "iccv", "ccfddl": "iccv"}},
+            {"display": "ECCV", "sources": {"ai_deadlines": "eccv", "ccfddl": "eccv"}},
+        ],
+        "sources": {"ai_deadlines": None, "ccfddl": None},
+    }]
+
+    # 소스: ECCV만 차기 회차를 가짐
+    hf = {
+        "eccv": [Edition(2026, "", date(2026, 9, 8), date(2026, 9, 13), "", None, [], "ai-deadlines")],
+    }
+
+    # manual: 구성원 이름("iccv")으로 적힌, ECCV보다 이른 차기 회차
+    manual = {"iccv": [Edition(2026, "", date(2026, 3, 1), date(2026, 3, 6), "", None, [], "manual")]}
+
+    out = build(registry, FIELDS, make_fetchers(hf=hf), manual=manual, scraped={}, today=TODAY)
+    conf = out["conferences"][0]
+    assert conf["abbr"] == "ICCV"
+    starts = [e["start"] for e in conf["editions"]]
+    assert "2026-03-01" in starts  # ICCV의 manual 회차가 표시되어야 함
 
 
 def test_scraped_by_member_name_attaches_to_combined_row():

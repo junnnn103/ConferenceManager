@@ -90,17 +90,21 @@ def build(
             per_member: dict[str, list[Edition]] = {}
             for member in entry["members"]:
                 by_source = _gather(member.get("sources"), fetchers, abbr_group)
+                # 결합 행의 manual은 구성원 이름으로 적는다(예: slt, asru).
+                # 그 구성원의 진짜 회차이므로 대표 선택에도 정당하게 참여한다.
+                member_manual = manual.get(member["display"].lower())
+                if member_manual:
+                    by_source["manual"] = member_manual
                 per_member[member["display"]] = list(merge_by_year(by_source).values())
             chosen, editions = pick_member(per_member, today)
             if chosen:
                 display = chosen
-            # manual은 그룹 단위 데이터다. 구성원 선택에 개입시키면 한쪽의 회차가
-            # 다른 쪽에도 유령처럼 생겨 엉뚱한 이름이 붙는다. 선택 뒤에 합친다.
             if manual_editions:
-                by_year = {e.year: e for e in editions}
-                for edition in manual_editions:
-                    by_year[edition.year] = edition
-                editions = list(by_year.values())
+                # 그룹 키로 적힌 항목은 어느 구성원의 회차인지 알 수 없다.
+                # 합치면 다른 구성원 이름표가 붙으므로 버리고 알린다.
+                print(f"경고: {abbr_group}은 결합 행입니다. manual 항목을 구성원 이름"
+                      f"(예: {entry['members'][0]['display'].lower()})으로 적으세요. "
+                      "그룹 키 항목은 무시합니다.", file=sys.stderr)
         else:
             by_source = _gather(entry.get("sources"), fetchers, abbr_group)
             if manual_editions:

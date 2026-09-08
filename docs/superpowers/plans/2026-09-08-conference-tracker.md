@@ -645,6 +645,9 @@ def make_grade_xlsx(path: Path) -> None:
     """
     wb = openpyxl.Workbook()
     ws = wb.active
+    # openpyxl은 기본 시트를 "Sheet"로 만든다. 실제 엑셀 두 개 모두 "Sheet1"이고
+    # bootstrap_registry.py가 그 이름을 찾으므로 픽스처도 맞춰야 한다.
+    ws.title = "Sheet1"
     ws["B2"] = "26년 최우수/우수 학회 List"
     ws["B4"], ws["C4"], ws["D4"], ws["E4"] = "No", "등급", "약어", "Full Name"
     rows = [
@@ -666,6 +669,7 @@ def make_ai_specialist_xlsx(path: Path) -> None:
     """
     wb = openpyxl.Workbook()
     ws = wb.active
+    ws.title = "Sheet1"
     ws["B2"] = "AI Specialist 인정 학회 List"
     ws["B4"], ws["C4"], ws["D4"], ws["E4"] = "대분류", "No", "약어", "학회명(영문)"
     rows = [
@@ -969,7 +973,7 @@ if __name__ == "__main__":
 - [ ] **Step 6: 테스트 통과 확인**
 
 Run: `python -m pytest tests/test_bootstrap_registry.py -v`
-Expected: PASS — 12 passed
+Expected: PASS — 13 passed (parametrize 6건 포함)
 
 - [ ] **Step 7: 실제 registry 생성**
 

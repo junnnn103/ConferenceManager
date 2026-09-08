@@ -143,5 +143,17 @@ def test_pick_member_prefers_the_one_actually_upcoming():
     assert name == "eccv"
 
 
+def test_pick_member_with_no_upcoming_prefers_the_most_recently_held():
+    # 둘 다 차기 회차가 없을 때는 가장 최근에 열린 쪽이 대표가 되어야 한다.
+    # pick_member의 -toordinal 부호가 이 비교를 뒤집는 장치다.
+    members = {
+        "iccv": [ed(2023, "ccfddl", start=date(2023, 10, 1), end=date(2023, 10, 6))],
+        "eccv": [ed(2024, "ccfddl", start=date(2024, 9, 29), end=date(2024, 10, 4))],
+    }
+    name, editions = pick_member(members, date(2026, 9, 20))
+    assert name == "eccv"
+    assert [e.year for e in editions] == [2024]
+
+
 def test_pick_member_with_no_data_returns_none():
     assert pick_member({"iccv": [], "eccv": []}, date(2026, 1, 1)) == (None, [])

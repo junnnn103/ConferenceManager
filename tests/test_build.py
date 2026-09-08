@@ -58,7 +58,7 @@ def test_enabled_field_ids():
 def test_disabled_field_conferences_are_excluded():
     out = build(REGISTRY, FIELDS, make_fetchers(hf={"cvpr": [cvpr_edition()]}),
                 manual={}, scraped={}, today=TODAY)
-    assert [c["abbr"] for c in out["conferences"]] == ["cvpr"]
+    assert [c["abbr"] for c in out["conferences"]] == ["CVPR"]
     assert "infocom" not in str(out)
 
 

@@ -1717,8 +1717,22 @@ def test_missing_directory_returns_empty(tmp_path):
 
 
 def test_raw_subdirectory_is_ignored(tmp_path):
+    # raw/ 는 검증 게이트를 통과하지 않은 추출 결과다. 재귀 글롭으로 바뀌면
+    # 검증 안 된 날짜가 사이트로 새어 나간다. 픽스처에 실제 마감을 넣어야
+    # 그 회귀가 결과에 드러난다 — 빈 editions로는 어느 쪽이든 빈 dict라 구분되지 않는다.
     (tmp_path / "raw").mkdir()
-    (tmp_path / "raw" / "chi.yaml").write_text("abbr: chi\neditions: []\n", encoding="utf-8")
+    (tmp_path / "raw" / "chi.yaml").write_text(
+        """
+abbr: chi
+editions:
+  - year: 2026
+    deadlines:
+      - type: lbw
+        label: "검증 안 된 추출값"
+        date: "2026-02-12 23:59:59"
+""",
+        encoding="utf-8",
+    )
     assert load_scraped(tmp_path) == {}
 ```
 

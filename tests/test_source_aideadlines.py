@@ -30,6 +30,21 @@ def test_falls_back_to_parsing_date_text_when_start_missing():
     assert ed.end == date(2025, 6, 17)
 
 
+def test_structured_start_end_wins_when_text_disagrees():
+    # start/end와 date 문자열이 어긋나는 경우에만 선호를 증명할 수 있다.
+    # 픽스처는 둘이 일치해 이 회귀를 잡지 못한다.
+    raw = [{
+        "title": "CVPR",
+        "year": 2026,
+        "start": "2026-06-03",
+        "end": "2026-06-07",
+        "date": "December 1-2, 2026",
+    }]
+    ed = parse_aideadlines(raw)[0]
+    assert ed.start == date(2026, 6, 3)
+    assert ed.end == date(2026, 6, 7)
+
+
 def test_place_joins_city_and_country():
     ed = next(e for e in parse_aideadlines(load_fixture()) if e.year == 2026)
     assert ed.place == "Denver USA"

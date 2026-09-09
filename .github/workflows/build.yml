@@ -1,0 +1,65 @@
+name: build
+
+on:
+  schedule:
+    # 21:00 UTC = 06:00 KST
+    - cron: "0 21 * * *"
+  workflow_dispatch:
+  push:
+    branches: [master, main]
+
+permissions:
+  contents: write
+
+concurrency:
+  group: build
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: 의존성 설치
+        run: pip install -e ".[dev,bootstrap]"
+
+      - name: Python 테스트
+        run: python -m pytest -q
+
+      - name: JS 테스트
+        run: node --test tests/js/
+
+      # 커밋된 CFP 데이터가 여전히 게이트를 통과하는지 다시 확인한다.
+      # 네트워크를 타지 않으므로 비용이 없고, 손으로 편집된 값이
+      # 게이트를 우회하는 것을 막는다.
+      - name: CFP 데이터 재검증
+        run: python -m scripts.validate_scraped
+
+      - name: 빌드
+        run: python -m scripts.build
+
+      - name: 변경분 커밋
+        run: |
+          if git diff --quiet -- docs/data/conferences.json data/scraped; then
+            echo "변경 없음"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add docs/data/conferences.json
+          # data/scraped는 마지막 태스크 전까지 저장소에 존재하지 않는다.
+          # 없는 경로를 add하면 git이 실패하므로 있을 때만 추가한다.
+          if [ -d data/scraped ]; then
+            git add data/scraped
+          fi
+          git commit -m "학회 일정 자동 갱신 ($(date -u +%Y-%m-%d))"
+          git push

@@ -67,7 +67,9 @@ def load_manual(path: Path) -> dict[str, list[Edition]]:
                 date_text=str(entry.get("date_text") or ""),
                 start=_as_date(entry.get("start")),
                 end=_as_date(entry.get("end")),
-                place=str(entry.get("place") or ""),
+                # place 콤마 정리는 Edition.__post_init__(scripts/models.py의
+                # normalize_place)이 모든 소스에 공통으로 적용한다.
+                place=entry.get("place"),
                 link=entry.get("link"),
                 deadlines=deadlines,
                 source="manual",

@@ -19,14 +19,16 @@ conferences:
     editions:
       # 공식 사이트(https://humanrobotinteraction.org/2026/)에서 확인:
       # 본 학회는 Edinburgh International Conference Centre, 워크숍은
-      # Heriot-Watt University에서 진행. 마감은 full-papers 페이지의
+      # Heriot-Watt University에서 진행 - 다른 33개 행의 place가 도시/국가
+      # 두세 단어로 끝나는 것과 형식을 맞추기 위해 이 장소 세부 정보는
+      # place에 넣지 않고 여기 주석에만 남긴다. 마감은 full-papers 페이지의
       # "Submission Deadline (only if you submitted the abstract before
       # Sep 22): September 30, 2025, 11:59 pm AoE"로 확인.
       - year: 2026
         date_text: "March 16-19, 2026"
         start: 2026-03-16
         end: 2026-03-19
-        place: "Edinburgh, Scotland (EICC; workshops at Heriot-Watt University)"
+        place: "Edinburgh, Scotland"
         link: "https://humanrobotinteraction.org/2026/"
         deadlines:
           - type: paper
@@ -95,6 +97,10 @@ conferences:
       # "2027-02-01"을 마감으로 제시하는 결과가 있었으나 출처가 submitforge.
       # com/mlciv.com 같은 제3자 집계 사이트(추정치)일 뿐 공식 발표가 아니라
       # 채택하지 않았다.
+      #
+      # place: 두 도시라 콤마 정리(normalize_place)를 기계적으로 거치면
+      # "Kyoto Japan & Hengqin China"가 된다 - 확인해 보니 두 콤마를 그냥
+      # 지운 결과가 오히려 자연스럽게 읽혀서 별도 손질 없이 그대로 둔다.
       - year: 2027
         date_text: "Aug 7-13, 2027 Kyoto, Japan & Aug 15-17, 2027 Hengqin, China"
         start: 2027-08-07

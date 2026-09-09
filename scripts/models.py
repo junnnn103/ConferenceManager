@@ -17,6 +17,25 @@ PAPER_TYPES = ("paper",)
 SUBMISSION_FALLBACK_TYPES = ("submission",)
 
 
+def normalize_place(value) -> str:
+    """'Bari, Italy' -> 'Bari Italy'.
+
+    각 소스 어댑터는 place를 서로 다른 원본 스키마에서 뽑아낸다
+    (ccfddl은 콤마가 섞인 자유 텍스트 한 필드, ai-deadlines는 별도의
+    city/country 필드, manual은 사람이 손으로 적은 문자열). 그 추출
+    방식은 스키마마다 다르므로 각 어댑터가 계속 맡는다. 하지만 콤마를
+    없애 표기를 통일하는 것은 스키마와 무관한 "표시 방식"의 문제라,
+    여기 Edition 생성 지점 한 곳에만 두고 모든 소스가 자동으로 같은
+    규칙을 받게 한다 - 안 그러면 새 소스가 추가될 때마다 이 함수를
+    복사해 붙이는 걸 잊을 수 있다(실제로 manual.py가 그랬다: ccfddl.py에만
+    있던 이 로직이 manual 항목에는 적용되지 않아, HRI/IJCAI/RSS의
+    manual 항목만 콤마가 남은 채로 다른 35개 행과 다르게 표시됐다).
+    """
+    if not value or str(value).strip().upper() in {"TBD", "TBA"}:
+        return ""
+    return " ".join(str(value).replace(",", " ").split())
+
+
 @dataclass
 class Deadline:
     type: str
@@ -50,6 +69,9 @@ class Edition:
     link: str | None
     deadlines: list[Deadline]
     source: str
+
+    def __post_init__(self) -> None:
+        self.place = normalize_place(self.place)
 
     def primary_deadline(self) -> datetime | None:
         """본 논문 마감. paper 타입을 최우선으로, 없으면 submission 타입을,

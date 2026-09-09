@@ -35,13 +35,6 @@ def _parse_datetime(value) -> datetime | None:
     return None
 
 
-def _normalize_place(value) -> str:
-    """'Bari, Italy' -> 'Bari Italy'. 레퍼런스 표기와 맞춘다."""
-    if not value or str(value).strip().upper() in {"TBD", "TBA"}:
-        return ""
-    return " ".join(str(value).replace(",", " ").split())
-
-
 def parse_ccfddl(raw: list) -> list[Edition]:
     """ccfddl YAML 문서를 Edition 목록으로 정규화한다."""
     if not raw:
@@ -78,7 +71,9 @@ def parse_ccfddl(raw: list) -> list[Edition]:
             date_text="" if date_text.upper() in {"TBD", "TBA"} else date_text,
             start=span[0] if span else None,
             end=span[1] if span else None,
-            place=_normalize_place(conf.get("place")),
+            # place 콤마 정리는 Edition.__post_init__(scripts/models.py의
+            # normalize_place)이 모든 소스에 공통으로 적용한다.
+            place=conf.get("place"),
             link=conf.get("link"),
             deadlines=deadlines,
             source="ccfddl",

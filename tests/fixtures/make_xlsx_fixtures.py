@@ -26,6 +26,7 @@ def make_grade_xlsx(path: Path) -> None:
         (3, "최우수", "iccv/eccv", "International Conference on Computer Vision / European Conference on Computer Vision"),
         (4, "우수", "wacv", "IEEE Winter Conference on Applications of Computer Vision"),
         (5, "우수", "SID", "SID DISPLAYWEEK"),
+        (6, "최우수", "kdd", "Knowledge Discovery and Data Mining"),
     ]
     for i, row in enumerate(rows, start=5):
         for j, value in enumerate(row):
@@ -48,6 +49,7 @@ def make_ai_specialist_xlsx(path: Path) -> None:
         (None, 3, "ICCV", "International Conference on Computer Vision"),
         (None, 4, "ECCV", "European Conference on Computer Vision"),
         (None, 5, "WACV", "IEEE Winter Conference on Applications of Computer Vision"),
+        (None, 6, "SIGKDD", "Knowledge Discovery and Data Mining"),
     ]
     for i, row in enumerate(rows, start=5):
         for j, value in enumerate(row):

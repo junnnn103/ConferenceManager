@@ -14,7 +14,7 @@ conferences:
   display: nips
   full_name: Neural Information Processing Systems
   grade: 최우수
-  ai_specialist: false
+  ai_specialist: true
   field: ML
   homepage: null
   members: null
@@ -144,7 +144,7 @@ conferences:
   display: kdd
   full_name: ACM SIGKDD Conference on Knowledge Discovery and Data Mining
   grade: 최우수
-  ai_specialist: false
+  ai_specialist: true
   field: DM/IR
   homepage: null
   members: null
@@ -243,7 +243,7 @@ conferences:
   display: mm
   full_name: ACM International Conference on Multimedia
   grade: 최우수
-  ai_specialist: false
+  ai_specialist: true
   field: Multimedia
   homepage: null
   members: null
@@ -486,7 +486,7 @@ conferences:
   display: nsdi
   full_name: USENIX Networked Systems Design and Implementation
   grade: 최우수
-  ai_specialist: false
+  ai_specialist: true
   field: Network
   homepage: null
   members: null
@@ -575,7 +575,7 @@ conferences:
   display: osdi
   full_name: USENIX Symposium on Operating Systems Design and Implementation (OSDI)
   grade: 우수
-  ai_specialist: false
+  ai_specialist: true
   field: OS/HPC
   homepage: null
   members: null
@@ -586,7 +586,7 @@ conferences:
   display: bigdataconf
   full_name: IEEE International Conference on Big Data
   grade: 우수
-  ai_specialist: false
+  ai_specialist: true
   field: DM/IR
   homepage: null
   members: null
@@ -981,7 +981,7 @@ conferences:
   display: siggrapha
   full_name: ACM SIGGRAPH Conference in Asia
   grade: 우수
-  ai_specialist: false
+  ai_specialist: true
   field: Graphics
   homepage: null
   members: null

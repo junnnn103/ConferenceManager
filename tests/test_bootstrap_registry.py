@@ -58,6 +58,17 @@ def test_build_registry_reads_grade_and_marks_ai_specialist():
     assert by_abbr["SID"]["field"] == "Display/Optics"
 
 
+def test_build_registry_applies_ai_specialist_aliases():
+    """두 엑셀이 같은 학회를 다르게 적는 경우(nips vs NeurIPS, kdd vs SIGKDD)에도
+    AI_SPECIALIST_ALIASES 덕분에 True로 매칭되어야 한다."""
+    entries = build_registry(FIXTURES / "grades.xlsx", FIXTURES / "ai_specialist.xlsx")
+    by_abbr = {e["abbr"]: e for e in entries}
+
+    assert by_abbr["kdd"]["ai_specialist"] is True
+    # 목록에 정말 없는 학회는 별칭을 추가해도 여전히 False여야 한다.
+    assert by_abbr["SID"]["ai_specialist"] is False
+
+
 def test_build_registry_seeds_empty_source_mapping():
     entries = build_registry(FIXTURES / "grades.xlsx", FIXTURES / "ai_specialist.xlsx")
     cvpr = next(e for e in entries if e["abbr"] == "cvpr")
@@ -74,6 +85,14 @@ def test_build_registry_seeds_members_for_combined_rows():
     combined = next(e for e in entries if e["abbr"] == "iccv/eccv")
     assert [m["display"] for m in combined["members"]] == ["iccv", "eccv"]
     assert combined["members"][0]["sources"] == {"ai_deadlines": None, "ccfddl": None}
+
+
+def test_real_registry_flags_ai_specialist_aliases_correctly():
+    """실제 커밋된 registry.yaml에서, 두 엑셀이 다르게 적는 학회들이
+    ai_specialist=True로 정확히 반영되어 있는지 확인한다."""
+    entries = {e["abbr"]: e for e in load_registry()}
+    for abbr in ("nips", "kdd", "mm", "bigdataconf", "siggrapha"):
+        assert entries[abbr]["ai_specialist"] is True, abbr
 
 
 def test_load_registry_roundtrips(tmp_path):

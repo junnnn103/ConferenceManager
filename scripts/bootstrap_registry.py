@@ -52,6 +52,19 @@ FIELD_ASSIGNMENT = {
     "IFT": "Food",
 }
 
+# 두 엑셀이 같은 학회를 다르게 적는다. 우수 학회 List의 약어 -> AI Specialist
+# List의 약어. 이 표가 없으면 NeurIPS나 SIGKDD 같은 학회가 인정 목록에 있는데도
+# ai_specialist=False 로 잘못 표시된다.
+AI_SPECIALIST_ALIASES = {
+    "nips": "neurips",
+    "kdd": "sigkdd",
+    "mm": "acmmm",
+    "bigdataconf": "bigdata",
+    "siggrapha": "siggraphasia",
+    "nsdi": "usenixnsdi",
+    "osdi": "usenixosdi",
+}
+
 
 def normalize_abbr(raw: str) -> str:
     """약어를 비교 가능한 형태로 정규화한다.
@@ -102,7 +115,9 @@ def build_registry(grade_xlsx: Path, ai_xlsx: Path) -> list[dict]:
             "display": abbr,
             "full_name": full_name,
             "grade": grade,
-            "ai_specialist": all(p in ai_abbrs for p in parts),
+            "ai_specialist": all(
+                AI_SPECIALIST_ALIASES.get(p, p) in ai_abbrs for p in parts
+            ),
             "field": FIELD_ASSIGNMENT.get(abbr),
             "homepage": None,
             # 결합 행(격년 교대 학회 쌍)만 members를 갖는다.

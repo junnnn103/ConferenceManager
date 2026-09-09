@@ -8,9 +8,6 @@ import {
 
 const STORAGE_KEY = "conference-manager-filters";
 
-// 정보가 없는 라벨. 이 값들은 화면에 굳이 다시 보여줄 필요가 없다.
-const GENERIC_DEADLINE_LABELS = new Set(["Paper", "Paper Submission"]);
-
 const state = {
   data: { conferences: [], fields: [], unresolved: [] },
   sortKey: "date",
@@ -137,6 +134,23 @@ function linkCell(conf, edition) {
   return cell;
 }
 
+// 마감 라벨에서 정보가 없는 단어만 남는지 판단한다. 실제 데이터의 라벨 대부분
+// (35개 중 29개)은 "Paper Submission Deadline" 류의 표현일 뿐이고, 그건 마감
+// 칸이 이미 말하고 있는 내용이라 그대로 보여주면 캡션이 열 제목을 반복하게
+// 된다. "fourth round"나 "Paper submission (short papers)"처럼 라운드/트랙을
+// 구분해 주는 라벨만 남기기 위해, 정보가 없는 단어를 지우고 남는 게 있는지로
+// 판단한다 — 문자열 전체를 통째로 비교하면 문구가 조금만 달라도(마침표, 어순,
+// deadline 유무) 걸러지지 않기 때문이다.
+const DEADLINE_LABEL_STOPWORDS = new Set([
+  "full", "paper", "papers", "submission", "submissions",
+  "deadline", "due", "research",
+]);
+
+function isGenericDeadlineLabel(label) {
+  const words = label.toLowerCase().split(/[^a-z0-9]+/).filter(Boolean);
+  return words.every((w) => DEADLINE_LABEL_STOPWORDS.has(w));
+}
+
 function renderRow(conf, now) {
   const edition = pickEdition(conf.editions, now);
   const row = document.createElement("tr");
@@ -202,9 +216,9 @@ function renderRow(conf, now) {
     deadlineCell.append(dday);
   }
   // info.label은 마감이 여러 라운드나 트랙으로 나뉜 학회에서 이 날짜가
-  // 무엇의 마감인지 알려준다 (예: UbiComp의 "fourth round"). "Paper"나
-  // "Paper Submission"처럼 뻔한 라벨은 정보가 없으므로 생략한다.
-  if (info.label && !GENERIC_DEADLINE_LABELS.has(info.label)) {
+  // 무엇의 마감인지 알려준다 (예: UbiComp의 "fourth round"). "Paper
+  // Submission Deadline" 류의 정보 없는 라벨은 생략한다.
+  if (info.label && !isGenericDeadlineLabel(info.label)) {
     const label = document.createElement("div");
     label.className = "deadline-label";
     label.textContent = info.label;

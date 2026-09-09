@@ -10,7 +10,12 @@ import {
   pickEdition,
 } from "../../docs/lib.js";
 
-const NOW = new Date("2026-09-08T00:00:00Z");
+// 로컬 달력 날짜 생성자를 쓴다 - "2026-09-08T00:00:00Z" 같은 UTC 인스턴트
+// 문자열은 서부 미국 등에서 로컬로 환산하면 전날(9/7)이 되어, startOfDay가
+// now를 로컬 날짜로 읽도록 고친 뒤에는 테스트 자체가 시간대에 따라
+// 달라진다. new Date(2026, 8, 8)은 어느 시간대에서 실행해도 "9월 8일"을
+// 뜻한다.
+const NOW = new Date(2026, 8, 8);
 
 const edition = (year, start, end, primary) => ({
   year,
@@ -81,6 +86,17 @@ test("formatDeadline reports unknown when there is no deadline", () => {
   const result = formatDeadline(edition(2026, "2026-10-24", "2026-10-29", null), NOW);
   assert.equal(result.state, "unknown");
   assert.equal(result.text, "미정");
+});
+
+test("formatDeadline's text is the deadline's calendar date regardless of the viewer's timezone", () => {
+  // "2026-05-25T23:59:59" has no offset. Parsed as local time in, say,
+  // America/Los_Angeles, that instant falls on May 26 in UTC — so naively
+  // formatting `new Date(iso)` with timeZone: "UTC" would print "May 26"
+  // there while printing "May 25" in UTC/Asia-Seoul. The deadline is a
+  // published calendar date, not an instant, so the text must not depend on
+  // where the browser happens to be.
+  const result = formatDeadline(edition(2026, "2026-10-24", "2026-10-29", "2026-05-25T23:59:59"), NOW);
+  assert.equal(result.text, "May 25, 2026");
 });
 
 test("compareBy date sorts nearest first and pushes past editions down", () => {
@@ -155,14 +171,14 @@ test("nextDeadline picks the earliest future round, not the latest", () => {
   // (fourth) — a naive "just take the last entry" implementation would also
   // return the fourth round here by coincidence unless two rounds are still
   // ahead, which is why this NOW is chosen deliberately.
-  const midYear = new Date("2026-06-01T00:00:00Z");
+  const midYear = new Date(2026, 5, 1);
   const result = nextDeadline(rollingEdition(UBICOMP_ROUNDS, "2026-11-01T23:59:59"), midYear);
   assert.equal(result.label, "third round");
   assert.equal(result.date, "2026-08-01T23:59:59");
 });
 
 test("nextDeadline falls back to the last round when every round has passed", () => {
-  const laterNow = new Date("2026-12-01T00:00:00Z");
+  const laterNow = new Date(2026, 11, 1);
   const result = nextDeadline(rollingEdition(UBICOMP_ROUNDS, "2026-11-01T23:59:59"), laterNow);
   assert.equal(result.label, "fourth round");
   assert.equal(result.date, "2026-11-01T23:59:59");
@@ -185,8 +201,19 @@ test("formatDeadline label matches the chosen rolling-deadline round", () => {
 });
 
 test("compareBy deadline sorts by the next unresolved round, not primary_deadline", () => {
-  // Both confs have a primary_deadline (latest round) that already passed relative
-  // to NOW would rank them oddly; sorting must follow the next actual round instead.
+  // At NOW itself only the last UbiComp round is still future, so its next
+  // round and its primary_deadline (the latest round) are the same date —
+  // a fixture built around NOW couldn't tell a correct implementation from
+  // one that reads primary_deadline directly (this is exactly how the first
+  // version of this test failed to discriminate). Use midYear instead: two
+  // rounds (third, fourth) are still ahead, so "next round" (Aug 1) and
+  // "primary_deadline" (Nov 1, the latest round) genuinely disagree.
+  //
+  // UBICOMP's next round is Aug 1 (before SOON's Sep 20 deadline) — correct
+  // sorting by next round puts UBICOMP first. Sorting by primary_deadline
+  // instead would compare Nov 1 against Sep 20 and put SOON first — the
+  // opposite order — so this fixture fails under the old behavior.
+  const midYear = new Date(2026, 5, 1);
   const rolling = conf({
     abbr: "UBICOMP",
     editions: [rollingEdition(UBICOMP_ROUNDS, "2026-11-01T23:59:59")],
@@ -195,8 +222,8 @@ test("compareBy deadline sorts by the next unresolved round, not primary_deadlin
     abbr: "SOON",
     editions: [edition(2026, "2026-12-01", "2026-12-05", "2026-09-20T23:59:59")],
   });
-  const sorted = [rolling, soon].sort(compareBy("deadline", "asc", NOW));
-  assert.deepEqual(sorted.map((c) => c.abbr), ["SOON", "UBICOMP"]);
+  const sorted = [soon, rolling].sort(compareBy("deadline", "asc", midYear));
+  assert.deepEqual(sorted.map((c) => c.abbr), ["UBICOMP", "SOON"]);
 });
 
 // --- nextDeadline must ignore non-paper deadline types ---
@@ -234,4 +261,46 @@ test("nextDeadline ignores non-paper types like notification and camera_ready", 
   const result = nextDeadline(wacvLikeEdition(), NOW);
   assert.equal(result.type, "submission");
   assert.equal(result.label, "Round 2 Submission");
+});
+
+// --- nextDeadline must prefer "paper" over an unrelated "submission" ---
+//
+// ECCV's real deadlines array uses "submission" for tracks that have nothing
+// to do with the main paper deadline: Tutorial Proposal Submission, Workshop
+// Proposal Submission, and — dated well after the actual paper deadline — AI
+// Art Submission. A flat PAPER_TYPES set of {paper, submission} lets that
+// later, unrelated AI Art date outrank the real "Paper Submission" (type
+// "paper"). When any "paper"-typed deadline exists, "submission"-typed ones
+// must not be considered at all.
+
+const eccvLikeEdition = () => ({
+  year: 2026,
+  date_text: "2026-06-01 ~ 2026-06-05",
+  start: "2026-06-01",
+  end: "2026-06-05",
+  place: "Somewhere",
+  link: null,
+  deadlines: [
+    { type: "submission", label: "Tutorial Proposal Submission", date: "2026-02-15T23:59:59", source: "ccfddl" },
+    { type: "submission", label: "Workshop Proposal Submission", date: "2026-02-27T23:59:59", source: "ccfddl" },
+    { type: "paper", label: "Paper Submission", date: "2026-03-05T22:00:00", source: "ccfddl" },
+    { type: "submission", label: "AI Art Submission", date: "2026-06-14T23:59:59", source: "ccfddl" },
+  ],
+  primary_deadline: "2026-03-05T22:00:00",
+  source: "ccfddl",
+});
+
+test("nextDeadline prefers paper over a later, unrelated submission-typed entry", () => {
+  // NOW = 2026-09-08: everything above has passed, including the Jun 14 AI
+  // Art Submission. A flat type set would fall back to the latest entry
+  // overall (AI Art Submission); tiering by paper-first must fall back to
+  // the latest *paper*-typed entry instead (there's only one: Paper Submission).
+  const result = nextDeadline(eccvLikeEdition(), NOW);
+  assert.equal(result.type, "paper");
+  assert.equal(result.label, "Paper Submission");
+});
+
+test("formatDeadline shows ECCV's Paper Submission, not the later AI Art Submission", () => {
+  const result = formatDeadline(eccvLikeEdition(), NOW);
+  assert.equal(result.label, "Paper Submission");
 });

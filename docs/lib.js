@@ -7,14 +7,38 @@ const MS_PER_DAY = 86400000;
 const GRADE_RANK = { 최우수: 0, 우수: 1 };
 
 // primary_deadline을 고를 때 "본 논문 마감"으로 인정하는 타입.
-// scripts/models.py의 PAPER_TYPES와 반드시 같아야 한다 — 여기서 다르게
-// 고르면 build가 계산한 primary_deadline과 브라우저가 고르는 다음 회차가
-// 서로 다른 기준으로 어긋나게 된다.
-const PAPER_TYPES = new Set(["paper", "submission"]);
+// 우선순위가 있는 단계별 폴백이다 - 평평한 집합이 아니다. "submission"은
+// ECCV의 튜토리얼/워크숍/AI Art 제출처럼 논문과 무관한 트랙에도 쓰이므로,
+// "paper" 타입이 하나라도 있으면 그것만 후보로 삼고 "submission"은 "paper"가
+// 전혀 없는 학회(ICASSP, INTERSPEECH 등)에서만 대신 쓴다.
+// scripts/models.py의 PAPER_TYPES/SUBMISSION_FALLBACK_TYPES와 반드시 같아야
+// 한다 — 여기서 다르게 고르면 build가 계산한 primary_deadline과 브라우저가
+// 고르는 다음 회차가 서로 다른 기준으로 어긋나게 된다.
+const PAPER_TYPES = ["paper"];
+const SUBMISSION_FALLBACK_TYPES = ["submission"];
 
+function paperCandidates(deadlines) {
+  const papers = deadlines.filter((d) => PAPER_TYPES.includes(d.type));
+  if (papers.length > 0) return papers;
+  return deadlines.filter((d) => SUBMISSION_FALLBACK_TYPES.includes(d.type));
+}
+
+/**
+ * 날짜를 하루 단위 UTC 타임스탬프로 정규화한다.
+ *
+ * 두 입력의 의미가 다르므로 처리도 달라야 한다. 마감 문자열
+ * ("2026-11-01T23:59:59"처럼 오프셋이 없는 것)은 발표된 달력 날짜이므로
+ * 앞 10자(연-월-일)만 읽어 UTC로 고정한다 - JS의 기본 파싱에 맡기면
+ * 오프셋 없는 시각을 뷰어의 로컬 시간대로 해석해서, 예를 들어 서부 미국
+ * 뷰어는 같은 마감을 하루 늦은 날짜로 보게 된다. 반대로 now는 뷰어 자신의
+ * '오늘'이므로 로컬 달력 날짜(getFullYear/getMonth/getDate)를 그대로 쓴다.
+ */
 function startOfDay(value) {
-  const d = new Date(value);
-  return Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate());
+  if (typeof value === "string") {
+    const [y, m, d] = value.slice(0, 10).split("-").map(Number);
+    return Date.UTC(y, m - 1, d);
+  }
+  return Date.UTC(value.getFullYear(), value.getMonth(), value.getDate());
 }
 
 /** 오늘부터 대상 날짜까지의 일수. 과거면 음수, 입력이 없으면 null. */
@@ -48,13 +72,16 @@ export function pickEdition(editions, now) {
  * primary_deadline은 "가장 늦은 라운드"라, 학회가 끝난 뒤 날짜가 대표로 뜬다.
  * 연구자에게 쓸모 있는 값은 다음에 닥칠 마감이므로 브라우저에서 고른다.
  *
- * 후보는 논문 마감 타입(paper, submission)으로 한정한다 — 실제 데이터에는
- * 같은 deadlines 배열에 등록/리뷰공개/통보/camera-ready 같은 행정 일정도
- * 섞여 있어서(WACV, SIGGRAPH, ECCV), 타입을 가리지 않고 날짜순으로만 고르면
- * "다음 마감"이 논문 제출과 무관한 통보일이나 camera-ready로 뽑힐 수 있다.
+ * 후보는 논문 마감 타입(paper, 없으면 submission)으로 한정한다 — 실제
+ * 데이터에는 같은 deadlines 배열에 등록/리뷰공개/통보/camera-ready 같은
+ * 행정 일정도 섞여 있어서(WACV, SIGGRAPH, ECCV), 타입을 가리지 않고
+ * 날짜순으로만 고르면 "다음 마감"이 논문 제출과 무관한 통보일이나
+ * camera-ready로 뽑힐 수 있다. paperCandidates가 paper/submission 사이의
+ * 우선순위까지 가려낸다 — ECCV의 AI Art Submission처럼 무관한 트랙에도
+ * "submission" 타입이 쓰이기 때문이다.
  */
 export function nextDeadline(edition, now) {
-  const all = (edition?.deadlines ?? []).filter((d) => PAPER_TYPES.has(d.type));
+  const all = paperCandidates(edition?.deadlines ?? []);
   if (all.length === 0) {
     return edition?.primary_deadline
       ? { type: "paper", label: "Paper", date: edition.primary_deadline }
@@ -71,7 +98,11 @@ export function formatDeadline(edition, now) {
   if (!chosen) return { state: "unknown", text: "미정", dday: "", label: "" };
 
   const delta = dayDelta(chosen.date, now);
-  const text = new Date(chosen.date).toLocaleDateString("en-US", {
+  // startOfDay(chosen.date)는 마감의 달력 날짜를 UTC 자정으로 고정해 두므로,
+  // 이걸 다시 UTC로 표시하면 뷰어의 시간대와 무관하게 항상 같은 날짜가 나온다.
+  // new Date(chosen.date)를 곧바로 넘기면 오프셋 없는 시각이 로컬로 파싱되어
+  // 자정 근처 마감(예: 23:59:59)이 시간대에 따라 하루 밀려 보일 수 있다.
+  const text = new Date(startOfDay(chosen.date)).toLocaleDateString("en-US", {
     year: "numeric",
     month: "short",
     day: "numeric",

@@ -9,7 +9,12 @@ from dataclasses import dataclass, field as dc_field
 from datetime import date, datetime
 
 # primary_deadline을 고를 때 "본 논문 마감"으로 인정하는 타입.
-PAPER_TYPES = ("paper", "submission")
+# 우선순위가 있는 단계별 폴백이다 - 평평한 집합이 아니다. "submission"은
+# ECCV의 튜토리얼/워크숍/AI Art 제출처럼 논문과 무관한 트랙에도 쓰이므로,
+# "paper" 타입이 하나라도 있으면 그것만 후보로 삼고 "submission"은 "paper"가
+# 전혀 없는 학회(ICASSP, INTERSPEECH 등)에서만 대신 쓴다.
+PAPER_TYPES = ("paper",)
+SUBMISSION_FALLBACK_TYPES = ("submission",)
 
 
 @dataclass
@@ -47,12 +52,16 @@ class Edition:
     source: str
 
     def primary_deadline(self) -> datetime | None:
-        """본 논문 마감. 없으면 가장 늦은 마감으로 대체한다."""
+        """본 논문 마감. paper 타입을 최우선으로, 없으면 submission 타입을,
+        그마저 없으면 가장 늦은 마감으로 대체한다."""
         if not self.deadlines:
             return None
         papers = [d for d in self.deadlines if d.type in PAPER_TYPES]
         if papers:
             return max(d.date for d in papers)
+        submissions = [d for d in self.deadlines if d.type in SUBMISSION_FALLBACK_TYPES]
+        if submissions:
+            return max(d.date for d in submissions)
         return max(d.date for d in self.deadlines)
 
     def to_dict(self) -> dict:

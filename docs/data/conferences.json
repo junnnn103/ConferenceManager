@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-09T07:47:47.988869+00:00",
+  "generated_at": "2026-09-09T07:52:31.175161+00:00",
   "fields": [
     {
       "id": "ML",
@@ -1981,6 +1981,17 @@
           ],
           "primary_deadline": "2026-01-22T23:59:59",
           "source": "ai-deadlines"
+        },
+        {
+          "year": 2027,
+          "date_text": "July 18-24, 2027",
+          "start": "2027-07-18",
+          "end": "2027-07-24",
+          "place": "Silicon Valley USA",
+          "link": "https://sigir2027.org/",
+          "deadlines": [],
+          "primary_deadline": null,
+          "source": "manual"
         }
       ]
     },
@@ -3105,6 +3116,17 @@
           ],
           "primary_deadline": "2025-12-31T23:59:59",
           "source": "ccfddl"
+        },
+        {
+          "year": 2027,
+          "date_text": "July 13-17, 2027",
+          "start": "2027-07-13",
+          "end": "2027-07-17",
+          "place": "Xiamen China",
+          "link": "https://ieee-cas.org/event/conference/2027-ieee-international-conference-multimedia-expo-icme",
+          "deadlines": [],
+          "primary_deadline": null,
+          "source": "manual"
         }
       ]
     },

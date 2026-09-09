@@ -124,7 +124,7 @@ conferences:
   grade: 최우수
   ai_specialist: true
   field: HCI
-  homepage: https://sigchi.org/
+  homepage: https://chi.acm.org/
   members: null
   sources:
     ai_deadlines: chi
@@ -223,7 +223,7 @@ conferences:
   grade: 최우수
   ai_specialist: true
   field: Graphics
-  homepage: https://s2026.siggraph.org/
+  homepage: https://www.siggraph.org/
   members: null
   sources:
     ai_deadlines: siggraph
@@ -278,7 +278,7 @@ conferences:
   grade: 최우수
   ai_specialist: true
   field: DM/IR
-  homepage: https://www.sigweb.org/
+  homepage: https://dl.acm.org/conference/cikm
   members: null
   sources:
     ai_deadlines: cikm

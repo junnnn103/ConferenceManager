@@ -5,6 +5,7 @@ import {
   matchesFilters,
   pickEdition,
 } from "./lib.js";
+import { safeHref } from "./url-safety.js";
 
 const STORAGE_KEY = "conference-manager-filters";
 
@@ -110,8 +111,9 @@ function linkCell(conf, edition) {
   home.textContent = "홈";
   home.className = "link-btn";
   home.title = "학회 공식 홈페이지";
-  if (conf.homepage) {
-    home.href = conf.homepage;
+  const homeHref = safeHref(conf.homepage, location.href);
+  if (homeHref) {
+    home.href = homeHref;
     home.target = "_blank";
     home.rel = "noopener";
   } else {
@@ -123,8 +125,9 @@ function linkCell(conf, edition) {
   cfp.textContent = "CFP";
   cfp.className = "link-btn";
   cfp.title = "이 회차의 논문 모집 공고";
-  if (edition?.link) {
-    cfp.href = edition.link;
+  const cfpHref = safeHref(edition?.link, location.href);
+  if (cfpHref) {
+    cfp.href = cfpHref;
     cfp.target = "_blank";
     cfp.rel = "noopener";
   } else {
@@ -158,11 +161,12 @@ function renderRow(conf, now) {
 
   const nameCell = document.createElement("td");
   nameCell.className = "name-col";
-  const name = document.createElement(conf.homepage ? "a" : "span");
+  const homeHref = safeHref(conf.homepage, location.href);
+  const name = document.createElement(homeHref ? "a" : "span");
   name.className = "abbr";
   name.textContent = conf.abbr;
-  if (conf.homepage) {
-    name.href = conf.homepage;
+  if (homeHref) {
+    name.href = homeHref;
     name.target = "_blank";
     name.rel = "noopener";
   }
@@ -230,13 +234,34 @@ function renderRow(conf, now) {
   return row;
 }
 
+// 표에 표시할 컬럼 수. 결과가 없을 때 안내 행을 표 너비 전체로 펼치는 데 쓴다.
+const COLUMN_COUNT = 7;
+
+function emptyRow() {
+  const row = document.createElement("tr");
+  row.className = "empty-row";
+  const cell = document.createElement("td");
+  cell.colSpan = COLUMN_COUNT;
+  cell.textContent = "조건에 맞는 학회가 없습니다. 필터 초기화를 눌러보세요.";
+  row.append(cell);
+  return row;
+}
+
+// 체크/토글 상태를 시각(.on)과 스크린 리더(aria-pressed) 양쪽에 같이 반영한다.
+function setPressed(button, on) {
+  button.classList.toggle("on", on);
+  button.setAttribute("aria-pressed", String(on));
+}
+
 function render() {
   const now = new Date();
   const visible = state.data.conferences
     .filter((c) => matchesFilters(c, state.filters, now))
     .sort(compareBy(state.sortKey, state.sortDir, now));
 
-  el.tbody.replaceChildren(...visible.map((c) => renderRow(c, now)));
+  el.tbody.replaceChildren(
+    ...(visible.length > 0 ? visible.map((c) => renderRow(c, now)) : [emptyRow()])
+  );
   el.count.textContent = `${visible.length} / ${state.data.conferences.length}개 표시`;
 
   document.querySelectorAll("#conference-table th[data-sort]").forEach((th) => {
@@ -245,16 +270,19 @@ function render() {
       ? (state.sortDir === "asc" ? "▲" : "▼")
       : "⇅";
     th.classList.toggle("active", active);
+    th.setAttribute("aria-sort", active
+      ? (state.sortDir === "asc" ? "ascending" : "descending")
+      : "none");
   });
 
   document.querySelectorAll("[data-field]").forEach((chip) => {
-    chip.classList.toggle("on", state.filters.fields.has(chip.dataset.field));
+    setPressed(chip, state.filters.fields.has(chip.dataset.field));
   });
   document.querySelectorAll("[data-grade]").forEach((chip) => {
-    chip.classList.toggle("on", state.filters.grades.has(chip.dataset.grade));
+    setPressed(chip, state.filters.grades.has(chip.dataset.grade));
   });
-  document.querySelector("#ai-only").classList.toggle("on", state.filters.aiOnly);
-  document.querySelector("#hide-past").classList.toggle("on", state.filters.hidePast);
+  setPressed(document.querySelector("#ai-only"), state.filters.aiOnly);
+  setPressed(document.querySelector("#hide-past"), state.filters.hidePast);
 
   persistState();
 }
@@ -271,6 +299,7 @@ function renderStatic() {
     chip.dataset.field = f.id;
     chip.textContent = f.label;
     chip.style.setProperty("--badge-color", f.color);
+    chip.setAttribute("aria-pressed", "false");
     return chip;
   }));
 

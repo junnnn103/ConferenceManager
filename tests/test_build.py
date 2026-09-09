@@ -130,6 +130,30 @@ def test_failing_fetcher_does_not_abort_the_build():
     assert [c["abbr"] for c in out["conferences"]] == ["CVPR"]
 
 
+def test_non_http_homepage_is_dropped_with_warning(capsys):
+    # registry.yaml, manual.yaml, ai-deadlines/ccfddl은 모두 공개 PR을 받는
+    # 제3자 소스다. javascript: 같은 스킴이 섞여 들어오면 브라우저가 href에
+    # 그대로 옮겨 클릭 한 번에 실행되므로, JSON에 실리기 전에 걸러야 한다.
+    registry = [{**REGISTRY[0], "homepage": "javascript:alert(1)"}]
+    out = build(registry, FIELDS, make_fetchers(hf={"cvpr": [cvpr_edition()]}),
+                manual={}, scraped={}, today=TODAY)
+    assert out["conferences"][0]["homepage"] is None
+    err = capsys.readouterr().err
+    assert "CVPR" in err
+    assert "javascript:alert(1)" in err
+
+
+def test_non_http_edition_link_is_dropped_with_warning(capsys):
+    edition = cvpr_edition()
+    edition.link = "javascript:alert(1)"
+    out = build(REGISTRY, FIELDS, make_fetchers(hf={"cvpr": [edition]}),
+                manual={}, scraped={}, today=TODAY)
+    assert out["conferences"][0]["editions"][0]["link"] is None
+    err = capsys.readouterr().err
+    assert "CVPR" in err
+    assert "javascript:alert(1)" in err
+
+
 def test_output_has_generated_at_timestamp():
     out = build(REGISTRY, FIELDS, make_fetchers(hf={"cvpr": [cvpr_edition()]}),
                 manual={}, scraped={}, today=TODAY)

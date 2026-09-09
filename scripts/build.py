@@ -12,6 +12,7 @@ import json
 import sys
 from datetime import date, datetime, timezone
 from pathlib import Path
+from urllib.parse import urlparse
 
 import yaml
 
@@ -30,6 +31,30 @@ SCRAPED_DIR = ROOT / "data" / "scraped"
 OUTPUT_PATH = ROOT / "docs" / "data" / "conferences.json"
 
 TZ_UTC = timezone.utc  # 표시는 클라이언트가 하므로 생성 시각만 UTC로 남긴다
+
+ALLOWED_LINK_SCHEMES = {"http", "https"}
+
+
+def _sanitize_link(url: str | None, abbr: str, field_name: str) -> str | None:
+    """http/https가 아닌 스킴은 버린다.
+
+    homepage와 회차 link는 registry.yaml, manual.yaml, 그리고 ai-deadlines/
+    ccfddl 같은 제3자 저장소에서 온다 - 전부 공개 PR을 받는 곳이다.
+    javascript: 같은 값이 그대로 conferences.json에 실리면, 브라우저가
+    href에 곧이곧대로 옮겨 클릭 한 번에 실행된다. 조용히 지우면 오타를
+    지운 것처럼 보이므로 stderr에 경고를 남긴다.
+    """
+    if not url:
+        return url
+    try:
+        scheme = urlparse(url).scheme.lower()
+    except ValueError:
+        scheme = ""
+    if scheme not in ALLOWED_LINK_SCHEMES:
+        print(f"경고: {abbr}의 {field_name}에 허용되지 않는 스킴이 있어 제거합니다: {url}",
+              file=sys.stderr)
+        return None
+    return url
 
 
 def load_fields(path: Path = FIELDS_PATH) -> list[dict]:
@@ -137,6 +162,10 @@ def build(
         if not selected:
             unresolved.append({"abbr": display, "reason": "소스에 회차 정보가 없음"})
             continue
+
+        homepage = _sanitize_link(homepage, display, "homepage")
+        for edition in selected:
+            edition.link = _sanitize_link(edition.link, display, f"{edition.year}년 CFP 링크")
 
         conferences.append(Conference(
             abbr=display,

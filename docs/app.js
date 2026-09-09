@@ -119,7 +119,7 @@ function linkCell(conf, edition) {
   if (homeHref) {
     home.href = homeHref;
     home.target = "_blank";
-    home.rel = "noopener";
+    home.rel = "noopener noreferrer";
   } else {
     home.classList.add("disabled");
   }
@@ -133,7 +133,7 @@ function linkCell(conf, edition) {
   if (cfpHref) {
     cfp.href = cfpHref;
     cfp.target = "_blank";
-    cfp.rel = "noopener";
+    cfp.rel = "noopener noreferrer";
   } else {
     cfp.classList.add("disabled");
   }
@@ -173,7 +173,7 @@ function renderRow(conf, now) {
   if (homeHref) {
     name.href = homeHref;
     name.target = "_blank";
-    name.rel = "noopener";
+    name.rel = "noopener noreferrer";
   }
   nameCell.append(name);
   if (conf.ai_specialist) {
@@ -264,6 +264,18 @@ function emptyRow() {
   return row;
 }
 
+// data/conferences.json을 못 가져왔을 때(네트워크 오류, 404 등) 표를 그냥
+// 비워 두면 사용자는 아무 설명 없이 빈 화면만 본다.
+function errorRow(message) {
+  const row = document.createElement("tr");
+  row.className = "empty-row error-row";
+  const cell = document.createElement("td");
+  cell.colSpan = COLUMN_COUNT;
+  cell.textContent = message;
+  row.append(cell);
+  return row;
+}
+
 // 토글이 펼쳐졌을 때 주 마감 아래로 나머지 단계를 보여주는 행.
 function renderStageRow(conf, edition, now) {
   const row = document.createElement("tr");
@@ -312,7 +324,7 @@ function renderStageRow(conf, edition, now) {
       if (safeUrl) {
         badge.href = safeUrl;
         badge.target = "_blank";
-        badge.rel = "noopener";
+        badge.rel = "noopener noreferrer";
       }
       item.append(badge);
     }
@@ -495,8 +507,19 @@ function wireEvents() {
 }
 
 async function main() {
-  const response = await fetch("data/conferences.json", { cache: "no-cache" });
-  state.data = await response.json();
+  try {
+    const response = await fetch("data/conferences.json", { cache: "no-cache" });
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    state.data = await response.json();
+  } catch (err) {
+    // 데이터를 못 가져오면 표가 그냥 비어 있어서(0 / 0개 표시) 사용자는
+    // 원인을 알 수 없다. 사유를 콘솔에 남기고, 표 본문에 안내 행을 보여준다.
+    console.error("학회 데이터를 불러오지 못했습니다:", err);
+    el.tbody.replaceChildren(errorRow(
+      "학회 데이터를 불러오지 못했습니다. 잠시 후 새로고침 해주세요."
+    ));
+    return;
+  }
 
   if (!readStateFromUrl()) readStateFromStorage();
   el.search.value = state.filters.query;

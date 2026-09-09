@@ -130,6 +130,13 @@ thead th.active { color: var(--text); }
 tbody tr:hover { background: var(--surface-alt); }
 tbody tr:last-child td { border-bottom: none; }
 
+/* 이미 끝났고 다음 회차 정보가 없는 학회: 정보는 여전히 유효하지만 지금
+   당장 할 일은 없다는 뜻이므로 "비활성"이 아니라 "차분함"으로 표현한다.
+   새 색을 만들지 않고 기존 토큰을 섞어서 만든다. */
+tr.ended { background: color-mix(in srgb, var(--text-dim) 10%, var(--bg)); }
+tr.ended:hover { background: color-mix(in srgb, var(--text-dim) 18%, var(--bg)); }
+tr.ended td, tr.ended .abbr { color: var(--text-dim); }
+
 .abbr { font-weight: 600; color: var(--text); text-decoration: none; }
 a.abbr:hover { color: var(--accent); text-decoration: underline; }
 .full-name { margin-top: 2px; color: var(--text-dim); font-size: 12px; }

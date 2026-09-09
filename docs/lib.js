@@ -177,22 +177,28 @@ function sortKey(conf, key, now) {
 }
 
 /**
+ * 표시 중인 회차가 이미 끝났는가. pickEdition은 다가오는 회차를 우선하므로,
+ * 이것이 참이면 예정된 회차가 아예 없다는 뜻이다.
+ * 정렬(하단으로 밀기)과 표시(회색 처리)가 같은 판단을 쓰도록 한 곳에 둔다.
+ */
+export function isEnded(conf, now) {
+  const edition = pickEdition(conf.editions, now);
+  const end = edition?.end || edition?.start;
+  if (!end) return false;
+  const today = startOfDay(now);
+  return startOfDay(end) < today;
+}
+
+/**
  * 정렬 비교자. 이미 지난 회차는 정렬 키와 무관하게 항상 아래로 민다 —
  * 가까운 미래가 맨 위에 오는 것이 이 표의 목적이기 때문이다.
  */
 export function compareBy(key, direction, now) {
   const sign = direction === "desc" ? -1 : 1;
-  const today = startOfDay(now);
-
-  const isPast = (conf) => {
-    const edition = pickEdition(conf.editions, now);
-    const end = edition?.end || edition?.start;
-    return end ? startOfDay(end) < today : false;
-  };
 
   return (a, b) => {
-    const pastA = isPast(a);
-    const pastB = isPast(b);
+    const pastA = isEnded(a, now);
+    const pastB = isEnded(b, now);
     if (pastA !== pastB) return pastA ? 1 : -1;
 
     const ka = sortKey(a, key, now);

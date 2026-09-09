@@ -3,6 +3,7 @@ import {
   extraDeadlines,
   formatDateRange,
   formatDeadline,
+  isEnded,
   matchesFilters,
   pickEdition,
 } from "./lib.js";
@@ -161,6 +162,7 @@ function renderRow(conf, now) {
   const edition = pickEdition(conf.editions, now);
   const row = document.createElement("tr");
   row.dataset.abbr = conf.abbr;
+  if (isEnded(conf, now)) row.classList.add("ended");
 
   const nameCell = document.createElement("td");
   nameCell.className = "name-col";

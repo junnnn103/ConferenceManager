@@ -6,6 +6,7 @@ import {
   dayDelta,
   extraDeadlines,
   formatDeadline,
+  isEnded,
   matchesFilters,
   nextDeadline,
   pickEdition,
@@ -105,6 +106,29 @@ test("compareBy date sorts nearest first and pushes past editions down", () => {
   const past = conf({ abbr: "B", editions: [edition(2026, "2026-01-05", "2026-01-09", null)] });
   const sorted = [past, upcoming].sort(compareBy("date", "asc", NOW));
   assert.deepEqual(sorted.map((c) => c.abbr), ["A", "B"]);
+});
+
+test("isEnded is true when the displayed edition already ended", () => {
+  const past = conf({ abbr: "A", editions: [edition(2026, "2026-01-05", "2026-01-09", null)] });
+  assert.equal(isEnded(past, NOW), true);
+});
+
+test("isEnded is false when there is an upcoming edition", () => {
+  const upcoming = conf({ abbr: "A", editions: [edition(2026, "2026-10-24", "2026-10-29", null)] });
+  assert.equal(isEnded(upcoming, NOW), false);
+});
+
+test("isEnded is false when no edition has dates", () => {
+  const undated = conf({
+    abbr: "A",
+    editions: [{ year: 2026, date_text: null, start: null, end: null, place: null, link: null, deadlines: [], primary_deadline: null, source: "ccfddl" }],
+  });
+  assert.equal(isEnded(undated, NOW), false);
+});
+
+test("isEnded is false when the edition ends exactly today", () => {
+  const endsToday = conf({ abbr: "A", editions: [edition(2026, "2026-09-04", "2026-09-08", null)] });
+  assert.equal(isEnded(endsToday, NOW), false);
 });
 
 test("compareBy grade ranks 최우수 above 우수", () => {

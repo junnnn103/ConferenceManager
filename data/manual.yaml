@@ -69,3 +69,46 @@ conferences:
         place: "Athens, Greece"
         link: "https://roboticsconference.org/"
         deadlines: []
+  # registry.yaml에는 이 학회의 abbr이 대문자 "ICME"로 적혀 있다(다른
+  # 항목은 대부분 소문자). manual의 키는 registry의 abbr과 대소문자까지
+  # 그대로 일치해야 매칭되므로 여기서도 "ICME"로 적는다.
+  ICME:
+    editions:
+      # 공식 링크(ieee-cas.org의 이벤트 페이지)는 이 저장소의 자동 조회가
+      # 403을 반환해 직접 열람하지 못했다. 저장소 소유자가 브라우저로 직접
+      # 열어 확인한 값("2027 IEEE International Conference on Multimedia &
+      # Expo (ICME) · 13 July 2027 – 17 July 2027 · Xiamen, China")을 옮겨
+      # 적었다. 별도로 showsbee.com(제3의 학회 일정 목록 사이트)에서 같은
+      # 날짜/장소를 다시 확인했다("Tuesday, July 13, 2027 - Saturday,
+      # July 17, 2027", "Xiamen, Xiamen, China"). 페이지 자체에 "More
+      # details to come"라고 적혀 있어 마감 미발표.
+      #
+      # 주의: "ICME 2027"로 검색하면 TMS의 World Congress on Integrated
+      # Computational Materials Engineering(2027-06-13~17, 시카고, 재료공학
+      # 학회)도 같은 약어로 걸린다. 여기 적는 ICME는 IEEE 멀티미디어 학회
+      # (registry의 field: Multimedia)이며 서로 다른 학회이니 헷갈리지
+      # 말 것.
+      - year: 2027
+        date_text: "July 13-17, 2027"
+        start: 2027-07-13
+        end: 2027-07-17
+        place: "Xiamen China"
+        link: "https://ieee-cas.org/event/conference/2027-ieee-international-conference-multimedia-expo-icme"
+        deadlines: []
+  sigir:
+    editions:
+      # 공식 사이트(https://sigir2027.org/)가 이 저장소의 자동 조회에는
+      # Cloudflare 522를 반환해 직접 열람하지 못했다. 저장소 소유자가
+      # 브라우저로 직접 확인한 문구("Join us for the ACM SIGIR 2027
+      # conference celebrating 50 years of innovation. July 18-24 in
+      # Silicon Valley!")를 옮겨 적었다. 검색으로 찾은 SIGIR 커뮤니티
+      # 구성원들의 공개 게시물도 같은 값(실리콘밸리, 2027)을 언급해 보강
+      # 확인했지만, 공식 페이지 원문을 이 저장소가 직접 읽은 것은 아니다.
+      # 마감 미발표.
+      - year: 2027
+        date_text: "July 18-24, 2027"
+        start: 2027-07-18
+        end: 2027-07-24
+        place: "Silicon Valley USA"
+        link: "https://sigir2027.org/"
+        deadlines: []

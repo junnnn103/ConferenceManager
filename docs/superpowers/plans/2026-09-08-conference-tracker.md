@@ -153,6 +153,22 @@ def test_edition_primary_deadline_falls_back_to_latest_when_no_paper():
     assert ed.primary_deadline() == datetime(2026, 1, 20)
 
 
+def test_edition_primary_deadline_prefers_paper_over_unrelated_submission():
+    # ECCV처럼 "submission" 타입이 튜토리얼/워크숍/AI Art 같은 논문과 무관한
+    # 트랙에도 쓰이는 경우, "paper" 타입이 있으면 그것만 후보여야 한다.
+    # submission 타입 중 가장 늦은 것(AI Art, 6월)이 이겨서는 안 된다.
+    ed = Edition(
+        year=2026, date_text="", start=None, end=None, place="", link=None,
+        source="ccfddl",
+        deadlines=[
+            Deadline("submission", "Tutorial Proposal Submission", datetime(2026, 2, 15), None, "ccfddl"),
+            Deadline("paper", "Paper Submission", datetime(2026, 3, 5), None, "ccfddl"),
+            Deadline("submission", "AI Art Submission", datetime(2026, 6, 14), None, "ccfddl"),
+        ],
+    )
+    assert ed.primary_deadline() == datetime(2026, 3, 5)
+
+
 def test_edition_primary_deadline_treats_submission_as_paper():
     ed = Edition(
         year=2026, date_text="", start=None, end=None, place="", link=None,
@@ -208,7 +224,12 @@ from dataclasses import dataclass, field as dc_field
 from datetime import date, datetime
 
 # primary_deadline을 고를 때 "본 논문 마감"으로 인정하는 타입.
-PAPER_TYPES = ("paper", "submission")
+# 우선순위가 있는 단계별 폴백이다 - 평평한 집합이 아니다. "submission"은
+# ECCV의 튜토리얼/워크숍/AI Art 제출처럼 논문과 무관한 트랙에도 쓰이므로,
+# "paper" 타입이 하나라도 있으면 그것만 후보로 삼고 "submission"은 "paper"가
+# 전혀 없는 학회(ICASSP, INTERSPEECH 등)에서만 대신 쓴다.
+PAPER_TYPES = ("paper",)
+SUBMISSION_FALLBACK_TYPES = ("submission",)
 
 
 @dataclass
@@ -246,12 +267,16 @@ class Edition:
     source: str
 
     def primary_deadline(self) -> datetime | None:
-        """본 논문 마감. 없으면 가장 늦은 마감으로 대체한다."""
+        """본 논문 마감. paper 타입을 최우선으로, 없으면 submission 타입을,
+        그마저 없으면 가장 늦은 마감으로 대체한다."""
         if not self.deadlines:
             return None
         papers = [d for d in self.deadlines if d.type in PAPER_TYPES]
         if papers:
             return max(d.date for d in papers)
+        submissions = [d for d in self.deadlines if d.type in SUBMISSION_FALLBACK_TYPES]
+        if submissions:
+            return max(d.date for d in submissions)
         return max(d.date for d in self.deadlines)
 
     def to_dict(self) -> dict:
@@ -296,7 +321,7 @@ class Conference:
 - [ ] **Step 5: 테스트 통과 확인**
 
 Run: `python -m pytest tests/test_models.py -v`
-Expected: PASS — 7 passed
+Expected: PASS — 8 passed
 
 - [ ] **Step 6: 커밋**
 
@@ -1897,7 +1922,7 @@ def load_scraped(directory: Path) -> dict[tuple[str, int], list[Deadline]]:
 - [ ] **Step 6: 테스트 통과 확인**
 
 Run: `python -m pytest tests/test_source_manual.py tests/test_source_scraped.py -v`
-Expected: PASS — 7 passed
+Expected: PASS — 8 passed
 
 - [ ] **Step 7: 커밋**
 
@@ -3461,10 +3486,16 @@ import {
   dayDelta,
   formatDeadline,
   matchesFilters,
+  nextDeadline,
   pickEdition,
 } from "../../docs/lib.js";
 
-const NOW = new Date("2026-09-08T00:00:00Z");
+// 로컬 달력 날짜 생성자를 쓴다 - "2026-09-08T00:00:00Z" 같은 UTC 인스턴트
+// 문자열은 서부 미국 등에서 로컬로 환산하면 전날(9/7)이 되어, startOfDay가
+// now를 로컬 날짜로 읽도록 고친 뒤에는 테스트 자체가 시간대에 따라
+// 달라진다. new Date(2026, 8, 8)은 어느 시간대에서 실행해도 "9월 8일"을
+// 뜻한다.
+const NOW = new Date(2026, 8, 8);
 
 const edition = (year, start, end, primary) => ({
   year,
@@ -3537,6 +3568,17 @@ test("formatDeadline reports unknown when there is no deadline", () => {
   assert.equal(result.text, "미정");
 });
 
+test("formatDeadline's text is the deadline's calendar date regardless of the viewer's timezone", () => {
+  // "2026-05-25T23:59:59" has no offset. Parsed as local time in, say,
+  // America/Los_Angeles, that instant falls on May 26 in UTC — so naively
+  // formatting `new Date(iso)` with timeZone: "UTC" would print "May 26"
+  // there while printing "May 25" in UTC/Asia-Seoul. The deadline is a
+  // published calendar date, not an instant, so the text must not depend on
+  // where the browser happens to be.
+  const result = formatDeadline(edition(2026, "2026-10-24", "2026-10-29", "2026-05-25T23:59:59"), NOW);
+  assert.equal(result.text, "May 25, 2026");
+});
+
 test("compareBy date sorts nearest first and pushes past editions down", () => {
   const upcoming = conf({ abbr: "A", editions: [edition(2026, "2026-10-24", "2026-10-29", null)] });
   const past = conf({ abbr: "B", editions: [edition(2026, "2026-01-05", "2026-01-09", null)] });
@@ -3577,6 +3619,171 @@ test("matchesFilters aiOnly keeps only AI Specialist conferences", () => {
   const filters = { fields: new Set(), grades: new Set(), aiOnly: true, hidePast: false, query: "" };
   assert.equal(matchesFilters(conf({ ai_specialist: false }), filters, NOW), false);
 });
+
+// --- nextDeadline: rolling-deadline (다회차) 학회의 대표 마감 선택 ---
+//
+// UbiComp처럼 연 4회 라운드가 있는 학회는 build가 계산한 primary_deadline이
+// "가장 늦은 라운드"라 학회가 끝난 뒤 날짜가 뜬다. 브라우저는 아직 지나지
+// 않은 것 중 가장 이른 라운드를 대표로 보여줘야 한다.
+
+const rollingEdition = (rounds, primary) => ({
+  year: 2026,
+  date_text: "2026-10-11 ~ 2026-10-15",
+  start: "2026-10-11",
+  end: "2026-10-15",
+  place: "Somewhere",
+  link: null,
+  deadlines: rounds,
+  primary_deadline: primary,
+  source: "ccfddl",
+});
+
+const UBICOMP_ROUNDS = [
+  { type: "paper", label: "first round", date: "2026-02-01T23:59:59", source: "ccfddl" },
+  { type: "paper", label: "second round", date: "2026-05-01T23:59:59", source: "ccfddl" },
+  { type: "paper", label: "third round", date: "2026-08-01T23:59:59", source: "ccfddl" },
+  { type: "paper", label: "fourth round", date: "2026-11-01T23:59:59", source: "ccfddl" },
+];
+
+test("nextDeadline picks the earliest future round, not the latest", () => {
+  // Between the second and third rounds: first/second have passed, third and
+  // fourth have not. The earliest future one (third) must win, not the last
+  // (fourth) — a naive "just take the last entry" implementation would also
+  // return the fourth round here by coincidence unless two rounds are still
+  // ahead, which is why this NOW is chosen deliberately.
+  const midYear = new Date(2026, 5, 1);
+  const result = nextDeadline(rollingEdition(UBICOMP_ROUNDS, "2026-11-01T23:59:59"), midYear);
+  assert.equal(result.label, "third round");
+  assert.equal(result.date, "2026-08-01T23:59:59");
+});
+
+test("nextDeadline falls back to the last round when every round has passed", () => {
+  const laterNow = new Date(2026, 11, 1);
+  const result = nextDeadline(rollingEdition(UBICOMP_ROUNDS, "2026-11-01T23:59:59"), laterNow);
+  assert.equal(result.label, "fourth round");
+  assert.equal(result.date, "2026-11-01T23:59:59");
+});
+
+test("nextDeadline with an empty deadlines array falls back to primary_deadline", () => {
+  const ed = { ...rollingEdition([], null), primary_deadline: "2026-12-01T23:59:59" };
+  const result = nextDeadline(ed, NOW);
+  assert.equal(result.date, "2026-12-01T23:59:59");
+});
+
+test("nextDeadline returns null when there is neither deadlines nor primary_deadline", () => {
+  assert.equal(nextDeadline(rollingEdition([], null), NOW), null);
+});
+
+test("formatDeadline label matches the chosen rolling-deadline round", () => {
+  const result = formatDeadline(rollingEdition(UBICOMP_ROUNDS, "2026-11-01T23:59:59"), NOW);
+  assert.equal(result.state, "upcoming");
+  assert.equal(result.label, "fourth round");
+});
+
+test("compareBy deadline sorts by the next unresolved round, not primary_deadline", () => {
+  // At NOW itself only the last UbiComp round is still future, so its next
+  // round and its primary_deadline (the latest round) are the same date —
+  // a fixture built around NOW couldn't tell a correct implementation from
+  // one that reads primary_deadline directly (this is exactly how the first
+  // version of this test failed to discriminate). Use midYear instead: two
+  // rounds (third, fourth) are still ahead, so "next round" (Aug 1) and
+  // "primary_deadline" (Nov 1, the latest round) genuinely disagree.
+  //
+  // UBICOMP's next round is Aug 1 (before SOON's Sep 20 deadline) — correct
+  // sorting by next round puts UBICOMP first. Sorting by primary_deadline
+  // instead would compare Nov 1 against Sep 20 and put SOON first — the
+  // opposite order — so this fixture fails under the old behavior.
+  const midYear = new Date(2026, 5, 1);
+  const rolling = conf({
+    abbr: "UBICOMP",
+    editions: [rollingEdition(UBICOMP_ROUNDS, "2026-11-01T23:59:59")],
+  });
+  const soon = conf({
+    abbr: "SOON",
+    editions: [edition(2026, "2026-12-01", "2026-12-05", "2026-09-20T23:59:59")],
+  });
+  const sorted = [soon, rolling].sort(compareBy("deadline", "asc", midYear));
+  assert.deepEqual(sorted.map((c) => c.abbr), ["UBICOMP", "SOON"]);
+});
+
+// --- nextDeadline must ignore non-paper deadline types ---
+//
+// 실제 데이터에는 WACV/SIGGRAPH/ECCV처럼 논문 마감 외에도 등록(registration),
+// 리뷰공개(review_release), 통보(notification), camera-ready 같은 타입이
+// 같은 deadlines 배열에 섞여 있다. 날짜순으로 "아직 지나지 않은 것"만 고르면
+// 이런 행정 일정이 논문 마감보다 먼저 뽑혀 나올 수 있다. build가 primary_deadline을
+// 계산할 때 쓰는 것과 같은 타입 집합(paper, submission)만 후보로 삼아야 한다.
+
+const wacvLikeEdition = () => ({
+  year: 2026,
+  date_text: "2026-01-01 ~ 2026-01-05",
+  start: "2026-01-01",
+  end: "2026-01-05",
+  place: "Somewhere",
+  link: null,
+  deadlines: [
+    { type: "registration", label: "Round 1 Registration", date: "2025-07-11T23:59:59", source: "ccfddl" },
+    { type: "submission", label: "Round 1 Submission", date: "2025-07-18T23:59:59", source: "ccfddl" },
+    { type: "review_release", label: "Round 1 Reviews Released", date: "2025-09-05T23:59:59", source: "ccfddl" },
+    { type: "submission", label: "Round 2 Submission", date: "2025-09-19T23:59:59", source: "ccfddl" },
+    { type: "notification", label: "Round 2 Decisions", date: "2026-10-09T23:59:59", source: "ccfddl" },
+    { type: "camera_ready", label: "Camera Ready", date: "2026-11-02T23:59:59", source: "ccfddl" },
+  ],
+  primary_deadline: "2025-09-19T23:59:59",
+  source: "ccfddl",
+});
+
+test("nextDeadline ignores non-paper types like notification and camera_ready", () => {
+  // NOW = 2026-09-08: both submission rounds have passed. The next chronological
+  // entry in the raw array is "Round 2 Decisions" (notification), which must NOT
+  // be picked — it isn't a paper deadline. Correct behavior falls back to the
+  // last paper/submission-type entry, Round 2 Submission.
+  const result = nextDeadline(wacvLikeEdition(), NOW);
+  assert.equal(result.type, "submission");
+  assert.equal(result.label, "Round 2 Submission");
+});
+
+// --- nextDeadline must prefer "paper" over an unrelated "submission" ---
+//
+// ECCV's real deadlines array uses "submission" for tracks that have nothing
+// to do with the main paper deadline: Tutorial Proposal Submission, Workshop
+// Proposal Submission, and — dated well after the actual paper deadline — AI
+// Art Submission. A flat PAPER_TYPES set of {paper, submission} lets that
+// later, unrelated AI Art date outrank the real "Paper Submission" (type
+// "paper"). When any "paper"-typed deadline exists, "submission"-typed ones
+// must not be considered at all.
+
+const eccvLikeEdition = () => ({
+  year: 2026,
+  date_text: "2026-06-01 ~ 2026-06-05",
+  start: "2026-06-01",
+  end: "2026-06-05",
+  place: "Somewhere",
+  link: null,
+  deadlines: [
+    { type: "submission", label: "Tutorial Proposal Submission", date: "2026-02-15T23:59:59", source: "ccfddl" },
+    { type: "submission", label: "Workshop Proposal Submission", date: "2026-02-27T23:59:59", source: "ccfddl" },
+    { type: "paper", label: "Paper Submission", date: "2026-03-05T22:00:00", source: "ccfddl" },
+    { type: "submission", label: "AI Art Submission", date: "2026-06-14T23:59:59", source: "ccfddl" },
+  ],
+  primary_deadline: "2026-03-05T22:00:00",
+  source: "ccfddl",
+});
+
+test("nextDeadline prefers paper over a later, unrelated submission-typed entry", () => {
+  // NOW = 2026-09-08: everything above has passed, including the Jun 14 AI
+  // Art Submission. A flat type set would fall back to the latest entry
+  // overall (AI Art Submission); tiering by paper-first must fall back to
+  // the latest *paper*-typed entry instead (there's only one: Paper Submission).
+  const result = nextDeadline(eccvLikeEdition(), NOW);
+  assert.equal(result.type, "paper");
+  assert.equal(result.label, "Paper Submission");
+});
+
+test("formatDeadline shows ECCV's Paper Submission, not the later AI Art Submission", () => {
+  const result = formatDeadline(eccvLikeEdition(), NOW);
+  assert.equal(result.label, "Paper Submission");
+});
 ```
 
 - [ ] **Step 2: 테스트가 실패하는지 확인**
@@ -3597,9 +3804,39 @@ Expected: FAIL — `Cannot find module .../docs/lib.js`
 const MS_PER_DAY = 86400000;
 const GRADE_RANK = { 최우수: 0, 우수: 1 };
 
+// primary_deadline을 고를 때 "본 논문 마감"으로 인정하는 타입.
+// 우선순위가 있는 단계별 폴백이다 - 평평한 집합이 아니다. "submission"은
+// ECCV의 튜토리얼/워크숍/AI Art 제출처럼 논문과 무관한 트랙에도 쓰이므로,
+// "paper" 타입이 하나라도 있으면 그것만 후보로 삼고 "submission"은 "paper"가
+// 전혀 없는 학회(ICASSP, INTERSPEECH 등)에서만 대신 쓴다.
+// scripts/models.py의 PAPER_TYPES/SUBMISSION_FALLBACK_TYPES와 반드시 같아야
+// 한다 — 여기서 다르게 고르면 build가 계산한 primary_deadline과 브라우저가
+// 고르는 다음 회차가 서로 다른 기준으로 어긋나게 된다.
+const PAPER_TYPES = ["paper"];
+const SUBMISSION_FALLBACK_TYPES = ["submission"];
+
+function paperCandidates(deadlines) {
+  const papers = deadlines.filter((d) => PAPER_TYPES.includes(d.type));
+  if (papers.length > 0) return papers;
+  return deadlines.filter((d) => SUBMISSION_FALLBACK_TYPES.includes(d.type));
+}
+
+/**
+ * 날짜를 하루 단위 UTC 타임스탬프로 정규화한다.
+ *
+ * 두 입력의 의미가 다르므로 처리도 달라야 한다. 마감 문자열
+ * ("2026-11-01T23:59:59"처럼 오프셋이 없는 것)은 발표된 달력 날짜이므로
+ * 앞 10자(연-월-일)만 읽어 UTC로 고정한다 - JS의 기본 파싱에 맡기면
+ * 오프셋 없는 시각을 뷰어의 로컬 시간대로 해석해서, 예를 들어 서부 미국
+ * 뷰어는 같은 마감을 하루 늦은 날짜로 보게 된다. 반대로 now는 뷰어 자신의
+ * '오늘'이므로 로컬 달력 날짜(getFullYear/getMonth/getDate)를 그대로 쓴다.
+ */
 function startOfDay(value) {
-  const d = new Date(value);
-  return Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate());
+  if (typeof value === "string") {
+    const [y, m, d] = value.slice(0, 10).split("-").map(Number);
+    return Date.UTC(y, m - 1, d);
+  }
+  return Date.UTC(value.getFullYear(), value.getMonth(), value.getDate());
 }
 
 /** 오늘부터 대상 날짜까지의 일수. 과거면 음수, 입력이 없으면 null. */
@@ -3626,20 +3863,51 @@ export function pickEdition(editions, now) {
     .pop();
 }
 
+/**
+ * 화면에 대표로 보여줄 마감. 아직 지나지 않은 것 중 가장 이른 것을 고른다.
+ *
+ * 롤링 마감을 쓰는 학회(UbiComp은 연 4회)에서 build가 계산해 둔
+ * primary_deadline은 "가장 늦은 라운드"라, 학회가 끝난 뒤 날짜가 대표로 뜬다.
+ * 연구자에게 쓸모 있는 값은 다음에 닥칠 마감이므로 브라우저에서 고른다.
+ *
+ * 후보는 논문 마감 타입(paper, 없으면 submission)으로 한정한다 — 실제
+ * 데이터에는 같은 deadlines 배열에 등록/리뷰공개/통보/camera-ready 같은
+ * 행정 일정도 섞여 있어서(WACV, SIGGRAPH, ECCV), 타입을 가리지 않고
+ * 날짜순으로만 고르면 "다음 마감"이 논문 제출과 무관한 통보일이나
+ * camera-ready로 뽑힐 수 있다. paperCandidates가 paper/submission 사이의
+ * 우선순위까지 가려낸다 — ECCV의 AI Art Submission처럼 무관한 트랙에도
+ * "submission" 타입이 쓰이기 때문이다.
+ */
+export function nextDeadline(edition, now) {
+  const all = paperCandidates(edition?.deadlines ?? []);
+  if (all.length === 0) {
+    return edition?.primary_deadline
+      ? { type: "paper", label: "Paper", date: edition.primary_deadline }
+      : null;
+  }
+  const today = startOfDay(now);
+  const sorted = all.slice().sort((a, b) => (a.date < b.date ? -1 : a.date > b.date ? 1 : 0));
+  return sorted.find((d) => startOfDay(d.date) >= today) ?? sorted[sorted.length - 1];
+}
+
 /** 제출마감 셀에 표시할 값. */
 export function formatDeadline(edition, now) {
-  const iso = edition?.primary_deadline;
-  if (!iso) return { state: "unknown", text: "미정", dday: "" };
+  const chosen = nextDeadline(edition, now);
+  if (!chosen) return { state: "unknown", text: "미정", dday: "", label: "" };
 
-  const delta = dayDelta(iso, now);
-  const text = new Date(iso).toLocaleDateString("en-US", {
+  const delta = dayDelta(chosen.date, now);
+  // startOfDay(chosen.date)는 마감의 달력 날짜를 UTC 자정으로 고정해 두므로,
+  // 이걸 다시 UTC로 표시하면 뷰어의 시간대와 무관하게 항상 같은 날짜가 나온다.
+  // new Date(chosen.date)를 곧바로 넘기면 오프셋 없는 시각이 로컬로 파싱되어
+  // 자정 근처 마감(예: 23:59:59)이 시간대에 따라 하루 밀려 보일 수 있다.
+  const text = new Date(startOfDay(chosen.date)).toLocaleDateString("en-US", {
     year: "numeric",
     month: "short",
     day: "numeric",
     timeZone: "UTC",
   });
-  if (delta >= 0) return { state: "upcoming", text, dday: `D-${delta}` };
-  return { state: "past", text, dday: `D+${Math.abs(delta)}` };
+  if (delta >= 0) return { state: "upcoming", text, dday: `D-${delta}`, label: chosen.label };
+  return { state: "past", text, dday: `D+${Math.abs(delta)}`, label: chosen.label };
 }
 
 /** 개최일 표시. 소스가 준 원문이 있으면 그대로 쓴다. */
@@ -3664,8 +3932,8 @@ function sortKey(conf, key, now) {
     case "place":
       return (edition?.place || "").toLowerCase();
     case "deadline": {
-      const iso = edition?.primary_deadline;
-      return iso ? startOfDay(iso) : Number.POSITIVE_INFINITY;
+      const chosen = nextDeadline(edition, now);
+      return chosen ? startOfDay(chosen.date) : Number.POSITIVE_INFINITY;
     }
     case "date":
     default: {
@@ -3726,7 +3994,7 @@ export function matchesFilters(conf, filters, now) {
 - [ ] **Step 4: 테스트 통과 확인**
 
 Run: `node --test tests/js/`
-Expected: PASS — 16 passed
+Expected: PASS — 26 passed
 
 - [ ] **Step 5: 커밋**
 

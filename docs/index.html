@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>학회 일정</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="page-header">
+    <h1>학회 일정</h1>
+    <p class="subtitle">
+      26년 우수 학회 List 중 AI/HCI 인접 학회
+      <span class="generated" id="generated-at"></span>
+    </p>
+  </header>
+
+  <section class="controls" aria-label="필터">
+    <input type="search" id="search" placeholder="학회명 검색" autocomplete="off">
+
+    <div class="filter-group" id="field-filters" role="group" aria-label="분야"></div>
+
+    <div class="filter-group" role="group" aria-label="등급">
+      <button type="button" class="chip" data-grade="최우수">최우수</button>
+      <button type="button" class="chip" data-grade="우수">우수</button>
+    </div>
+
+    <div class="filter-group">
+      <button type="button" class="chip" id="ai-only">AI Specialist만</button>
+      <button type="button" class="chip" id="hide-past">마감 지난 것 숨기기</button>
+      <button type="button" class="chip" id="reset">필터 초기화</button>
+    </div>
+  </section>
+
+  <p class="count" id="count" aria-live="polite"></p>
+
+  <table id="conference-table">
+    <thead>
+      <tr>
+        <th data-sort="abbr"><button type="button">학회 <span class="arrow"></span></button></th>
+        <th data-sort="field"><button type="button">분야 <span class="arrow"></span></button></th>
+        <th data-sort="grade"><button type="button">등급 <span class="arrow"></span></button></th>
+        <th data-sort="date"><button type="button">개최일 <span class="arrow"></span></button></th>
+        <th data-sort="place"><button type="button">장소 <span class="arrow"></span></button></th>
+        <th data-sort="deadline"><button type="button">제출마감 <span class="arrow"></span></button></th>
+        <th class="links-col">링크</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <section class="unresolved" id="unresolved" hidden>
+    <h2>일정 미확인 <span id="unresolved-count"></span></h2>
+    <p class="hint">두 공개 소스와 수기 자료 어디에도 회차 정보가 없는 학회입니다.</p>
+    <ul id="unresolved-list"></ul>
+  </section>
+
+  <script type="module" src="app.js"></script>
+</body>
+</html>

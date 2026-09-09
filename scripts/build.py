@@ -9,6 +9,7 @@
 
 import argparse
 import json
+import re
 import sys
 from datetime import date, datetime, timezone
 from pathlib import Path
@@ -33,24 +34,36 @@ OUTPUT_PATH = ROOT / "docs" / "data" / "conferences.json"
 TZ_UTC = timezone.utc  # 표시는 클라이언트가 하므로 생성 시각만 UTC로 남긴다
 
 ALLOWED_LINK_SCHEMES = {"http", "https"}
+_ABSOLUTE_HTTP_RE = re.compile(r"^https?://", re.IGNORECASE)
 
 
 def _sanitize_link(url: str | None, abbr: str, field_name: str) -> str | None:
-    """http/https가 아닌 스킴은 버린다.
+    """절대 http/https 주소가 아니면 버린다.
 
     homepage와 회차 link는 registry.yaml, manual.yaml, 그리고 ai-deadlines/
     ccfddl 같은 제3자 저장소에서 온다 - 전부 공개 PR을 받는 곳이다.
     javascript: 같은 값이 그대로 conferences.json에 실리면, 브라우저가
-    href에 곧이곧대로 옮겨 클릭 한 번에 실행된다. 조용히 지우면 오타를
-    지운 것처럼 보이므로 stderr에 경고를 남긴다.
+    href에 곧이곧대로 옮겨 클릭 한 번에 실행된다.
+
+    스킴 자체가 없는 값("//evil.com", "evil.com", "/relative/path")도 함께
+    막는다. docs/app.js의 safeHref가 렌더 시점에 base(현재 페이지 주소)를
+    붙여 new URL()로 해석하는데, 이런 값은 base의 스킴/호스트를 빌려
+    "//evil.com"은 완전히 다른 사이트로 가는 살아있는 링크가, "evil.com"과
+    "/relative/path"는 우리 도메인 위의 없는 경로가 되어 버린다. 이
+    프로젝트의 링크는 항상 절대 주소이므로 여기서도 같은 기준으로 미리
+    걸러야 build와 render 두 방어선의 기준이 어긋나지 않는다.
+
+    조용히 지우면 오타를 지운 것처럼 보이므로 stderr에 경고를 남긴다.
     """
     if not url:
         return url
-    try:
-        scheme = urlparse(url).scheme.lower()
-    except ValueError:
-        scheme = ""
-    if scheme not in ALLOWED_LINK_SCHEMES:
+    valid = bool(_ABSOLUTE_HTTP_RE.match(url))
+    if valid:
+        try:
+            valid = urlparse(url).scheme.lower() in ALLOWED_LINK_SCHEMES
+        except ValueError:
+            valid = False
+    if not valid:
         print(f"경고: {abbr}의 {field_name}에 허용되지 않는 스킴이 있어 제거합니다: {url}",
               file=sys.stderr)
         return None

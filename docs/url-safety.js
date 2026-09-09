@@ -7,9 +7,14 @@
 //
 // DOM에 의존하지 않는다 - base를 인자로 받아 node --test로 바로 검증한다.
 export function safeHref(url, base) {
-  if (!url) return null;
+  if (typeof url !== "string") return null;
+  const trimmed = url.trim();
+  // 상대 주소를 해석하지 않는다. "//evil.com"은 base의 스킴을 빌려 외부 사이트로
+  // 가는 살아있는 링크가 되고, "evil.com"이나 "/path"는 우리 도메인의 없는 경로가
+  // 된다. 이 프로젝트의 링크는 항상 절대 http(s) 주소이므로 그렇게만 받는다.
+  if (!/^https?:\/\//i.test(trimmed)) return null;
   try {
-    const parsed = new URL(url, base);
+    const parsed = new URL(trimmed, base);
     return parsed.protocol === "http:" || parsed.protocol === "https:" ? parsed.href : null;
   } catch {
     return null;

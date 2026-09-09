@@ -154,6 +154,21 @@ def test_non_http_edition_link_is_dropped_with_warning(capsys):
     assert "javascript:alert(1)" in err
 
 
+def test_relative_and_protocol_relative_homepage_is_dropped(capsys):
+    # docs/app.js의 safeHref는 렌더 시점에 base(현재 페이지 주소)를 붙여
+    # new URL()로 해석한다. "//evil.com"은 base의 스킴만 빌려 완전히 다른
+    # 사이트로 가는 살아있는 링크가 되고, "evil.com"과 "/relative/path"는
+    # 우리 도메인 위의 없는 경로가 된다. 스킴이 아예 없는 이 값들도
+    # build 단계에서부터 막아야 한다.
+    for bad in ("//evil.com/path", "evil.com", "/relative/path"):
+        registry = [{**REGISTRY[0], "homepage": bad}]
+        out = build(registry, FIELDS, make_fetchers(hf={"cvpr": [cvpr_edition()]}),
+                    manual={}, scraped={}, today=TODAY)
+        assert out["conferences"][0]["homepage"] is None, bad
+        err = capsys.readouterr().err
+        assert "CVPR" in err and bad in err, bad
+
+
 def test_output_has_generated_at_timestamp():
     out = build(REGISTRY, FIELDS, make_fetchers(hf={"cvpr": [cvpr_edition()]}),
                 manual={}, scraped={}, today=TODAY)

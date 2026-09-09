@@ -192,6 +192,32 @@ test("matchesFilters hidePast drops conferences whose deadline has passed", () =
   assert.equal(matchesFilters(conf(), filters, NOW), false);
 });
 
+test("matchesFilters hidePast follows nextDeadline, not primary_deadline, when they diverge", () => {
+  // SIGGRAPH/CVPR/ACL 2027처럼 deadlines에 paper/submission 타입이 전혀
+  // 없이 workshop 등만 있으면 셀에는 미정이 뜬다(nextDeadline이 null을
+  // 돌려주므로). 하지만 primary_deadline은 그 workshop 마감 날짜를 그대로
+  // 갖고 있어 아직 미래처럼 보인다. hidePast가 primary_deadline을 기준으로
+  // 판단하면, 화면엔 미정이라고 써 있는 학회가 "곧 마감"인 것처럼 필터를
+  // 통과해 버린다 - 셀과 같은 근거(nextDeadline)를 써야 한다.
+  const workshopOnly = conf({
+    editions: [{
+      year: 2027,
+      date_text: "2027",
+      start: "2027-07-01",
+      end: "2027-07-05",
+      place: "Somewhere",
+      link: null,
+      deadlines: [
+        { type: "workshop", label: "Workshop Proposal", date: "2026-12-01T23:59:59", source: "cfp-scrape" },
+      ],
+      primary_deadline: "2026-12-01T23:59:59",
+      source: "ccfddl",
+    }],
+  });
+  const filters = { fields: new Set(), grades: new Set(), aiOnly: false, hidePast: true, query: "" };
+  assert.equal(matchesFilters(workshopOnly, filters, NOW), false);
+});
+
 test("matchesFilters aiOnly keeps only AI Specialist conferences", () => {
   const filters = { fields: new Set(), grades: new Set(), aiOnly: true, hidePast: false, query: "" };
   assert.equal(matchesFilters(conf({ ai_specialist: false }), filters, NOW), false);

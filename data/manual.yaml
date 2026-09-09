@@ -44,3 +44,28 @@ conferences:
         place: "Santa Clara, California, USA"
         link: "https://humanrobotinteraction.org/"
         deadlines: []
+  ijcai:
+    editions:
+      # 공식 사이트(https://www.ijcai.org/future_conferences)에서 확인:
+      # "The third IJCAI-27 will be held in Kyoto, Japan from August 7th
+      # until August 13th, 2027 and in Hengqin, China from August 15th
+      # until August 17th, 2027." 두 도시에 걸친 한 회차로 표시. 마감 미발표.
+      - year: 2027
+        date_text: "Aug 7-13, 2027 Kyoto, Japan & Aug 15-17, 2027 Hengqin, China"
+        start: 2027-08-07
+        end: 2027-08-17
+        place: "Kyoto, Japan & Hengqin, China"
+        link: "https://www.ijcai.org/future_conferences"
+        deadlines: []
+  rss:
+    editions:
+      # 공식 사이트(https://roboticsconference.org/)에서 확인: "We look
+      # forward to seeing you at RSS 2027 in Athens, Greece, July 6–11,
+      # 2027!" 마감 미발표.
+      - year: 2027
+        date_text: "July 6-11, 2027"
+        start: 2027-07-06
+        end: 2027-07-11
+        place: "Athens, Greece"
+        link: "https://roboticsconference.org/"
+        deadlines: []

@@ -42,10 +42,12 @@ conferences:
   homepage: https://www.thecvf.com/
   members:
   - display: ICCV
+    homepage: https://iccv.thecvf.com/
     sources:
       ai_deadlines: iccv
       ccfddl: iccv
   - display: ECCV
+    homepage: https://eccv.ecva.net/
     sources:
       ai_deadlines: eccv
       ccfddl: eccv
@@ -758,10 +760,12 @@ conferences:
   homepage: https://signalprocessingsociety.org/community-involvement/speech-and-language-processing
   members:
   - display: ASRU
+    homepage: https://signalprocessingsociety.org/event-names/asru
     sources:
       ai_deadlines: null
       ccfddl: null
   - display: SLT
+    homepage: https://signalprocessingsociety.org/event-names/slt
     sources:
       ai_deadlines: null
       ccfddl: slt

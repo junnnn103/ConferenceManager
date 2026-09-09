@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-09T00:39:26.888327+00:00",
+  "generated_at": "2026-09-09T00:52:26.181003+00:00",
   "fields": [
     {
       "id": "ML",
@@ -381,7 +381,7 @@
       "grade": "최우수",
       "ai_specialist": true,
       "field": "CV",
-      "homepage": "https://www.thecvf.com/",
+      "homepage": "https://eccv.ecva.net/",
       "editions": [
         {
           "year": 2024,
@@ -2983,7 +2983,7 @@
       "grade": "우수",
       "ai_specialist": true,
       "field": "Speech",
-      "homepage": "https://signalprocessingsociety.org/community-involvement/speech-and-language-processing",
+      "homepage": "https://signalprocessingsociety.org/event-names/slt",
       "editions": [
         {
           "year": 2026,

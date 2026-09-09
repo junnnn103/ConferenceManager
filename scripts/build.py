@@ -83,11 +83,13 @@ def build(
 
         abbr_group = entry["abbr"]
         display = entry.get("display") or abbr_group
+        homepage = entry.get("homepage")
         manual_editions = manual.get(abbr_group, [])
 
         if entry.get("members"):
             # 결합 행: 구성원을 각각 조회한 뒤 차기 회차가 이른 쪽을 대표로 삼는다.
             per_member: dict[str, list[Edition]] = {}
+            member_homepages: dict[str, str] = {}
             for member in entry["members"]:
                 by_source = _gather(member.get("sources"), fetchers, abbr_group)
                 # 결합 행의 manual은 구성원 이름으로 적는다(예: slt, asru).
@@ -96,9 +98,17 @@ def build(
                 if member_manual:
                     by_source["manual"] = member_manual
                 per_member[member["display"]] = list(merge_by_year(by_source).values())
+                if member.get("homepage"):
+                    member_homepages[member["display"]] = member["homepage"]
             chosen, editions = pick_member(per_member, today)
             if chosen:
                 display = chosen
+                # 화면에 뜨는 이름이 구성원 이름(ECCV 등)이므로, 그 구성원의
+                # 홈페이지가 있으면 그것을 쓴다. 없으면 행 전체의 홈페이지로
+                # 폴백한다 — 안 그러면 ECCV를 눌렀는데 CVF 대문(양쪽 공통
+                # 상위 페이지)이나 ICCV 홈페이지가 뜨는, CHI/SIGCHI와 같은
+                # 종류의 오류가 난다.
+                homepage = member_homepages.get(chosen) or homepage
             if manual_editions:
                 # 그룹 키로 적힌 항목은 어느 구성원의 회차인지 알 수 없다.
                 # 합치면 다른 구성원 이름표가 붙으므로 버리고 알린다.
@@ -135,7 +145,7 @@ def build(
             grade=entry.get("grade") or "",
             ai_specialist=bool(entry.get("ai_specialist")),
             field=entry["field"],
-            homepage=entry.get("homepage"),
+            homepage=homepage,
             editions=selected,
         ).to_dict())
 

@@ -375,3 +375,40 @@ test("extraDeadlines excludes by identity, not by date — a shared date does no
   const types = extraDeadlines(sharedDateEdition, NOW).map((d) => d.type);
   assert.deepEqual(types, ["abstract"]);
 });
+
+// --- nextDeadline must not synthesize a featured deadline out of thin air
+// when deadlines exist but none is paper/submission typed ---
+//
+// The empty-deadlines fallback (primary_deadline only, no deadlines array)
+// synthesizes a { type: "paper", ... } object that isn't a member of
+// edition.deadlines — harmless there, since extraDeadlines has nothing to
+// exclude it from. But if deadlines is non-empty and simply has no
+// paper/submission entry (e.g. only notification/camera_ready survived,
+// which is what an LLM-extracted CFP could plausibly produce), that same
+// synthesis would hand extraDeadlines an object that matches nothing in the
+// array by reference, so nothing gets excluded and the featured deadline
+// duplicates into the expander list.
+
+const noPaperTypeEdition = () => ({
+  year: 2026,
+  date_text: "2026-05-01 ~ 2026-06-05",
+  start: "2026-05-01",
+  end: "2026-06-05",
+  place: "Somewhere",
+  link: null,
+  deadlines: [
+    { type: "notification", label: "Decisions", date: "2026-05-01T23:59:59", source: "cfp-scrape" },
+    { type: "camera_ready", label: "Camera Ready", date: "2026-06-01T23:59:59", source: "cfp-scrape" },
+  ],
+  primary_deadline: "2026-05-01T23:59:59",
+  source: "cfp-scrape",
+});
+
+test("nextDeadline returns null when deadlines exist but none is paper/submission typed", () => {
+  assert.equal(nextDeadline(noPaperTypeEdition(), NOW), null);
+});
+
+test("extraDeadlines shows every stage without duplication when nextDeadline finds no featured deadline", () => {
+  const types = extraDeadlines(noPaperTypeEdition(), NOW).map((d) => d.type);
+  assert.deepEqual(types, ["notification", "camera_ready"]);
+});

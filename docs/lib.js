@@ -81,8 +81,21 @@ export function pickEdition(editions, now) {
  * "submission" 타입이 쓰이기 때문이다.
  */
 export function nextDeadline(edition, now) {
-  const all = paperCandidates(edition?.deadlines ?? []);
+  const deadlines = edition?.deadlines ?? [];
+  const all = paperCandidates(deadlines);
   if (all.length === 0) {
+    // 두 경우는 답이 다르다. deadlines가 아예 비어 있으면(마감 배열 없이
+    // primary_deadline만 있는 소스) primary_deadline으로 합성해서 보여주는
+    // 수밖에 없고, 그래도 안전하다 - extraDeadlines가 뺄 실제 항목이 배열에
+    // 없기 때문이다. 하지만 deadlines에 항목은 있는데 그중 paper/submission
+    // 타입이 하나도 없다면(예: notification과 camera_ready만 있는 경우),
+    // primary_deadline으로 합성한 객체는 deadlines의 그 무엇과도 같은 참조가
+    // 아니라서 extraDeadlines가 아무것도 못 빼고, 셀에 뜬 마감이 펼침
+    // 목록에도 중복으로 나타난다. 게다가 notification/camera_ready 날짜를
+    // "제출마감"이라 부르는 것 자체가 틀렸다 - paper-over-submission
+    // 우선순위와 같은 판단이다. 이 경우 null을 돌려주면 셀은 미정으로
+    // 뜨고, 모든 단계가 그대로 펼침 목록에 남는다.
+    if (deadlines.length > 0) return null;
     return edition?.primary_deadline
       ? { type: "paper", label: "Paper", date: edition.primary_deadline }
       : null;

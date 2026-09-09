@@ -371,6 +371,13 @@ function render() {
   setPressed(document.querySelector("#ai-only"), state.filters.aiOnly);
   setPressed(document.querySelector("#hide-past"), state.filters.hidePast);
 
+  // 개별 토글로도 state.expanded가 바뀌므로, 전체 펼치기 버튼의 문구는
+  // 그 버튼의 클릭 핸들러가 아니라 여기서 매번 실제 상태로부터 다시
+  // 계산한다 - 그래야 "무엇을 하면 어떻게 될지"를 버튼이 항상 정확히
+  // 말한다. 핸들러는 무엇을 할지만 결정하고, 문구는 render()가 결정한다.
+  document.querySelector("#expand-all").textContent =
+    state.expanded.size > 0 ? "전체 접기" : "전체 펼치기";
+
   persistState();
 }
 
@@ -470,7 +477,7 @@ function wireEvents() {
     render();
   });
 
-  document.querySelector("#expand-all").addEventListener("click", (event) => {
+  document.querySelector("#expand-all").addEventListener("click", () => {
     const now = new Date();
     const anyOpen = state.expanded.size > 0;
     state.expanded.clear();
@@ -481,7 +488,6 @@ function wireEvents() {
         }
       }
     }
-    event.target.textContent = anyOpen ? "전체 펼치기" : "전체 접기";
     render();
   });
 }

@@ -1,0 +1,22 @@
+{
+  "chi": {
+    "url": "https://chi2027.acm.org/",
+    "last_modified": "Mon, 13 Jul 2026 07:32:29 GMT"
+  },
+  "mm": {
+    "url": "https://2026.acmmm.org/",
+    "last_modified": "Wed, 09 Sep 2026 01:40:53 GMT"
+  },
+  "ismar": {
+    "url": "https://www.ieeeismar.net/2026/call-for-posters/",
+    "etag": "\"6aa0b925-aec7\""
+  },
+  "uist": {
+    "url": "https://uist.acm.org/2026/cfp",
+    "note": "no ETag/Last-Modified header returned by server"
+  },
+  "siggraph": {
+    "url": "https://www.siggraph.org/",
+    "note": "blocked by Sucuri CloudProxy bot-protection (JS challenge, HTTP 307); page not fetched"
+  }
+}

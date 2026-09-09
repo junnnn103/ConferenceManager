@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-09T06:23:23.221978+00:00",
+  "generated_at": "2026-09-09T06:34:12.414351+00:00",
   "fields": [
     {
       "id": "ML",
@@ -1105,6 +1105,26 @@
               "date": "2027-02-18T23:59:59",
               "source": "ai-deadlines",
               "timezone": "AoE"
+            },
+            {
+              "type": "poster",
+              "label": "Posters",
+              "date": "2027-01-21T23:59:59",
+              "source": "cfp-scrape",
+              "evidence": {
+                "raw_text": "Thursday, January 21, 2027 : Submission deadline",
+                "url": "https://chi2027.acm.org/authors/posters/"
+              }
+            },
+            {
+              "type": "workshop",
+              "label": "Workshops",
+              "date": "2026-10-01T23:59:59",
+              "source": "cfp-scrape",
+              "evidence": {
+                "raw_text": "Thursday, October 1, 2026 : Organizer submission deadline",
+                "url": "https://chi2027.acm.org/authors/workshops/"
+              }
             }
           ],
           "primary_deadline": "2026-09-10T23:59:59",
@@ -2058,6 +2078,26 @@
               "date": "2026-08-20T23:59:59",
               "source": "ai-deadlines",
               "timezone": "AoE"
+            },
+            {
+              "type": "workshop",
+              "label": "Workshops",
+              "date": "2026-02-12T23:59:59",
+              "source": "cfp-scrape",
+              "evidence": {
+                "raw_text": "12th February 2026 - Deadline for submission of workshop proposals.",
+                "url": "https://2026.acmmm.org/site/call-workshops.html"
+              }
+            },
+            {
+              "type": "demo",
+              "label": "Demo and Video",
+              "date": "2026-06-11T23:59:59",
+              "source": "cfp-scrape",
+              "evidence": {
+                "raw_text": "Please submit via OpenReview by June 11, 2026.",
+                "url": "https://2026.acmmm.org/site/call-demos.html"
+              }
             }
           ],
           "primary_deadline": "2026-04-01T23:59:59",
@@ -2939,6 +2979,46 @@
               "date": "2026-03-31T23:59:59",
               "source": "ccfddl",
               "timezone": "AoE"
+            },
+            {
+              "type": "poster",
+              "label": "Posters",
+              "date": "2026-07-10T23:59:59",
+              "source": "cfp-scrape",
+              "evidence": {
+                "raw_text": "Submission deadline Friday, July 10, 2026",
+                "url": "https://uist.acm.org/2026/cfp#posters"
+              }
+            },
+            {
+              "type": "demo",
+              "label": "Demos",
+              "date": "2026-07-10T23:59:59",
+              "source": "cfp-scrape",
+              "evidence": {
+                "raw_text": "Submission deadline Friday, July 10, 2026",
+                "url": "https://uist.acm.org/2026/cfp#demos"
+              }
+            },
+            {
+              "type": "doctoral_consortium",
+              "label": "Doctoral Symposium",
+              "date": "2026-07-10T23:59:59",
+              "source": "cfp-scrape",
+              "evidence": {
+                "raw_text": "Submission deadline Friday, July 10, 2026",
+                "url": "https://uist.acm.org/2026/cfp#doctoral-symposium"
+              }
+            },
+            {
+              "type": "workshop",
+              "label": "Workshops",
+              "date": "2026-07-10T23:59:59",
+              "source": "cfp-scrape",
+              "evidence": {
+                "raw_text": "Submission deadline July 10th, 2026",
+                "url": "https://uist.acm.org/2026/cfp#workshops"
+              }
             }
           ],
           "primary_deadline": "2026-03-31T23:59:59",
@@ -3125,6 +3205,56 @@
               "date": "2026-03-16T23:59:59",
               "source": "ccfddl",
               "timezone": "AoE"
+            },
+            {
+              "type": "poster",
+              "label": "Posters",
+              "date": "2026-06-30T23:59:59",
+              "source": "cfp-scrape",
+              "evidence": {
+                "raw_text": "June 30, 2026: Poster paper submission and optional material submission due",
+                "url": "https://www.ieeeismar.net/2026/call-for-posters/"
+              }
+            },
+            {
+              "type": "workshop",
+              "label": "Workshops",
+              "date": "2026-05-22T23:59:59",
+              "source": "cfp-scrape",
+              "evidence": {
+                "raw_text": "Workshop proposal deadline: May 22nd, 2026 (23:59 AoE, Friday)",
+                "url": "https://www.ieeeismar.net/2026/call-for-workshops/"
+              }
+            },
+            {
+              "type": "demo",
+              "label": "Demos",
+              "date": "2026-07-17T23:59:59",
+              "source": "cfp-scrape",
+              "evidence": {
+                "raw_text": "Submission deadline: July 17 th, 2026 (23:59 AoE)",
+                "url": "https://www.ieeeismar.net/2026/call-for-demos/"
+              }
+            },
+            {
+              "type": "doctoral_consortium",
+              "label": "Doctoral Consortium",
+              "date": "2026-06-03T23:59:59",
+              "source": "cfp-scrape",
+              "evidence": {
+                "raw_text": "Application submission deadline: June 3rd, 2026 (23:59 AoE, Wednesday)",
+                "url": "https://www.ieeeismar.net/2026/call-for-doctoral-consortium/"
+              }
+            },
+            {
+              "type": "tutorial",
+              "label": "Tutorials",
+              "date": "2026-05-22T23:59:59",
+              "source": "cfp-scrape",
+              "evidence": {
+                "raw_text": "Tutorial proposal deadline: May 22nd, 2026 (23:59 AoE, Friday)",
+                "url": "https://www.ieeeismar.net/2026/call-for-tutorials/"
+              }
             }
           ],
           "primary_deadline": "2026-03-16T23:59:59",

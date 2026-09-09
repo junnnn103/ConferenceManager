@@ -1,0 +1,43 @@
+{
+  "abbr": "uist",
+  "editions": [
+    {
+      "year": 2026,
+      "conference_start": "2026-11-02",
+      "items": [
+        {
+          "type": "poster",
+          "label": "Posters",
+          "date": "2026-07-10 23:59:59",
+          "confidence": "high",
+          "raw_text": "Submission deadline Friday, July 10, 2026",
+          "url": "https://uist.acm.org/2026/cfp#posters"
+        },
+        {
+          "type": "demo",
+          "label": "Demos",
+          "date": "2026-07-10 23:59:59",
+          "confidence": "high",
+          "raw_text": "Submission deadline Friday, July 10, 2026",
+          "url": "https://uist.acm.org/2026/cfp#demos"
+        },
+        {
+          "type": "doctoral_consortium",
+          "label": "Doctoral Symposium",
+          "date": "2026-07-10 23:59:59",
+          "confidence": "high",
+          "raw_text": "Submission deadline Friday, July 10, 2026",
+          "url": "https://uist.acm.org/2026/cfp#doctoral-symposium"
+        },
+        {
+          "type": "workshop",
+          "label": "Workshops",
+          "date": "2026-07-10 23:59:59",
+          "confidence": "high",
+          "raw_text": "Submission deadline July 10th, 2026",
+          "url": "https://uist.acm.org/2026/cfp#workshops"
+        }
+      ]
+    }
+  ]
+}

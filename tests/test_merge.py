@@ -138,6 +138,49 @@ def test_select_editions_on_empty_input():
     assert select_editions([], date(2026, 1, 1)) == []
 
 
+def test_select_editions_keeps_undated_edition_with_future_deadline():
+    # MLSys 2027: date: TBD지만 마감(2026-10-30)은 확정. 이미 끝난 2026
+    # 회차(직전)와 함께 살아남아야 한다 - 날짜가 없다고 버려서 이미 끝난
+    # 회차만 남기면, 확정된 마감을 무시하고 사이트에 종료된 회차만 보여주게
+    # 된다.
+    editions = [
+        ed(2026, "x", start=date(2026, 3, 1), end=date(2026, 3, 5)),
+        ed(2027, "x", deadlines=[dl("paper", datetime(2026, 10, 30))]),
+    ]
+    picked = select_editions(editions, date(2026, 9, 9))
+    assert [e.year for e in picked] == [2026, 2027]
+
+
+def test_select_editions_ignores_undated_edition_with_past_deadline():
+    # 마감이 이미 지난 날짜 미상 회차는 '차기'가 아니다 - 최후의 수단으로만
+    # 살아남아야 한다.
+    editions = [
+        ed(2026, "x", start=date(2026, 3, 1), end=date(2026, 3, 5)),
+        ed(2027, "x", deadlines=[dl("paper", datetime(2025, 1, 1))]),
+    ]
+    picked = select_editions(editions, date(2026, 9, 9))
+    assert [e.year for e in picked] == [2026]
+
+
+def test_select_editions_orders_undated_deadline_candidates_by_earliest_deadline():
+    # 날짜 있는 회차가 전혀 없을 때, 날짜 미상 회차 여럿 중에서는 가장 이른
+    # 마감을 가진 쪽이 '차기'로 뽑힌다 — 연도가 더 최신인 쪽이 아니다.
+    # (연도만으로 고르면 우연히 맞아떨어질 수 있어, 일부러 더 이른 연도가
+    # 더 이른 마감을 갖도록 뒤집어 둔다.)
+    editions = [
+        ed(2028, "x", deadlines=[dl("paper", datetime(2026, 12, 1))]),
+        ed(2027, "x", deadlines=[dl("paper", datetime(2026, 10, 30))]),
+    ]
+    picked = select_editions(editions, date(2026, 9, 9))
+    assert [e.year for e in picked] == [2027]
+
+
+def test_select_editions_all_undated_no_deadlines_falls_back_to_latest_year():
+    # 날짜도 마감도 전혀 없으면 기존처럼 가장 최근 연도 하나만 남긴다.
+    editions = [ed(2025, "x"), ed(2026, "x")]
+    assert [e.year for e in select_editions(editions, date(2026, 1, 1))] == [2026]
+
+
 def test_pick_member_chooses_earliest_upcoming():
     # ICCV는 홀수해, ECCV는 짝수해. 2026년 9월 기준 차기는 ICCV 2027.
     members = {

@@ -72,6 +72,38 @@ test("pickEdition returns null for an empty list", () => {
   assert.equal(pickEdition([], NOW), null);
 });
 
+// MLSys 2027: date는 TBD지만 마감(primary_deadline)은 확정되어 있다.
+// scripts/merge.py의 select_editions와 같은 규칙으로, 날짜가 없어도 아직
+// 지나지 않은 마감이 있으면 '차기'로 뽑아야 한다.
+test("pickEdition picks an undated edition with a future primary_deadline over an already-ended dated one", () => {
+  const editions = [
+    edition(2026, "2026-03-01", "2026-03-05", null), // 이미 끝난 회차
+    edition(2027, null, null, "2026-10-30T23:59:59"), // 날짜 미상, 마감만 확정
+  ];
+  assert.equal(pickEdition(editions, NOW).year, 2027);
+});
+
+test("pickEdition ignores an undated edition whose primary_deadline already passed", () => {
+  const editions = [
+    edition(2026, "2026-03-01", "2026-03-05", null),
+    edition(2027, null, null, "2025-01-01T23:59:59"),
+  ];
+  assert.equal(pickEdition(editions, NOW).year, 2026);
+});
+
+test("isEnded is false for an undated edition with a future primary_deadline", () => {
+  // pickEdition이 이 회차를 고른 뒤, isEnded는 end/start가 없으므로 '종료'로
+  // 판단하지 않아야 한다 - 회색 처리되면 안 된다.
+  const conf1 = conf({
+    abbr: "MLSYS",
+    editions: [
+      edition(2026, "2026-03-01", "2026-03-05", null),
+      edition(2027, null, null, "2026-10-30T23:59:59"),
+    ],
+  });
+  assert.equal(isEnded(conf1, NOW), false);
+});
+
 test("formatDeadline marks a future deadline as upcoming", () => {
   const result = formatDeadline(edition(2027, "2027-01-01", "2027-01-05", "2026-12-01T23:59:59"), NOW);
   assert.equal(result.state, "upcoming");

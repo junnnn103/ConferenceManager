@@ -36,30 +36,67 @@ def apply_scraped(edition: Edition, extra: list[Deadline]) -> Edition:
 
 
 def edition_status(edition: Edition, today: date) -> str:
-    """upcoming / past / unknown."""
+    """upcoming / past / unknown.
+
+    날짜만 본다 - 마감이 있어도 "unknown"을 "upcoming"으로 바꾸지 않는다.
+    pick_member도 이 함수로 결합 행(ICCV/ECCV 등)의 대표를 고르는데,
+    거기서 마감 유무까지 승격 기준에 넣으면 날짜 없이 마감만 있는 구성원이
+    실제 개최일이 확정된 다른 구성원을 제치고 대표가 될 수 있다 - 이 함수의
+    책임 밖이다. 날짜 없는 회차를 마감으로 구제하는 로직은 그 필요가 실제로
+    있는 select_editions에만 있다(_future_deadline).
+    """
     end = edition.end or edition.start
     if end is None:
         return "unknown"
     return "upcoming" if end >= today else "past"
 
 
+def _future_deadline(edition: Edition, today: date) -> date | None:
+    """날짜 정보가 없는 회차를 위한 대체 신호.
+
+    학회는 개최지/일정보다 마감을 먼저 공지하는 경우가 흔하다(예: MLSys
+    2027은 날짜는 TBD지만 마감은 확정되어 있다). 아직 지나지 않은 마감이
+    있다면 그 날짜를 돌려주고, 없으면 None을 돌려준다.
+    """
+    primary = edition.primary_deadline()
+    if primary is None:
+        return None
+    primary_date = primary.date() if hasattr(primary, "date") else primary
+    return primary_date if primary_date >= today else None
+
+
 def select_editions(editions: list[Edition], today: date) -> list[Edition]:
     """직전 1개와 차기 1개만 남긴다.
 
     브라우저가 날짜 경계를 넘어가도 올바른 회차를 고를 수 있도록 둘을 넘긴다.
-    날짜가 없는 회차는 다른 후보가 전혀 없을 때만 살린다.
+
+    날짜가 없어도 아직 지나지 않은 마감이 있는 회차는 '차기'로 인정한다 —
+    날짜 없이 버리면 확정된 마감을 무시하고 이미 끝난 이전 회차만 보여주게
+    되기 때문이다. 날짜도 마감도 전혀 없는 회차는 여전히 다른 후보가 전혀
+    없을 때만 최후의 수단으로 살린다.
     """
     if not editions:
         return []
 
     dated = [e for e in editions if (e.end or e.start) is not None]
-    if not dated:
-        # 전부 날짜 미상이면 가장 최근 연도 하나만 남겨 '일정 미확인'으로 보낸다.
+    # 날짜는 없지만 아직 지나지 않은 마감이 있는 회차. (date, edition) 쌍으로
+    # 들고 있다가 날짜 기반 후보와 마감일을 기준으로 함께 정렬한다.
+    undated_with_deadline = [
+        (deadline, e)
+        for e in editions
+        if (e.end or e.start) is None
+        and (deadline := _future_deadline(e, today)) is not None
+    ]
+
+    if not dated and not undated_with_deadline:
+        # 전부 날짜도 마감도 미상이면 가장 최근 연도 하나만 남겨 '일정
+        # 미확인'으로 보낸다.
         return [max(editions, key=lambda e: e.year)]
 
     upcoming = sorted(
-        (e for e in dated if edition_status(e, today) == "upcoming"),
-        key=lambda e: (e.start or e.end),
+        [(e.start or e.end, e) for e in dated if edition_status(e, today) == "upcoming"]
+        + undated_with_deadline,
+        key=lambda pair: pair[0],
     )
     past = sorted(
         (e for e in dated if edition_status(e, today) == "past"),
@@ -70,7 +107,9 @@ def select_editions(editions: list[Edition], today: date) -> list[Edition]:
     if past:
         picked.append(past[-1])
     if upcoming:
-        picked.append(upcoming[0])
+        picked.append(upcoming[0][1])
+    if not picked:
+        return [max(editions, key=lambda e: e.year)]
     return picked
 
 

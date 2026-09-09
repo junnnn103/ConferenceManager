@@ -47,22 +47,45 @@ export function dayDelta(isoDate, now) {
   return Math.round((startOfDay(isoDate) - startOfDay(now)) / MS_PER_DAY);
 }
 
-/** 종료일이 오늘 이후인 회차 중 가장 이른 것. 없으면 가장 최근에 지난 회차. */
+/**
+ * 종료일이 오늘 이후인 회차 중 가장 이른 것. 없으면 가장 최근에 지난 회차.
+ *
+ * 날짜가 없어도 아직 지나지 않은 마감(primary_deadline)이 있는 회차는
+ * '차기' 후보로 인정한다 - scripts/merge.py의 select_editions와 같은
+ * 규칙이다. build가 이미 직전 1개/차기 1개로 추려서 넘기지만, 브라우저는
+ * 자신의 '오늘'로 다시 골라야 날짜 경계를 넘어가도 어긋나지 않으므로
+ * 여기서도 같은 기준을 써야 한다 - 안 그러면 MLSys처럼 날짜 없이 마감만
+ * 확정된 회차가 브라우저에서 다시 탈락하고, 이미 끝난 이전 회차가 대신
+ * 뽑혀 종료된 것처럼 보인다.
+ */
 export function pickEdition(editions, now) {
   if (!editions || editions.length === 0) return null;
   const dated = editions.filter((e) => e.end || e.start);
-  if (dated.length === 0) return editions[editions.length - 1];
+  const undatedWithDeadline = editions.filter(
+    (e) => !(e.end || e.start) && e.primary_deadline
+  );
+  if (dated.length === 0 && undatedWithDeadline.length === 0) {
+    return editions[editions.length - 1];
+  }
 
   const today = startOfDay(now);
-  const upcoming = dated
-    .filter((e) => startOfDay(e.end || e.start) >= today)
-    .sort((a, b) => startOfDay(a.start || a.end) - startOfDay(b.start || b.end));
-  if (upcoming.length > 0) return upcoming[0];
+  const upcoming = [
+    ...dated
+      .filter((e) => startOfDay(e.end || e.start) >= today)
+      .map((e) => [startOfDay(e.start || e.end), e]),
+    ...undatedWithDeadline
+      .filter((e) => startOfDay(e.primary_deadline) >= today)
+      .map((e) => [startOfDay(e.primary_deadline), e]),
+  ].sort((a, b) => a[0] - b[0]);
+  if (upcoming.length > 0) return upcoming[0][1];
 
-  return dated
-    .slice()
-    .sort((a, b) => startOfDay(a.end || a.start) - startOfDay(b.end || b.start))
-    .pop();
+  if (dated.length > 0) {
+    return dated
+      .slice()
+      .sort((a, b) => startOfDay(a.end || a.start) - startOfDay(b.end || b.start))
+      .pop();
+  }
+  return editions[editions.length - 1];
 }
 
 /**

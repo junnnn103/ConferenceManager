@@ -51,7 +51,15 @@ jobs:
 
       - name: 변경분 커밋
         run: |
-          if git diff --quiet -- docs/data/conferences.json data/scraped; then
+          # generated_at은 매 빌드마다 바뀌므로 이 줄만 다르면 "변경 없음"으로
+          # 본다 - 안 그러면 이 워크플로가 매일 실속 없는 커밋을 만들고,
+          # 그 커밋이 다른 push와 겹치면 충돌까지 난다(실제로 겪은 일이다).
+          # conferences.json은 build.py가 json.dumps(..., indent=2)로 쓰므로
+          # generated_at이 한 줄을 통째로 차지한다 - -I 옵션이 정확히 그
+          # 줄만 걸러낸다. data/scraped는 generated_at이 없으므로 그대로
+          # --quiet로 본다.
+          if git diff --quiet -I'"generated_at"' -- docs/data/conferences.json \
+              && git diff --quiet -- data/scraped; then
             echo "변경 없음"
             exit 0
           fi

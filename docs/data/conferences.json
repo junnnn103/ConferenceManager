@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-09T06:49:54.384546+00:00",
+  "generated_at": "2026-09-09T07:47:47.988869+00:00",
   "fields": [
     {
       "id": "ML",
@@ -955,6 +955,17 @@
           ],
           "primary_deadline": "2026-01-19T23:59:59",
           "source": "ai-deadlines"
+        },
+        {
+          "year": 2027,
+          "date_text": "Aug 7-13, 2027 Kyoto, Japan & Aug 15-17, 2027 Hengqin, China",
+          "start": "2027-08-07",
+          "end": "2027-08-17",
+          "place": "Kyoto, Japan & Hengqin, China",
+          "link": "https://www.ijcai.org/future_conferences",
+          "deadlines": [],
+          "primary_deadline": null,
+          "source": "manual"
         }
       ]
     },
@@ -2524,6 +2535,17 @@
           ],
           "primary_deadline": "2026-01-30T23:59:59",
           "source": "ai-deadlines"
+        },
+        {
+          "year": 2027,
+          "date_text": "July 6-11, 2027",
+          "start": "2027-07-06",
+          "end": "2027-07-11",
+          "place": "Athens, Greece",
+          "link": "https://roboticsconference.org/",
+          "deadlines": [],
+          "primary_deadline": null,
+          "source": "manual"
         }
       ]
     },
@@ -2603,6 +2625,25 @@
           ],
           "primary_deadline": "2025-10-30T20:00:00",
           "source": "ccfddl"
+        },
+        {
+          "year": 2027,
+          "date_text": "",
+          "start": null,
+          "end": null,
+          "place": "Bellevue Washington USA",
+          "link": "https://mlsys.org/",
+          "deadlines": [
+            {
+              "type": "paper",
+              "label": "Paper",
+              "date": "2026-10-30T20:00:00",
+              "source": "ccfddl",
+              "timezone": "UTC"
+            }
+          ],
+          "primary_deadline": "2026-10-30T20:00:00",
+          "source": "ccfddl"
         }
       ]
     },
@@ -2617,21 +2658,32 @@
       "editions": [
         {
           "year": 2026,
-          "date_text": "March 9-12, 2026",
-          "start": "2026-03-09",
-          "end": "2026-03-12",
-          "place": "Christchurch New Zealand",
+          "date_text": "March 16-19, 2026",
+          "start": "2026-03-16",
+          "end": "2026-03-19",
+          "place": "Edinburgh, Scotland (EICC; workshops at Heriot-Watt University)",
           "link": "https://humanrobotinteraction.org/2026/",
           "deadlines": [
             {
               "type": "paper",
               "label": "Full Paper",
-              "date": "2025-10-01T23:59:59",
+              "date": "2025-09-30T23:59:59",
               "source": "manual",
               "timezone": "AoE"
             }
           ],
-          "primary_deadline": "2025-10-01T23:59:59",
+          "primary_deadline": "2025-09-30T23:59:59",
+          "source": "manual"
+        },
+        {
+          "year": 2027,
+          "date_text": "March 8-12, 2027",
+          "start": "2027-03-08",
+          "end": "2027-03-12",
+          "place": "Santa Clara, California, USA",
+          "link": "https://humanrobotinteraction.org/",
+          "deadlines": [],
+          "primary_deadline": null,
           "source": "manual"
         }
       ]

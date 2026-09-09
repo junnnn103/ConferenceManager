@@ -12,13 +12,13 @@
 
 ## 현재 상태
 
-**16개 태스크 중 9개 완료. 테스트 122개 전부 통과.**
+**16개 태스크 중 9개 완료. 테스트 124개 전부 통과.**
 
 | # | 태스크 | 상태 | 마지막 커밋 |
 |---|---|---|---|
 | 1 | 스캐폴딩·데이터 모델 | 완료 | `5fbe518` |
 | 2 | 날짜 파서 | 완료 | `e5d7b98` |
-| 3 | registry 부트스트랩 | 완료 | `5d521ad` |
+| 3 | registry 부트스트랩 | 완료 | `ba79a70` (사후 수정 1건) |
 | 4 | ccfddl 어댑터 | 완료 | `4cf9f15` |
 | 5 | ai-deadlines 어댑터 | 완료 | `60f9a0e` |
 | 6 | manual·scraped 로더 | 완료 | `4303d41` |
@@ -39,7 +39,7 @@
 ```bash
 git checkout feature/conference-tracker
 pip install -e ".[dev,bootstrap]"
-python -m pytest -q          # 122 passed 여야 한다
+python -m pytest -q          # 124 passed 여야 한다
 python -m scripts.build      # 학회 1개, 미확인 38개
 ```
 
@@ -58,6 +58,27 @@ Task 10부터 `docs/superpowers/plans/2026-09-08-conference-tracker.md`의 해�
    건너뛰어도 아무 테스트도 안 깨졌다.
 2. **수정 후 판별력 확인** — 새 테스트를 넣었으면 고친 코드를 일부러 되돌려
    그 테스트가 실패하는지 본다. 이 절차가 없었다면 "고쳤다"고 믿고 넘어간 게 두 건 있었다.
+
+## 리뷰가 못 잡은 것 — 사용자가 잡았다
+
+**`ai_specialist` 값 7개가 틀려 있었다.** 두 엑셀이 같은 학회를 다르게 적는데
+(`nips`↔`NeurIPS`, `kdd`↔`SIGKDD`, `mm`↔`ACM MM`, `bigdataconf`↔`BigData`,
+`siggrapha`↔`SIGGRAPH Asia`, `nsdi`↔`USENIX NSDI`, `osdi`↔`USENIX OSDI`)
+`normalize_abbr`에 별칭 표가 없었다. 5개가 사이트에 나올 39개 안에 있어,
+NeurIPS와 KDD에 AI Specialist 배지가 안 붙는 상태였다.
+
+**Task 3 리뷰가 이걸 통과시킨 이유가 중요하다.** 리뷰어는 "registry가 엑셀에서
+재생성한 것과 일치하는가"를 매우 꼼꼼히 검증했다 — 필드 단위 대조, AST로 매핑 비교,
+openpyxl 차단 후 임포트 확인까지. 그런데 **코드가 일관되게 틀리면 그 검증은 통과한다.**
+결과를 원본의 *의미*와 대조하지 않았기 때문이다.
+
+사용자가 표를 보고 "NeurIPS가 AI Specialist가 아니라고?"라고 알아챈 것이
+유일한 발견 경로였다. 앞으로 데이터를 만드는 태스크(특히 Task 10의 홈페이지 URL과
+소스 id 39개)는 **결과를 원본과 대조하는 검증**을 별도로 넣을 것.
+
+수정: `AI_SPECIALIST_ALIASES` 표 추가(`ba79a70`), registry 재생성(72→79),
+별칭 표를 비우면 깨지는 테스트와 실제 registry에 대한 회귀 테스트 추가.
+과잉 수정 없음 — `mlsys`·`ismar`·`humanoids`는 정말 인정 목록에 없어 `False` 유지.
 
 ## 이 프로젝트에서 실제로 뚫렸던 것
 
@@ -111,6 +132,11 @@ Task 10부터 `docs/superpowers/plans/2026-09-08-conference-tracker.md`의 해�
     알 수 없어 버리고 경고한다. 틀린 이름표를 붙이느니 "일정 미확인"에 보이는 편이 정직하다.
 13. **scraped 조회를 구성원 이름 우선, `abbr_group` 폴백으로** — `iccv/eccv`는 파일명이
     될 수 없어 결합 행이 자동 추출 마감을 영원히 못 받는 상태였다.
+
+### registry 데이터 (Task 3, 사후 수정)
+
+13.5 **`AI_SPECIALIST_ALIASES` 표를 추가** — 두 엑셀의 표기 차이 7건을 잇는다.
+   내년 엑셀에서 표기가 또 달라지면 이 표에 추가해야 한다.
 
 ### 계획서 자체의 오류 정정 (코드가 옳고 계획서가 틀렸던 것)
 

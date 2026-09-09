@@ -2,11 +2,13 @@ name: build
 
 on:
   schedule:
-    # 21:00 UTC = 06:00 KST
-    - cron: "0 21 * * *"
+    # 일요일 21:00 UTC = 월요일 06:00 KST. 주 1회.
+    # 마감 D-day는 브라우저가 뷰어의 시계로 계산하므로 매일 빌드할 필요가 없다.
+    # 이 실행이 하는 일은 업스트림 두 저장소의 변경을 받아오는 것뿐이다.
+    - cron: "0 21 * * 0"
   workflow_dispatch:
   push:
-    branches: [master, main]
+    branches: [master, main, feature/conference-tracker]
 
 permissions:
   contents: write

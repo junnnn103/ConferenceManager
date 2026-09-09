@@ -157,6 +157,34 @@ def test_combined_row_picks_member_and_uses_its_display_name():
     assert conf["abbr_group"] == "iccv/eccv"
 
 
+# main()이 실제 registry.yaml/네트워크를 타지 않도록 완전히 격리된 픽스처.
+# sources가 전부 null이라 fetcher가 호출되지 않고, conf0만 manual로 해소되어
+# "부분 실패"(1/5 < 절반)를 결정적으로 재현한다. 활성 학회 수가 바뀌어도
+# (task 10처럼 registry.yaml의 sources를 채우는 변경이 와도) 이 테스트는
+# 흔들리지 않는다.
+_SHRINK_TEST_FIELDS = [{"id": "CV", "label": "CV", "color": "#3b82f6", "enabled": True}]
+_SHRINK_TEST_REGISTRY = [
+    {"abbr": f"conf{i}", "display": f"CONF{i}", "full_name": "", "grade": "",
+     "ai_specialist": False, "field": "CV", "homepage": None, "members": None,
+     "sources": {"ai_deadlines": None, "ccfddl": None}}
+    for i in range(5)
+]
+_SHRINK_TEST_MANUAL = {
+    "conf0": [Edition(
+        year=2024, date_text="Jan 1, 2024", start=date(2024, 1, 1), end=date(2024, 1, 2),
+        place="X", link="https://example.com", deadlines=[], source="manual",
+    )],
+}
+
+
+def _patch_isolated_build_inputs(monkeypatch, build_module):
+    """main()이 실제 data/registry.yaml이나 네트워크를 건드리지 않게 한다."""
+    monkeypatch.setattr(build_module, "load_registry", lambda: _SHRINK_TEST_REGISTRY)
+    monkeypatch.setattr(build_module, "load_fields", lambda: _SHRINK_TEST_FIELDS)
+    monkeypatch.setattr(build_module, "load_manual", lambda path: _SHRINK_TEST_MANUAL)
+    monkeypatch.setattr(build_module, "load_scraped", lambda path: {})
+
+
 def test_shrinking_conferences_below_half_is_rejected(tmp_path, monkeypatch):
     # 기존 JSON이 많은 학회를 가지고 있을 때, 새 실행이 그것의 절반 미만을
     # 내보내면 소스 장애로 보고 기존 파일을 유지한다.
@@ -164,9 +192,7 @@ def test_shrinking_conferences_below_half_is_rejected(tmp_path, monkeypatch):
 
     output_file = tmp_path / "conferences.json"
     monkeypatch.setattr(build_module, "OUTPUT_PATH", output_file)
-    monkeypatch.setattr(build_module, "FIELDS_PATH", build_module.ROOT / "data" / "fields.yaml")
-    monkeypatch.setattr(build_module, "MANUAL_PATH", build_module.ROOT / "data" / "manual.yaml")
-    monkeypatch.setattr(build_module, "SCRAPED_DIR", build_module.ROOT / "data" / "scraped")
+    _patch_isolated_build_inputs(monkeypatch, build_module)
 
     # 기존 파일: 40개 학회
     existing = {
@@ -179,7 +205,8 @@ def test_shrinking_conferences_below_half_is_rejected(tmp_path, monkeypatch):
     output_file.write_text(json.dumps(existing), encoding="utf-8")
 
     # 새 실행: 1개만 생성 (< 20, 절반의 절반)
-    out = build(REGISTRY, FIELDS, make_fetchers(), manual={}, scraped={}, today=TODAY)
+    out = build(_SHRINK_TEST_REGISTRY, _SHRINK_TEST_FIELDS, make_fetchers(),
+                manual=_SHRINK_TEST_MANUAL, scraped={}, today=TODAY)
     assert len(out["conferences"]) < 20
 
     # main()이 거부해야 함
@@ -198,9 +225,7 @@ def test_allow_shrink_flag_overrides_rejection(tmp_path, monkeypatch):
 
     output_file = tmp_path / "conferences.json"
     monkeypatch.setattr(build_module, "OUTPUT_PATH", output_file)
-    monkeypatch.setattr(build_module, "FIELDS_PATH", build_module.ROOT / "data" / "fields.yaml")
-    monkeypatch.setattr(build_module, "MANUAL_PATH", build_module.ROOT / "data" / "manual.yaml")
-    monkeypatch.setattr(build_module, "SCRAPED_DIR", build_module.ROOT / "data" / "scraped")
+    _patch_isolated_build_inputs(monkeypatch, build_module)
 
     # 기존 파일: 40개
     existing = {

@@ -1,0 +1,3205 @@
+{
+  "generated_at": "2026-09-09T00:32:05.055365+00:00",
+  "fields": [
+    {
+      "id": "ML",
+      "label": "ML",
+      "color": "#a855f7"
+    },
+    {
+      "id": "CV",
+      "label": "CV",
+      "color": "#3b82f6"
+    },
+    {
+      "id": "NLP",
+      "label": "NLP",
+      "color": "#22c55e"
+    },
+    {
+      "id": "Speech",
+      "label": "Speech",
+      "color": "#14b8a6"
+    },
+    {
+      "id": "Robotics",
+      "label": "Robotics",
+      "color": "#f97316"
+    },
+    {
+      "id": "DM/IR",
+      "label": "DM/IR",
+      "color": "#eab308"
+    },
+    {
+      "id": "HCI",
+      "label": "HCI",
+      "color": "#ec4899"
+    },
+    {
+      "id": "Graphics",
+      "label": "Graphics",
+      "color": "#8b5cf6"
+    },
+    {
+      "id": "Multimedia",
+      "label": "Multimedia",
+      "color": "#06b6d4"
+    },
+    {
+      "id": "AR/VR",
+      "label": "AR/VR",
+      "color": "#f43f5e"
+    }
+  ],
+  "conferences": [
+    {
+      "abbr": "CVPR",
+      "abbr_group": "cvpr",
+      "full_name": "Computer Vision and Pattern Recognition",
+      "grade": "최우수",
+      "ai_specialist": true,
+      "field": "CV",
+      "homepage": "https://cvpr.thecvf.com/",
+      "editions": [
+        {
+          "year": 2026,
+          "date_text": "June 3-7, 2026",
+          "start": "2026-06-03",
+          "end": "2026-06-07",
+          "place": "Denver USA",
+          "link": "https://cvpr.thecvf.com/Conferences/2026/CallForPapers",
+          "deadlines": [
+            {
+              "type": "abstract",
+              "label": "Abstract Submission",
+              "date": "2025-11-07T23:59:59",
+              "source": "ai-deadlines",
+              "timezone": "AoE"
+            },
+            {
+              "type": "paper",
+              "label": "Paper Submission",
+              "date": "2025-11-13T23:59:59",
+              "source": "ai-deadlines",
+              "timezone": "AoE"
+            },
+            {
+              "type": "supplementary",
+              "label": "Supplementary Materials",
+              "date": "2025-11-20T23:59:59",
+              "source": "ai-deadlines",
+              "timezone": "AoE"
+            },
+            {
+              "type": "review_release",
+              "label": "Reviews Released",
+              "date": "2026-01-22T23:59:59",
+              "source": "ai-deadlines",
+              "timezone": "AoE"
+            },
+            {
+              "type": "rebuttal_start",
+              "label": "Rebuttal Period Starts",
+              "date": "2026-01-22T23:59:59",
+              "source": "ai-deadlines",
+              "timezone": "AoE"
+            },
+            {
+              "type": "rebuttal_end",
+              "label": "Rebuttal Period Ends",
+              "date": "2026-01-29T23:59:59",
+              "source": "ai-deadlines",
+              "timezone": "AoE"
+            },
+            {
+              "type": "notification",
+              "label": "Final Decisions",
+              "date": "2026-02-20T23:59:59",
+              "source": "ai-deadlines",
+              "timezone": "AoE"
+            }
+          ],
+          "primary_deadline": "2025-11-13T23:59:59",
+          "source": "ai-deadlines"
+        },
+        {
+          "year": 2027,
+          "date_text": "June 19-26, 2027",
+          "start": "2027-06-19",
+          "end": "2027-06-26",
+          "place": "Seattle USA",
+          "link": "https://cvpr.thecvf.com/",
+          "deadlines": [],
+          "primary_deadline": null,
+          "source": "ai-deadlines"
+        }
+      ]
+    },
+    {
+      "abbr": "NeurIPS",
+      "abbr_group": "nips",
+      "full_name": "Neural Information Processing Systems",
+      "grade": "최우수",
+      "ai_specialist": true,
+      "field": "ML",
+      "homepage": "https://neurips.cc/",
+      "editions": [
+        {
+          "year": 2025,
+          "date_text": "November 30 - December 7, 2025",
+          "start": "2025-11-30",
+          "end": "2025-12-07",
+          "place": "San Diego USA",
+          "link": "https://neurips.cc/",
+          "deadlines": [
+            {
+              "type": "abstract",
+              "label": "Abstract submission deadline",
+              "date": "2025-05-11T23:59:59",
+              "source": "ai-deadlines",
+              "timezone": "AoE"
+            },
+            {
+              "type": "paper",
+              "label": "Paper submission deadline",
+              "date": "2025-05-15T23:59:59",
+              "source": "ai-deadlines",
+              "timezone": "AoE"
+            },
+            {
+              "type": "supplementary",
+              "label": "Supplementary materials deadline",
+              "date": "2025-05-22T23:59:59",
+              "source": "ai-deadlines",
+              "timezone": "AoE"
+            },
+            {
+              "type": "rebuttal_start",
+              "label": "Author rebuttal begins",
+              "date": "2025-07-24T00:00:00",
+              "source": "ai-deadlines",
+              "timezone": "AoE"
+            },
+            {
+              "type": "rebuttal_end",
+              "label": "Author rebuttal ends",
+              "date": "2025-07-30T23:59:59",
+              "source": "ai-deadlines",
+              "timezone": "AoE"
+            },
+            {
+              "type": "notification",
+              "label": "Author notification",
+              "date": "2025-09-18T23:59:59",
+              "source": "ai-deadlines",
+              "timezone": "AoE"
+            },
+            {
+              "type": "camera_ready",
+              "label": "Camera-ready deadline",
+              "date": "2025-10-23T23:59:59",
+              "source": "ai-deadlines",
+              "timezone": "AoE"
+            }
+          ],
+          "primary_deadline": "2025-05-15T23:59:59",
+          "source": "ai-deadlines"
+        },
+        {
+          "year": 2026,
+          "date_text": "December 6-12, 2026",
+          "start": "2026-12-06",
+          "end": "2026-12-12",
+          "place": "Sydney Australia",
+          "link": "https://neurips.cc/",
+          "deadlines": [
+            {
+              "type": "abstract",
+              "label": "Abstract registration deadline",
+              "date": "2026-05-04T23:59:59",
+              "source": "ai-deadlines",
+              "timezone": "AoE"
+            },
+            {
+              "type": "paper",
+              "label": "Paper submission deadline",
+              "date": "2026-05-06T23:59:59",
+              "source": "ai-deadlines",
+              "timezone": "AoE"
+            },
+            {
+              "type": "supplementary",
+              "label": "Supplementary materials deadline",
+              "date": "2026-05-06T23:59:59",
+              "source": "ai-deadlines",
+              "timezone": "AoE"
+            },
+            {
+              "type": "review_release",
+              "label": "Reviews released to authors",
+              "date": "2026-07-22T23:59:59",
+              "source": "ai-deadlines",
+              "timezone": "AoE"
+            },
+            {
+              "type": "rebuttal_start",
+              "label": "Author + Reviewer + AC Discussion Period starts",
+              "date": "2026-07-27T00:00:00",
+              "source": "ai-deadlines",
+              "timezone": "AoE"
+            },
+            {
+              "type": "rebuttal_end",
+              "label": "Author + Reviewer + AC Discussion Period ends",
+              "date": "2026-08-03T23:59:59",
+              "source": "ai-deadlines",
+              "timezone": "AoE"
+            },
+            {
+              "type": "notification",
+              "label": "Author notification",
+              "date": "2026-09-24T23:59:59",
+              "source": "ai-deadlines",
+              "timezone": "AoE"
+            }
+          ],
+          "primary_deadline": "2026-05-06T23:59:59",
+          "source": "ai-deadlines"
+        }
+      ]
+    },
+    {
+      "abbr": "ICLR",
+      "abbr_group": "iclr",
+      "full_name": "International Conference on Learning Representations",
+      "grade": "최우수",
+      "ai_specialist": true,
+      "field": "ML",
+      "homepage": "https://iclr.cc/",
+      "editions": [
+        {
+          "year": 2026,
+          "date_text": "April 23-27, 2026",
+          "start": "2026-04-23",
+          "end": "2026-04-27",
+          "place": "Rio de Janeiro Brazil",
+          "link": "https://iclr.cc/Conferences/2026",
+          "deadlines": [
+            {
+              "type": "abstract",
+              "label": "Abstract Submission",
+              "date": "2025-09-19T23:59:59",
+              "source": "ai-deadlines",
+              "timezone": "AoE"
+            },
+            {
+              "type": "submission",
+              "label": "Paper Submission",
+              "date": "2025-09-24T23:59:59",
+              "source": "ai-deadlines",
+              "timezone": "AoE"
+            },
+            {
+              "type": "review_release",
+              "label": "Reviews Released",
+              "date": "2025-11-11T23:59:59",
+              "source": "ai-deadlines",
+              "timezone": "AoE"
+            },
+            {
+              "type": "rebuttal_end",
+              "label": "Discussion Period End",
+              "date": "2025-12-03T23:59:59",
+              "source": "ai-deadlines",
+              "timezone": "AoE"
+            },
+            {
+              "type": "notification",
+              "label": "Notification",
+              "date": "2026-01-25T23:59:59",
+              "source": "ai-deadlines",
+              "timezone": "AoE"
+            }
+          ],
+          "primary_deadline": "2025-09-24T23:59:59",
+          "source": "ai-deadlines"
+        },
+        {
+          "year": 2027,
+          "date_text": "April 26-30, 2027",
+          "start": "2027-04-26",
+          "end": "2027-04-30",
+          "place": "San Francisco United States",
+          "link": "https://iclr.cc/Conferences/2027",
+          "deadlines": [
+            {
+              "type": "abstract",
+              "label": "Abstract Submission",
+              "date": "2026-09-18T23:59:59",
+              "source": "ai-deadlines",
+              "timezone": "AoE"
+            },
+            {
+              "type": "submission",
+              "label": "Paper Submission",
+              "date": "2026-09-25T23:59:59",
+              "source": "ai-deadlines",
+              "timezone": "AoE"
+            },
+            {
+              "type": "review_release",
+              "label": "Reviews Released",
+              "date": "2026-11-05T23:59:59",
+              "source": "ai-deadlines",
+              "timezone": "AoE"
+            },
+            {
+              "type": "rebuttal_end",
+              "label": "Author-Reviewer Discussion End",
+              "date": "2026-11-18T23:59:59",
+              "source": "ai-deadlines",
+              "timezone": "AoE"
+            },
+            {
+              "type": "notification",
+              "label": "Final Decisions",
+              "date": "2026-12-16T23:59:59",
+              "source": "ai-deadlines",
+              "timezone": "AoE"
+            }
+          ],
+          "primary_deadline": "2026-09-25T23:59:59",
+          "source": "ai-deadlines"
+        }
+      ]
+    },
+    {
+      "abbr": "ECCV",
+      "abbr_group": "iccv/eccv",
+      "full_name": "International Conference on Computer Vision / European Conference on Computer Vision",
+      "grade": "최우수",
+      "ai_specialist": true,
+      "field": "CV",
+      "homepage": "https://www.thecvf.com/",
+      "editions": [
+        {
+          "year": 2024,
+          "date_text": "September 29 - October 4, 2024",
+          "start": "2024-09-29",
+          "end": "2024-10-04",
+          "place": "MiCo Milano Italy",
+          "link": "https://eccv2024.ecva.net/",
+          "deadlines": [
+            {
+              "type": "abstract",
+              "label": "Abstract",
+              "date": "2024-02-29T13:00:00",
+              "source": "ccfddl",
+              "timezone": "UTC-8"
+            },
+            {
+              "type": "paper",
+              "label": "Paper",
+              "date": "2024-03-07T13:00:00",
+              "source": "ccfddl",
+              "timezone": "UTC-8"
+            }
+          ],
+          "primary_deadline": "2024-03-07T13:00:00",
+          "source": "ccfddl"
+        },
+        {
+          "year": 2026,
+          "date_text": "September 8-12, 2026",
+          "start": "2026-09-08",
+          "end": "2026-09-12",
+          "place": "Malmö Sweden",
+          "link": "https://eccv.ecva.net/Conferences/2026",
+          "deadlines": [
+            {
+              "type": "submission",
+              "label": "Tutorial Proposal Submission",
+              "date": "2026-02-15T23:59:59",
+              "source": "ai-deadlines",
+              "timezone": "AoE"
+            },
+            {
+              "type": "registration",
+              "label": "Paper Registration",
+              "date": "2026-02-26T22:00:00",
+              "source": "ai-deadlines",
+              "timezone": "UTC"
+            },
+            {
+              "type": "submission",
+              "label": "Workshop Proposal Submission",
+              "date": "2026-02-27T23:59:59",
+              "source": "ai-deadlines",
+              "timezone": "AoE"
+            },
+            {
+              "type": "paper",
+              "label": "Paper Submission",
+              "date": "2026-03-05T22:00:00",
+              "source": "ai-deadlines",
+              "timezone": "UTC"
+            },
+            {
+              "type": "supplementary",
+              "label": "Supplemental Materials",
+              "date": "2026-03-12T22:00:00",
+              "source": "ai-deadlines",
+              "timezone": "UTC"
+            },
+            {
+              "type": "notification",
+              "label": "Tutorial/Workshop Decisions",
+              "date": "2026-04-12T20:00:00",
+              "source": "ai-deadlines",
+              "timezone": "UTC"
+            },
+            {
+              "type": "review_release",
+              "label": "Reviews Released to Authors",
+              "date": "2026-05-02T23:59:59",
+              "source": "ai-deadlines",
+              "timezone": "UTC"
+            },
+            {
+              "type": "rebuttal_end",
+              "label": "Rebuttal Deadline",
+              "date": "2026-05-11T21:00:00",
+              "source": "ai-deadlines",
+              "timezone": "UTC"
+            },
+            {
+              "type": "submission",
+              "label": "AI Art Submission",
+              "date": "2026-06-14T23:59:59",
+              "source": "ai-deadlines",
+              "timezone": "AoE"
+            },
+            {
+              "type": "notification",
+              "label": "Final Decisions",
+              "date": "2026-06-17T23:59:59",
+              "source": "ai-deadlines",
+              "timezone": "UTC"
+            },
+            {
+              "type": "camera_ready",
+              "label": "Camera Ready Deadline",
+              "date": "2026-06-26T23:59:59",
+              "source": "ai-deadlines",
+              "timezone": "AoE"
+            },
+            {
+              "type": "notification",
+              "label": "AI Art Acceptance Notification",
+              "date": "2026-06-29T23:59:59",
+              "source": "ai-deadlines",
+              "timezone": "AoE"
+            }
+          ],
+          "primary_deadline": "2026-06-14T23:59:59",
+          "source": "ai-deadlines"
+        }
+      ]
+    },
+    {
+      "abbr": "ICML",
+      "abbr_group": "icml",
+      "full_name": "International Conference on Machine Learning",
+      "grade": "최우수",
+      "ai_specialist": true,
+      "field": "ML",
+      "homepage": "https://icml.cc/",
+      "editions": [
+        {
+          "year": 2026,
+          "date_text": "July 6-11, 2026",
+          "start": "2026-07-06",
+          "end": "2026-07-11",
+          "place": "Seoul South Korea",
+          "link": "https://icml.cc/Conferences/2026/CallForPapers",
+          "deadlines": [
+            {
+              "type": "abstract",
+              "label": "Abstract Submission",
+              "date": "2026-01-23T23:59:59",
+              "source": "ai-deadlines",
+              "timezone": "AoE"
+            },
+            {
+              "type": "paper",
+              "label": "Paper Submission",
+              "date": "2026-01-28T23:59:59",
+              "source": "ai-deadlines",
+              "timezone": "AoE"
+            },
+            {
+              "type": "review_release",
+              "label": "Reviews Released",
+              "date": "2026-03-24T23:59:59",
+              "source": "ai-deadlines",
+              "timezone": "AoE"
+            },
+            {
+              "type": "rebuttal_end",
+              "label": "Author Response Deadline",
+              "date": "2026-03-30T23:59:59",
+              "source": "ai-deadlines",
+              "timezone": "AoE"
+            },
+            {
+              "type": "notification",
+              "label": "Author Notification",
+              "date": "2026-04-30T23:59:59",
+              "source": "ai-deadlines",
+              "timezone": "AoE"
+            }
+          ],
+          "primary_deadline": "2026-01-28T23:59:59",
+          "source": "ai-deadlines"
+        }
+      ]
+    },
+    {
+      "abbr": "AAAI",
+      "abbr_group": "aaai",
+      "full_name": "AAAI Conference on Artificial Intelligence",
+      "grade": "최우수",
+      "ai_specialist": true,
+      "field": "ML",
+      "homepage": "https://aaai.org/conference/aaai/",
+      "editions": [
+        {
+          "year": 2026,
+          "date_text": "January 20 - 27, 2026",
+          "start": "2026-01-20",
+          "end": "2026-01-27",
+          "place": "Singapore Singapore",
+          "link": "https://aaai.org/conference/aaai/aaai-26/",
+          "deadlines": [
+            {
+              "type": "abstract",
+              "label": "Abstract submission deadline",
+              "date": "2025-07-25T23:59:59",
+              "source": "ai-deadlines",
+              "timezone": "AoE"
+            },
+            {
+              "type": "paper",
+              "label": "Paper submission deadline",
+              "date": "2025-08-01T23:59:59",
+              "source": "ai-deadlines",
+              "timezone": "AoE"
+            },
+            {
+              "type": "supplementary",
+              "label": "Supplementary material and code deadline",
+              "date": "2025-08-04T23:59:59",
+              "source": "ai-deadlines",
+              "timezone": "AoE"
+            },
+            {
+              "type": "notification",
+              "label": "Phase 1 rejection notifications",
+              "date": "2025-09-15T23:59:59",
+              "source": "ai-deadlines",
+              "timezone": "AoE"
+            },
+            {
+              "type": "rebuttal_start",
+              "label": "Author feedback window start",
+              "date": "2025-10-07T23:59:59",
+              "source": "ai-deadlines",
+              "timezone": "AoE"
+            },
+            {
+              "type": "rebuttal_end",
+              "label": "Author feedback window end",
+              "date": "2025-10-13T23:59:59",
+              "source": "ai-deadlines",
+              "timezone": "AoE"
+            },
+            {
+              "type": "notification",
+              "label": "Final acceptance/rejection notices",
+              "date": "2025-11-08T23:59:59",
+              "source": "ai-deadlines",
+              "timezone": "AoE"
+            },
+            {
+              "type": "camera_ready",
+              "label": "Camera-ready deadline",
+              "date": "2025-11-13T23:59:59",
+              "source": "ai-deadlines",
+              "timezone": "AoE"
+            }
+          ],
+          "primary_deadline": "2025-08-01T23:59:59",
+          "source": "ai-deadlines"
+        },
+        {
+          "year": 2027,
+          "date_text": "February 16 - 23, 2027",
+          "start": "2027-02-16",
+          "end": "2027-02-23",
+          "place": "Montréal Canada",
+          "link": "https://aaai.org/conference/aaai/aaai-27/",
+          "deadlines": [
+            {
+              "type": "abstract",
+              "label": "Abstract submission deadline",
+              "date": "2026-07-21T23:59:59",
+              "source": "ai-deadlines",
+              "timezone": "AoE"
+            },
+            {
+              "type": "paper",
+              "label": "Paper submission deadline",
+              "date": "2026-07-28T23:59:59",
+              "source": "ai-deadlines",
+              "timezone": "AoE"
+            },
+            {
+              "type": "supplementary",
+              "label": "Supplementary material and code deadline",
+              "date": "2026-07-31T23:59:59",
+              "source": "ai-deadlines",
+              "timezone": "AoE"
+            },
+            {
+              "type": "notification",
+              "label": "Phase 1 rejection notifications",
+              "date": "2026-09-24T23:59:59",
+              "source": "ai-deadlines",
+              "timezone": "AoE"
+            },
+            {
+              "type": "rebuttal_start",
+              "label": "Author feedback window start",
+              "date": "2026-10-19T23:59:59",
+              "source": "ai-deadlines",
+              "timezone": "AoE"
+            },
+            {
+              "type": "rebuttal_end",
+              "label": "Author feedback window end",
+              "date": "2026-10-25T23:59:59",
+              "source": "ai-deadlines",
+              "timezone": "AoE"
+            },
+            {
+              "type": "notification",
+              "label": "Final acceptance/rejection notices",
+              "date": "2026-11-30T23:59:59",
+              "source": "ai-deadlines",
+              "timezone": "AoE"
+            },
+            {
+              "type": "camera_ready",
+              "label": "Camera-ready deadline",
+              "date": "2026-12-14T23:59:59",
+              "source": "ai-deadlines",
+              "timezone": "AoE"
+            }
+          ],
+          "primary_deadline": "2026-07-28T23:59:59",
+          "source": "ai-deadlines"
+        }
+      ]
+    },
+    {
+      "abbr": "ACL",
+      "abbr_group": "acl",
+      "full_name": "Association for Computational Linguistics",
+      "grade": "최우수",
+      "ai_specialist": true,
+      "field": "NLP",
+      "homepage": "https://www.aclweb.org/",
+      "editions": [
+        {
+          "year": 2026,
+          "date_text": "July 2 - 7, 2026",
+          "start": "2026-07-02",
+          "end": "2026-07-07",
+          "place": "San Diego USA",
+          "link": "https://2026.aclweb.org/",
+          "deadlines": [
+            {
+              "type": "paper",
+              "label": "Paper submission deadline",
+              "date": "2026-01-05T23:59:59",
+              "source": "ai-deadlines",
+              "timezone": "AoE"
+            },
+            {
+              "type": "review_release",
+              "label": "ARR reviews available",
+              "date": "2026-03-10T23:59:59",
+              "source": "ai-deadlines",
+              "timezone": "AoE"
+            },
+            {
+              "type": "commitment_deadline",
+              "label": "ARR commitment deadline",
+              "date": "2026-03-14T23:59:59",
+              "source": "ai-deadlines",
+              "timezone": "AoE"
+            },
+            {
+              "type": "notification",
+              "label": "Author notification date",
+              "date": "2026-04-04T23:59:59",
+              "source": "ai-deadlines",
+              "timezone": "AoE"
+            },
+            {
+              "type": "withdrawal",
+              "label": "Withdrawal deadline",
+              "date": "2026-04-19T23:59:59",
+              "source": "ai-deadlines",
+              "timezone": "AoE"
+            },
+            {
+              "type": "camera_ready",
+              "label": "Camera-ready deadline",
+              "date": "2026-04-19T23:59:59",
+              "source": "ai-deadlines",
+              "timezone": "AoE"
+            }
+          ],
+          "primary_deadline": "2026-01-05T23:59:59",
+          "source": "ai-deadlines"
+        },
+        {
+          "year": 2027,
+          "date_text": "August 17-22, 2027",
+          "start": "2027-08-17",
+          "end": "2027-08-22",
+          "place": "Kyoto Japan",
+          "link": "https://2027.aclweb.org/",
+          "deadlines": [],
+          "primary_deadline": null,
+          "source": "ccfddl"
+        }
+      ]
+    },
+    {
+      "abbr": "EMNLP",
+      "abbr_group": "emnlp",
+      "full_name": "Conference on Empirical Methods in Natural Language Processing",
+      "grade": "최우수",
+      "ai_specialist": true,
+      "field": "NLP",
+      "homepage": "https://aclanthology.org/venues/emnlp/",
+      "editions": [
+        {
+          "year": 2025,
+          "date_text": "November 5 - 9, 2025",
+          "start": "2025-11-05",
+          "end": "2025-11-09",
+          "place": "Suzhou China",
+          "link": "https://2025.emnlp.org/",
+          "deadlines": [
+            {
+              "type": "paper",
+              "label": "Paper",
+              "date": "2025-05-19T23:59:59",
+              "source": "ccfddl",
+              "timezone": "UTC-12"
+            }
+          ],
+          "primary_deadline": "2025-05-19T23:59:59",
+          "source": "ccfddl"
+        },
+        {
+          "year": 2026,
+          "date_text": "October 24 - 29, 2026",
+          "start": "2026-10-24",
+          "end": "2026-10-29",
+          "place": "Budapest Hungary",
+          "link": "https://2026.emnlp.org/",
+          "deadlines": [
+            {
+              "type": "paper",
+              "label": "Paper submission deadline",
+              "date": "2026-05-25T23:59:59",
+              "source": "ai-deadlines",
+              "timezone": "AoE"
+            },
+            {
+              "type": "reviewer_registration",
+              "label": "Reviewer registration deadline",
+              "date": "2026-05-27T23:59:59",
+              "source": "ai-deadlines",
+              "timezone": "AoE"
+            },
+            {
+              "type": "rebuttal_start",
+              "label": "Author response period start",
+              "date": "2026-07-07T23:59:59",
+              "source": "ai-deadlines",
+              "timezone": "AoE"
+            },
+            {
+              "type": "rebuttal_end",
+              "label": "Author response period end",
+              "date": "2026-07-13T23:59:59",
+              "source": "ai-deadlines",
+              "timezone": "AoE"
+            },
+            {
+              "type": "review_release",
+              "label": "Meta review release",
+              "date": "2026-07-30T23:59:59",
+              "source": "ai-deadlines",
+              "timezone": "AoE"
+            },
+            {
+              "type": "commitment_deadline",
+              "label": "EMNLP commitment deadline",
+              "date": "2026-08-02T23:59:59",
+              "source": "ai-deadlines",
+              "timezone": "AoE"
+            },
+            {
+              "type": "notification",
+              "label": "Author notification date",
+              "date": "2026-08-20T23:59:59",
+              "source": "ai-deadlines",
+              "timezone": "AoE"
+            },
+            {
+              "type": "camera_ready",
+              "label": "Camera-ready deadline",
+              "date": "2026-08-30T23:59:59",
+              "source": "ai-deadlines",
+              "timezone": "AoE"
+            }
+          ],
+          "primary_deadline": "2026-05-25T23:59:59",
+          "source": "ai-deadlines"
+        }
+      ]
+    },
+    {
+      "abbr": "IJCAI",
+      "abbr_group": "ijcai",
+      "full_name": "International Joint Conference on Artificial Intelligence",
+      "grade": "우수",
+      "ai_specialist": true,
+      "field": "ML",
+      "homepage": "https://www.ijcai.org/",
+      "editions": [
+        {
+          "year": 2026,
+          "date_text": "August 15-21, 2026",
+          "start": "2026-08-15",
+          "end": "2026-08-21",
+          "place": "Bremen Germany",
+          "link": "https://2026.ijcai.org/",
+          "deadlines": [
+            {
+              "type": "abstract",
+              "label": "Abstract submission deadline",
+              "date": "2026-01-12T23:59:59",
+              "source": "ai-deadlines",
+              "timezone": "AoE"
+            },
+            {
+              "type": "paper",
+              "label": "Full paper submission deadline",
+              "date": "2026-01-19T23:59:59",
+              "source": "ai-deadlines",
+              "timezone": "AoE"
+            },
+            {
+              "type": "notification",
+              "label": "Phase I notification",
+              "date": "2026-03-04T23:59:59",
+              "source": "ai-deadlines",
+              "timezone": "AoE"
+            },
+            {
+              "type": "rebuttal_start",
+              "label": "Author response period start",
+              "date": "2026-04-07T00:00:00",
+              "source": "ai-deadlines",
+              "timezone": "AoE"
+            },
+            {
+              "type": "rebuttal_end",
+              "label": "Author response period end",
+              "date": "2026-04-10T23:59:59",
+              "source": "ai-deadlines",
+              "timezone": "AoE"
+            },
+            {
+              "type": "notification",
+              "label": "Paper notification",
+              "date": "2026-04-29T23:59:59",
+              "source": "ai-deadlines",
+              "timezone": "AoE"
+            },
+            {
+              "type": "camera_ready",
+              "label": "Camera ready deadline",
+              "date": "2026-05-15T23:59:59",
+              "source": "ai-deadlines",
+              "timezone": "AoE"
+            }
+          ],
+          "primary_deadline": "2026-01-19T23:59:59",
+          "source": "ai-deadlines"
+        }
+      ]
+    },
+    {
+      "abbr": "NAACL",
+      "abbr_group": "naacl",
+      "full_name": "North American Chapter of the Association for Computational Linguistics",
+      "grade": "우수",
+      "ai_specialist": true,
+      "field": "NLP",
+      "homepage": "https://naacl.org/",
+      "editions": [
+        {
+          "year": 2025,
+          "date_text": "April 29-May 4, 2025",
+          "start": "2025-04-29",
+          "end": "2025-05-04",
+          "place": "Albuquerque New Mexico",
+          "link": "https://2025.naacl.org/",
+          "deadlines": [
+            {
+              "type": "paper",
+              "label": "Paper",
+              "date": "2024-10-15T23:59:59",
+              "source": "ai-deadlines",
+              "timezone": "AoE"
+            }
+          ],
+          "primary_deadline": "2024-10-15T23:59:59",
+          "source": "ai-deadlines"
+        },
+        {
+          "year": 2027,
+          "date_text": "June 1-5, 2027",
+          "start": "2027-06-01",
+          "end": "2027-06-05",
+          "place": "San Francisco USA",
+          "link": "https://2027.naacl.org/",
+          "deadlines": [
+            {
+              "type": "paper",
+              "label": "Paper",
+              "date": "2026-10-12T23:59:59",
+              "source": "ai-deadlines",
+              "timezone": "AoE"
+            }
+          ],
+          "primary_deadline": "2026-10-12T23:59:59",
+          "source": "ai-deadlines"
+        }
+      ]
+    },
+    {
+      "abbr": "CHI",
+      "abbr_group": "chi",
+      "full_name": "International Conference on Human Factors in Computing Systems",
+      "grade": "최우수",
+      "ai_specialist": true,
+      "field": "HCI",
+      "homepage": "https://sigchi.org/",
+      "editions": [
+        {
+          "year": 2026,
+          "date_text": "April 13 - April 17, 2026",
+          "start": "2026-04-13",
+          "end": "2026-04-17",
+          "place": "Barcelona Spain",
+          "link": "https://chi2026.acm.org/",
+          "deadlines": [
+            {
+              "type": "abstract",
+              "label": "Abstract/Metadata Due",
+              "date": "2025-09-04T23:59:59",
+              "source": "ai-deadlines",
+              "timezone": "AoE"
+            },
+            {
+              "type": "paper",
+              "label": "Full Paper Due",
+              "date": "2025-09-11T23:59:59",
+              "source": "ai-deadlines",
+              "timezone": "AoE"
+            },
+            {
+              "type": "review_release",
+              "label": "Reviews Released",
+              "date": "2025-11-04T23:59:59",
+              "source": "ai-deadlines",
+              "timezone": "AoE"
+            },
+            {
+              "type": "rebuttal_and_revision",
+              "label": "Resubmission Due",
+              "date": "2025-12-04T23:59:59",
+              "source": "ai-deadlines",
+              "timezone": "AoE"
+            },
+            {
+              "type": "notification",
+              "label": "Decisions Notification",
+              "date": "2026-01-15T23:59:59",
+              "source": "ai-deadlines",
+              "timezone": "AoE"
+            }
+          ],
+          "primary_deadline": "2025-09-11T23:59:59",
+          "source": "ai-deadlines"
+        },
+        {
+          "year": 2027,
+          "date_text": "May 10 - May 14, 2027",
+          "start": "2027-05-10",
+          "end": "2027-05-14",
+          "place": "Pittsburgh United States",
+          "link": "https://chi2027.acm.org/",
+          "deadlines": [
+            {
+              "type": "paper",
+              "label": "Full Paper Due",
+              "date": "2026-09-10T23:59:59",
+              "source": "ai-deadlines",
+              "timezone": "AoE"
+            },
+            {
+              "type": "review_release",
+              "label": "Reviews Released",
+              "date": "2026-11-05T23:59:59",
+              "source": "ai-deadlines",
+              "timezone": "AoE"
+            },
+            {
+              "type": "rebuttal_and_revision",
+              "label": "Resubmission Due",
+              "date": "2026-12-03T23:59:59",
+              "source": "ai-deadlines",
+              "timezone": "AoE"
+            },
+            {
+              "type": "notification",
+              "label": "Decisions Notification",
+              "date": "2026-12-17T23:59:59",
+              "source": "ai-deadlines",
+              "timezone": "AoE"
+            },
+            {
+              "type": "camera_ready",
+              "label": "Publication-Ready Deadline",
+              "date": "2027-02-18T23:59:59",
+              "source": "ai-deadlines",
+              "timezone": "AoE"
+            }
+          ],
+          "primary_deadline": "2026-09-10T23:59:59",
+          "source": "ai-deadlines"
+        }
+      ]
+    },
+    {
+      "abbr": "ICASSP",
+      "abbr_group": "icassp",
+      "full_name": "International Conference on Acoustics, Speech, and Signal Processing",
+      "grade": "최우수",
+      "ai_specialist": true,
+      "field": "Speech",
+      "homepage": "https://signalprocessingsociety.org/event-names/icassp",
+      "editions": [
+        {
+          "year": 2026,
+          "date_text": "May 4-8, 2026",
+          "start": "2025-05-04",
+          "end": "2025-05-08",
+          "place": "Barcelona Spain",
+          "link": "https://2026.ieeeicassp.org",
+          "deadlines": [
+            {
+              "type": "submission",
+              "label": "Paper Submission",
+              "date": "2025-09-18T08:59:59",
+              "source": "ai-deadlines",
+              "timezone": "GMT+02"
+            }
+          ],
+          "primary_deadline": "2025-09-18T08:59:59",
+          "source": "ai-deadlines"
+        },
+        {
+          "year": 2027,
+          "date_text": "May 16-21, 2027",
+          "start": "2027-05-16",
+          "end": "2027-05-21",
+          "place": "Toronto Canada",
+          "link": "https://2027.ieeeicassp.org/",
+          "deadlines": [
+            {
+              "type": "paper",
+              "label": "Paper",
+              "date": "2026-09-16T23:59:59",
+              "source": "ccfddl",
+              "timezone": "UTC-12"
+            }
+          ],
+          "primary_deadline": "2026-09-16T23:59:59",
+          "source": "ccfddl"
+        }
+      ]
+    },
+    {
+      "abbr": "KDD",
+      "abbr_group": "kdd",
+      "full_name": "ACM SIGKDD Conference on Knowledge Discovery and Data Mining",
+      "grade": "최우수",
+      "ai_specialist": true,
+      "field": "DM/IR",
+      "homepage": "https://kdd.org/",
+      "editions": [
+        {
+          "year": 2026,
+          "date_text": "August 9 - 13, 2026",
+          "start": "2026-08-09",
+          "end": "2026-08-13",
+          "place": "Jeju Korea",
+          "link": "https://kdd2026.kdd.org/",
+          "deadlines": [
+            {
+              "type": "abstract",
+              "label": "Abstract submission (First Cycle)",
+              "date": "2025-07-24T23:59:59",
+              "source": "ai-deadlines",
+              "timezone": "AoE"
+            },
+            {
+              "type": "paper",
+              "label": "Paper submission (First Cycle)",
+              "date": "2025-07-31T23:59:59",
+              "source": "ai-deadlines",
+              "timezone": "AoE"
+            },
+            {
+              "type": "rebuttal_start",
+              "label": "Rebuttal period start (First Cycle)",
+              "date": "2025-10-04T23:59:59",
+              "source": "ai-deadlines",
+              "timezone": "AoE"
+            },
+            {
+              "type": "rebuttal_end",
+              "label": "Rebuttal period end (First Cycle)",
+              "date": "2025-10-18T23:59:59",
+              "source": "ai-deadlines",
+              "timezone": "AoE"
+            },
+            {
+              "type": "notification",
+              "label": "Notification (First Cycle)",
+              "date": "2025-11-23T23:59:59",
+              "source": "ai-deadlines",
+              "timezone": "AoE"
+            },
+            {
+              "type": "abstract",
+              "label": "Abstract submission (Second Cycle)",
+              "date": "2026-02-01T23:59:59",
+              "source": "ai-deadlines",
+              "timezone": "AoE"
+            },
+            {
+              "type": "paper",
+              "label": "Paper submission (Second Cycle)",
+              "date": "2026-02-08T23:59:59",
+              "source": "ai-deadlines",
+              "timezone": "AoE"
+            },
+            {
+              "type": "rebuttal_start",
+              "label": "Rebuttal period start (Second Cycle)",
+              "date": "2026-04-04T23:59:59",
+              "source": "ai-deadlines",
+              "timezone": "AoE"
+            },
+            {
+              "type": "rebuttal_end",
+              "label": "Rebuttal period end (Second Cycle)",
+              "date": "2026-04-17T23:59:59",
+              "source": "ai-deadlines",
+              "timezone": "AoE"
+            },
+            {
+              "type": "notification",
+              "label": "Notification (Second Cycle)",
+              "date": "2026-05-16T23:59:59",
+              "source": "ai-deadlines",
+              "timezone": "AoE"
+            }
+          ],
+          "primary_deadline": "2026-02-08T23:59:59",
+          "source": "ai-deadlines"
+        },
+        {
+          "year": 2027,
+          "date_text": "August 1-5, 2027",
+          "start": "2027-08-01",
+          "end": "2027-08-05",
+          "place": "San Jose California USA",
+          "link": "https://kdd2027.kdd.org/",
+          "deadlines": [
+            {
+              "type": "abstract",
+              "label": "1st round of 2 total rounds",
+              "date": "2026-07-19T23:59:59",
+              "source": "ccfddl",
+              "timezone": "AoE"
+            },
+            {
+              "type": "paper",
+              "label": "1st round of 2 total rounds",
+              "date": "2026-07-26T23:59:59",
+              "source": "ccfddl",
+              "timezone": "AoE"
+            }
+          ],
+          "primary_deadline": "2026-07-26T23:59:59",
+          "source": "ccfddl"
+        }
+      ]
+    },
+    {
+      "abbr": "ICRA",
+      "abbr_group": "icra",
+      "full_name": "IEEE International Conference on Robotics and Automation",
+      "grade": "최우수",
+      "ai_specialist": true,
+      "field": "Robotics",
+      "homepage": "https://www.ieee-ras.org/conferences-workshops/fully-sponsored/icra/",
+      "editions": [
+        {
+          "year": 2026,
+          "date_text": "June 1 - June 5, 2026",
+          "start": "2026-06-01",
+          "end": "2026-06-05",
+          "place": "Vienna Austria",
+          "link": "https://2026.ieee-icra.org/",
+          "deadlines": [
+            {
+              "type": "submission",
+              "label": "Paper Submission",
+              "date": "2025-09-15T23:59:59",
+              "source": "ai-deadlines",
+              "timezone": "PST"
+            },
+            {
+              "type": "notification",
+              "label": "Notification of Acceptance",
+              "date": "2026-01-31T23:59:59",
+              "source": "ai-deadlines",
+              "timezone": "PST"
+            },
+            {
+              "type": "camera_ready",
+              "label": "Camera-Ready Submission",
+              "date": "2026-03-06T23:59:59",
+              "source": "ai-deadlines",
+              "timezone": "PST"
+            }
+          ],
+          "primary_deadline": "2025-09-15T23:59:59",
+          "source": "ai-deadlines"
+        },
+        {
+          "year": 2027,
+          "date_text": "May 24 - 28, 2027",
+          "start": "2027-05-24",
+          "end": "2027-05-28",
+          "place": "Seoul South Korea",
+          "link": "https://2027.ieee-icra.org/",
+          "deadlines": [
+            {
+              "type": "submission",
+              "label": "Paper Submission",
+              "date": "2026-09-15T23:59:59",
+              "source": "ai-deadlines",
+              "timezone": "PST"
+            },
+            {
+              "type": "notification",
+              "label": "Notification of Acceptance",
+              "date": "2027-01-31T23:59:59",
+              "source": "ai-deadlines",
+              "timezone": "PST"
+            },
+            {
+              "type": "camera_ready",
+              "label": "Camera-Ready Submission",
+              "date": "2027-03-06T23:59:59",
+              "source": "ai-deadlines",
+              "timezone": "PST"
+            }
+          ],
+          "primary_deadline": "2026-09-15T23:59:59",
+          "source": "ai-deadlines"
+        }
+      ]
+    },
+    {
+      "abbr": "WWW",
+      "abbr_group": "www",
+      "full_name": "World Wide Web Conference Series",
+      "grade": "최우수",
+      "ai_specialist": true,
+      "field": "DM/IR",
+      "homepage": "https://www.iw3c2.org/",
+      "editions": [
+        {
+          "year": 2026,
+          "date_text": "April 13-17, 2026",
+          "start": "2026-04-13",
+          "end": "2026-04-17",
+          "place": "Dubai UAE",
+          "link": "https://www2026.thewebconf.org/",
+          "deadlines": [
+            {
+              "type": "abstract",
+              "label": "Abstract Submission",
+              "date": "2025-09-30T23:59:59",
+              "source": "ai-deadlines",
+              "timezone": "AoE"
+            },
+            {
+              "type": "submission",
+              "label": "Paper Submission",
+              "date": "2025-10-07T23:59:59",
+              "source": "ai-deadlines",
+              "timezone": "AoE"
+            },
+            {
+              "type": "rebuttal_start",
+              "label": "Rebuttal Period Start",
+              "date": "2025-11-24T00:00:00",
+              "source": "ai-deadlines",
+              "timezone": "AoE"
+            },
+            {
+              "type": "rebuttal_end",
+              "label": "Rebuttal Period End",
+              "date": "2025-12-01T23:59:59",
+              "source": "ai-deadlines",
+              "timezone": "AoE"
+            },
+            {
+              "type": "notification",
+              "label": "Notification",
+              "date": "2026-01-13T23:59:59",
+              "source": "ai-deadlines",
+              "timezone": "AoE"
+            },
+            {
+              "type": "camera_ready",
+              "label": "Camera Ready",
+              "date": "2026-01-25T23:59:59",
+              "source": "ai-deadlines",
+              "timezone": "AoE"
+            }
+          ],
+          "primary_deadline": "2025-10-07T23:59:59",
+          "source": "ai-deadlines"
+        },
+        {
+          "year": 2027,
+          "date_text": "May 10-14, 2027",
+          "start": "2027-05-10",
+          "end": "2027-05-14",
+          "place": "Dublin Ireland",
+          "link": "https://www2027.thewebconf.org/",
+          "deadlines": [
+            {
+              "type": "abstract",
+              "label": "Abstract Submission",
+              "date": "2026-10-18T23:59:59",
+              "source": "ai-deadlines",
+              "timezone": "AoE"
+            },
+            {
+              "type": "submission",
+              "label": "Paper Submission",
+              "date": "2026-10-25T23:59:59",
+              "source": "ai-deadlines",
+              "timezone": "AoE"
+            },
+            {
+              "type": "review_release",
+              "label": "Result Release",
+              "date": "2026-12-21T23:59:59",
+              "source": "ai-deadlines",
+              "timezone": "AoE"
+            },
+            {
+              "type": "rebuttal_start",
+              "label": "Rebuttal Period Start",
+              "date": "2026-12-21T00:00:00",
+              "source": "ai-deadlines",
+              "timezone": "AoE"
+            },
+            {
+              "type": "rebuttal_end",
+              "label": "Rebuttal Period End",
+              "date": "2026-12-31T23:59:59",
+              "source": "ai-deadlines",
+              "timezone": "AoE"
+            },
+            {
+              "type": "notification",
+              "label": "Notification",
+              "date": "2027-01-04T23:59:59",
+              "source": "ai-deadlines",
+              "timezone": "AoE"
+            },
+            {
+              "type": "camera_ready",
+              "label": "Camera Ready",
+              "date": "2027-01-31T23:59:59",
+              "source": "ai-deadlines",
+              "timezone": "AoE"
+            }
+          ],
+          "primary_deadline": "2026-10-25T23:59:59",
+          "source": "ai-deadlines"
+        }
+      ]
+    },
+    {
+      "abbr": "INTERSPEECH",
+      "abbr_group": "interspeech",
+      "full_name": "Annual Conference of the International Speech Communication Association",
+      "grade": "최우수",
+      "ai_specialist": true,
+      "field": "Speech",
+      "homepage": "https://www.isca-speech.org/",
+      "editions": [
+        {
+          "year": 2025,
+          "date_text": "August 17-22, 2025",
+          "start": "2025-08-17",
+          "end": "2025-08-22",
+          "place": "Rotterdam Netherlands",
+          "link": "https://www.interspeech2025.org/home",
+          "deadlines": [
+            {
+              "type": "paper",
+              "label": "Paper",
+              "date": "2025-02-19T23:59:59",
+              "source": "ccfddl",
+              "timezone": "UTC+0"
+            }
+          ],
+          "primary_deadline": "2025-02-19T23:59:59",
+          "source": "ccfddl"
+        },
+        {
+          "year": 2026,
+          "date_text": "September 28-October 1, 2026",
+          "start": "2026-09-28",
+          "end": "2026-10-01",
+          "place": "Sydney Australia",
+          "link": "https://interspeech2026.org",
+          "deadlines": [
+            {
+              "type": "submission",
+              "label": "Paper submission deadline",
+              "date": "2026-02-25T23:59:59",
+              "source": "ai-deadlines",
+              "timezone": "AoE"
+            },
+            {
+              "type": "supplementary",
+              "label": "Paper update deadline",
+              "date": "2026-03-04T23:59:59",
+              "source": "ai-deadlines",
+              "timezone": "AoE"
+            },
+            {
+              "type": "rebuttal_start",
+              "label": "Rebuttal period start",
+              "date": "2026-04-24T23:59:59",
+              "source": "ai-deadlines",
+              "timezone": "AoE"
+            },
+            {
+              "type": "rebuttal_end",
+              "label": "Rebuttal period end",
+              "date": "2026-05-01T23:59:59",
+              "source": "ai-deadlines",
+              "timezone": "AoE"
+            },
+            {
+              "type": "notification",
+              "label": "Paper acceptance notification",
+              "date": "2026-06-05T23:59:59",
+              "source": "ai-deadlines",
+              "timezone": "AoE"
+            },
+            {
+              "type": "camera_ready",
+              "label": "Camera-ready paper submission",
+              "date": "2026-06-19T23:59:59",
+              "source": "ai-deadlines",
+              "timezone": "AoE"
+            }
+          ],
+          "primary_deadline": "2026-02-25T23:59:59",
+          "source": "ai-deadlines"
+        }
+      ]
+    },
+    {
+      "abbr": "WACV",
+      "abbr_group": "wacv",
+      "full_name": "IEEE Winter Conference on Applications of Computer Vision",
+      "grade": "우수",
+      "ai_specialist": true,
+      "field": "CV",
+      "homepage": "https://wacv.thecvf.com/",
+      "editions": [
+        {
+          "year": 2026,
+          "date_text": "March 6 - March 10, 2026",
+          "start": "2026-03-06",
+          "end": "2026-03-10",
+          "place": "Tucson, Arizona USA",
+          "link": "https://wacv.thecvf.com/",
+          "deadlines": [
+            {
+              "type": "registration",
+              "label": "Round 1 Paper Registration",
+              "date": "2025-07-11T23:59:59",
+              "source": "ai-deadlines",
+              "timezone": "AoE"
+            },
+            {
+              "type": "submission",
+              "label": "Round 1 Paper Submission",
+              "date": "2025-07-18T23:59:59",
+              "source": "ai-deadlines",
+              "timezone": "AoE"
+            },
+            {
+              "type": "supplementary",
+              "label": "Round 1 Supplementary Material Submission",
+              "date": "2025-07-18T23:59:59",
+              "source": "ai-deadlines",
+              "timezone": "AoE"
+            },
+            {
+              "type": "review_release",
+              "label": "Round 1 Reviews Released",
+              "date": "2025-09-05T23:59:59",
+              "source": "ai-deadlines",
+              "timezone": "AoE"
+            },
+            {
+              "type": "rebuttal_and_revision",
+              "label": "Round 1 Rebuttal and Revision Submission",
+              "date": "2025-09-19T23:59:59",
+              "source": "ai-deadlines",
+              "timezone": "AoE"
+            },
+            {
+              "type": "notification",
+              "label": "Round 1 Final Decisions Released to Authors",
+              "date": "2025-11-06T23:59:59",
+              "source": "ai-deadlines",
+              "timezone": "AoE"
+            },
+            {
+              "type": "registration",
+              "label": "Round 2 New Paper Registration",
+              "date": "2025-09-12T23:59:59",
+              "source": "ai-deadlines",
+              "timezone": "AoE"
+            },
+            {
+              "type": "submission",
+              "label": "Round 2 Paper Submission",
+              "date": "2025-09-19T23:59:59",
+              "source": "ai-deadlines",
+              "timezone": "AoE"
+            },
+            {
+              "type": "supplementary",
+              "label": "Round 2 Supplementary Material Submission",
+              "date": "2025-09-19T23:59:59",
+              "source": "ai-deadlines",
+              "timezone": "AoE"
+            },
+            {
+              "type": "notification",
+              "label": "Round 2 Reviews and Final Decisions to Authors",
+              "date": "2025-11-06T23:59:59",
+              "source": "ai-deadlines",
+              "timezone": "AoE"
+            },
+            {
+              "type": "camera_ready",
+              "label": "Camera-Ready Deadline",
+              "date": "2026-01-10T23:59:59",
+              "source": "ai-deadlines",
+              "timezone": "AoE"
+            }
+          ],
+          "primary_deadline": "2025-09-19T23:59:59",
+          "source": "ai-deadlines"
+        },
+        {
+          "year": 2027,
+          "date_text": "January 4 - January 8, 2027",
+          "start": "2027-01-04",
+          "end": "2027-01-08",
+          "place": "Buena Vista, FL USA",
+          "link": "https://wacv.thecvf.com/",
+          "deadlines": [
+            {
+              "type": "registration",
+              "label": "Round 1 Paper Registration",
+              "date": "2026-06-19T23:59:59",
+              "source": "ai-deadlines",
+              "timezone": "AoE"
+            },
+            {
+              "type": "submission",
+              "label": "Round 1 Paper Submission",
+              "date": "2026-06-26T23:59:59",
+              "source": "ai-deadlines",
+              "timezone": "AoE"
+            },
+            {
+              "type": "supplementary",
+              "label": "Round 1 Supplementary Material",
+              "date": "2026-06-28T23:59:59",
+              "source": "ai-deadlines",
+              "timezone": "AoE"
+            },
+            {
+              "type": "review_release",
+              "label": "Round 1 Reviews and Decisions To Authors",
+              "date": "2026-08-09T23:59:59",
+              "source": "ai-deadlines",
+              "timezone": "AoE"
+            },
+            {
+              "type": "rebuttal_and_revision",
+              "label": "Round 1 Rebuttal and Revision Submission",
+              "date": "2026-08-21T23:59:59",
+              "source": "ai-deadlines",
+              "timezone": "AoE"
+            },
+            {
+              "type": "registration",
+              "label": "Round 2 New Paper Registration",
+              "date": "2026-08-21T23:59:59",
+              "source": "ai-deadlines",
+              "timezone": "AoE"
+            },
+            {
+              "type": "submission",
+              "label": "Round 2 Paper Submissions",
+              "date": "2026-08-28T23:59:59",
+              "source": "ai-deadlines",
+              "timezone": "AoE"
+            },
+            {
+              "type": "supplementary",
+              "label": "Round 2 Supplemental Material",
+              "date": "2026-08-30T23:59:59",
+              "source": "ai-deadlines",
+              "timezone": "AoE"
+            },
+            {
+              "type": "notification",
+              "label": "Round 2 Reviews and Final Decisions to Authors",
+              "date": "2026-10-09T23:59:59",
+              "source": "ai-deadlines",
+              "timezone": "AoE"
+            },
+            {
+              "type": "notification",
+              "label": "Round 1 Final Decisions Released to Authors",
+              "date": "2026-10-09T23:59:59",
+              "source": "ai-deadlines",
+              "timezone": "AoE"
+            },
+            {
+              "type": "camera_ready",
+              "label": "Camera Ready Both Rounds",
+              "date": "2026-11-02T23:59:59",
+              "source": "ai-deadlines",
+              "timezone": "AoE"
+            }
+          ],
+          "primary_deadline": "2026-08-28T23:59:59",
+          "source": "ai-deadlines"
+        }
+      ]
+    },
+    {
+      "abbr": "SIGGRAPH",
+      "abbr_group": "siggraph",
+      "full_name": "ACM SIGGRAPH Conference",
+      "grade": "최우수",
+      "ai_specialist": true,
+      "field": "Graphics",
+      "homepage": "https://s2026.siggraph.org/",
+      "editions": [
+        {
+          "year": 2026,
+          "date_text": "July 19-23, 2026",
+          "start": "2026-07-19",
+          "end": "2026-07-23",
+          "place": "Los Angeles United States",
+          "link": "https://s2026.siggraph.org/",
+          "deadlines": [
+            {
+              "type": "submission",
+              "label": "Art Papers deadline",
+              "date": "2026-01-13T22:00:00",
+              "source": "ai-deadlines",
+              "timezone": "UTC"
+            },
+            {
+              "type": "submission",
+              "label": "Student Volunteers Team Leader Applications deadline",
+              "date": "2026-01-13T22:00:00",
+              "source": "ai-deadlines",
+              "timezone": "UTC"
+            },
+            {
+              "type": "submission",
+              "label": "Technical Papers submission form deadline",
+              "date": "2026-01-15T22:00:00",
+              "source": "ai-deadlines",
+              "timezone": "UTC"
+            },
+            {
+              "type": "paper",
+              "label": "Technical Papers deadline",
+              "date": "2026-01-22T22:00:00",
+              "source": "ai-deadlines",
+              "timezone": "UTC"
+            },
+            {
+              "type": "submission",
+              "label": "Upload and conflicts deadline",
+              "date": "2026-01-23T22:00:00",
+              "source": "ai-deadlines",
+              "timezone": "UTC"
+            },
+            {
+              "type": "submission",
+              "label": "Art Gallery deadline",
+              "date": "2026-01-27T22:00:00",
+              "source": "ai-deadlines",
+              "timezone": "UTC"
+            },
+            {
+              "type": "submission",
+              "label": "Technical Workshops deadline",
+              "date": "2026-01-27T22:00:00",
+              "source": "ai-deadlines",
+              "timezone": "UTC"
+            },
+            {
+              "type": "submission",
+              "label": "Talks, Production Sessions, Panels, Courses, Educator's Forum, Spatial Storytelling, Immersive Pavilion, Emerging Technologies deadline",
+              "date": "2026-02-10T22:00:00",
+              "source": "ai-deadlines",
+              "timezone": "UTC"
+            },
+            {
+              "type": "submission",
+              "label": "Student Volunteers Applications deadline",
+              "date": "2026-02-10T22:00:00",
+              "source": "ai-deadlines",
+              "timezone": "UTC"
+            },
+            {
+              "type": "submission",
+              "label": "Computer Animation Festival deadline",
+              "date": "2026-03-17T22:00:00",
+              "source": "ai-deadlines",
+              "timezone": "UTC"
+            },
+            {
+              "type": "submission",
+              "label": "Frontiers deadline",
+              "date": "2026-04-07T22:00:00",
+              "source": "ai-deadlines",
+              "timezone": "UTC"
+            },
+            {
+              "type": "submission",
+              "label": "Real-Time Live! deadline",
+              "date": "2026-04-07T22:00:00",
+              "source": "ai-deadlines",
+              "timezone": "UTC"
+            },
+            {
+              "type": "submission",
+              "label": "Posters deadline",
+              "date": "2026-04-21T22:00:00",
+              "source": "ai-deadlines",
+              "timezone": "UTC"
+            },
+            {
+              "type": "submission",
+              "label": "Appy Hour deadline",
+              "date": "2026-04-21T22:00:00",
+              "source": "ai-deadlines",
+              "timezone": "UTC"
+            },
+            {
+              "type": "submission",
+              "label": "Student Research Competition deadline",
+              "date": "2026-04-21T22:00:00",
+              "source": "ai-deadlines",
+              "timezone": "UTC"
+            }
+          ],
+          "primary_deadline": "2026-04-21T22:00:00",
+          "source": "ai-deadlines"
+        },
+        {
+          "year": 2027,
+          "date_text": "August 8-12, 2027",
+          "start": "2027-08-08",
+          "end": "2027-08-12",
+          "place": "Anaheim United States",
+          "link": "https://www.siggraph.org/",
+          "deadlines": [],
+          "primary_deadline": null,
+          "source": "ai-deadlines"
+        }
+      ]
+    },
+    {
+      "abbr": "SIGIR",
+      "abbr_group": "sigir",
+      "full_name": "Research and Development in Information Retrieval",
+      "grade": "최우수",
+      "ai_specialist": true,
+      "field": "DM/IR",
+      "homepage": "https://sigir.org/",
+      "editions": [
+        {
+          "year": 2026,
+          "date_text": "July 20-24, 2026",
+          "start": "2026-07-20",
+          "end": "2026-07-24",
+          "place": "Melbourne Australia",
+          "link": "https://sigir2026.org/en-AU",
+          "deadlines": [
+            {
+              "type": "abstract",
+              "label": "Full research paper abstract deadline",
+              "date": "2026-01-15T23:59:59",
+              "source": "ai-deadlines",
+              "timezone": "AoE"
+            },
+            {
+              "type": "submission",
+              "label": "Full research paper submission deadline",
+              "date": "2026-01-22T23:59:59",
+              "source": "ai-deadlines",
+              "timezone": "AoE"
+            },
+            {
+              "type": "notification",
+              "label": "Notification deadline",
+              "date": "2026-04-02T23:59:59",
+              "source": "ai-deadlines",
+              "timezone": "AoE"
+            },
+            {
+              "type": "camera_ready",
+              "label": "Camera-ready deadline",
+              "date": "2026-04-29T23:59:59",
+              "source": "ai-deadlines",
+              "timezone": "AoE"
+            },
+            {
+              "type": "registration",
+              "label": "Author registration deadline",
+              "date": "2026-04-29T23:59:59",
+              "source": "ai-deadlines",
+              "timezone": "AoE"
+            }
+          ],
+          "primary_deadline": "2026-01-22T23:59:59",
+          "source": "ai-deadlines"
+        }
+      ]
+    },
+    {
+      "abbr": "ACM MM",
+      "abbr_group": "mm",
+      "full_name": "ACM International Conference on Multimedia",
+      "grade": "최우수",
+      "ai_specialist": true,
+      "field": "Multimedia",
+      "homepage": "https://www.acmmm.org/",
+      "editions": [
+        {
+          "year": 2025,
+          "date_text": "October 27-31, 2025",
+          "start": "2025-10-27",
+          "end": "2025-10-31",
+          "place": "Dublin Ireland",
+          "link": "https://acmmm2025.org/",
+          "deadlines": [
+            {
+              "type": "abstract",
+              "label": "Abstract submission for regular papers",
+              "date": "2025-04-04T23:59:59",
+              "source": "ai-deadlines",
+              "timezone": "AoE"
+            },
+            {
+              "type": "paper",
+              "label": "Regular paper submission (including supplementary materials, if applicable)",
+              "date": "2025-04-11T23:59:59",
+              "source": "ai-deadlines",
+              "timezone": "AoE"
+            },
+            {
+              "type": "rebuttal_start",
+              "label": "Rebuttal period start",
+              "date": "2025-06-09T23:59:59",
+              "source": "ai-deadlines",
+              "timezone": "AoE"
+            },
+            {
+              "type": "rebuttal_end",
+              "label": "Rebuttal period end",
+              "date": "2025-06-19T23:59:59",
+              "source": "ai-deadlines",
+              "timezone": "AoE"
+            }
+          ],
+          "primary_deadline": "2025-04-11T23:59:59",
+          "source": "ai-deadlines"
+        },
+        {
+          "year": 2026,
+          "date_text": "November 10-14, 2026",
+          "start": "2026-11-10",
+          "end": "2026-11-14",
+          "place": "Rio de Janeiro Brazil",
+          "link": "https://2026.acmmm.org/",
+          "deadlines": [
+            {
+              "type": "abstract",
+              "label": "Contribution registration",
+              "date": "2026-03-25T23:59:59",
+              "source": "ai-deadlines",
+              "timezone": "AoE"
+            },
+            {
+              "type": "paper",
+              "label": "Contribution submission",
+              "date": "2026-04-01T23:59:59",
+              "source": "ai-deadlines",
+              "timezone": "AoE"
+            },
+            {
+              "type": "supplementary",
+              "label": "Supplementary material submission",
+              "date": "2026-04-08T23:59:59",
+              "source": "ai-deadlines",
+              "timezone": "AoE"
+            },
+            {
+              "type": "rebuttal_start",
+              "label": "Rebuttal period start",
+              "date": "2026-06-04T23:59:59",
+              "source": "ai-deadlines",
+              "timezone": "AoE"
+            },
+            {
+              "type": "notification",
+              "label": "Author notification",
+              "date": "2026-07-09T23:59:59",
+              "source": "ai-deadlines",
+              "timezone": "AoE"
+            },
+            {
+              "type": "camera_ready",
+              "label": "Camera-ready submission",
+              "date": "2026-08-06T23:59:59",
+              "source": "ai-deadlines",
+              "timezone": "AoE"
+            },
+            {
+              "type": "registration",
+              "label": "Author registration",
+              "date": "2026-08-20T23:59:59",
+              "source": "ai-deadlines",
+              "timezone": "AoE"
+            }
+          ],
+          "primary_deadline": "2026-04-01T23:59:59",
+          "source": "ai-deadlines"
+        }
+      ]
+    },
+    {
+      "abbr": "CIKM",
+      "abbr_group": "cikm",
+      "full_name": "International Conference on Information and Knowledge Management",
+      "grade": "최우수",
+      "ai_specialist": true,
+      "field": "DM/IR",
+      "homepage": "https://www.sigweb.org/",
+      "editions": [
+        {
+          "year": 2025,
+          "date_text": "November 10-14, 2025",
+          "start": "2025-11-10",
+          "end": "2025-11-14",
+          "place": "Seoul South Korea",
+          "link": "https://cikm2025.org/",
+          "deadlines": [
+            {
+              "type": "abstract",
+              "label": "Abstract submission deadline",
+              "date": "2025-05-16T23:59:00",
+              "source": "ai-deadlines",
+              "timezone": "AoE"
+            },
+            {
+              "type": "paper",
+              "label": "Full paper submission deadline",
+              "date": "2025-05-23T23:59:00",
+              "source": "ai-deadlines",
+              "timezone": "AoE"
+            },
+            {
+              "type": "notification",
+              "label": "Author notification",
+              "date": "2025-08-04T23:59:00",
+              "source": "ai-deadlines",
+              "timezone": "AoE"
+            },
+            {
+              "type": "camera_ready",
+              "label": "Camera-ready deadline",
+              "date": "2025-08-27T23:59:00",
+              "source": "ai-deadlines",
+              "timezone": "AoE"
+            }
+          ],
+          "primary_deadline": "2025-05-23T23:59:00",
+          "source": "ai-deadlines"
+        },
+        {
+          "year": 2026,
+          "date_text": "November 7-11, 2026",
+          "start": "2026-11-07",
+          "end": "2026-11-11",
+          "place": "Rome Italy",
+          "link": "https://cikm2026.diag.uniroma1.it/",
+          "deadlines": [
+            {
+              "type": "abstract",
+              "label": "Abstract submission deadline",
+              "date": "2026-05-16T23:59:00",
+              "source": "ai-deadlines",
+              "timezone": "AoE"
+            },
+            {
+              "type": "paper",
+              "label": "Full paper submission deadline",
+              "date": "2026-05-23T23:59:00",
+              "source": "ai-deadlines",
+              "timezone": "AoE"
+            },
+            {
+              "type": "notification",
+              "label": "Author notification",
+              "date": "2026-08-07T23:59:00",
+              "source": "ai-deadlines",
+              "timezone": "AoE"
+            },
+            {
+              "type": "camera_ready",
+              "label": "Camera-ready deadline",
+              "date": "2026-08-20T23:59:00",
+              "source": "ai-deadlines",
+              "timezone": "AoE"
+            }
+          ],
+          "primary_deadline": "2026-05-23T23:59:00",
+          "source": "ai-deadlines"
+        }
+      ]
+    },
+    {
+      "abbr": "CoRL",
+      "abbr_group": "corl",
+      "full_name": "Conference on Robot Learning",
+      "grade": "최우수",
+      "ai_specialist": true,
+      "field": "Robotics",
+      "homepage": "https://www.corl.org/",
+      "editions": [
+        {
+          "year": 2025,
+          "date_text": "September 27-30, 2025",
+          "start": "2025-09-27",
+          "end": "2025-09-30",
+          "place": "Seoul South Korea",
+          "link": "https://www.corl.org/",
+          "deadlines": [
+            {
+              "type": "paper",
+              "label": "Paper",
+              "date": "2025-04-30T23:59:59",
+              "source": "ai-deadlines",
+              "timezone": "AoE"
+            }
+          ],
+          "primary_deadline": "2025-04-30T23:59:59",
+          "source": "ai-deadlines"
+        },
+        {
+          "year": 2026,
+          "date_text": "November 9-12, 2026",
+          "start": "2026-11-09",
+          "end": "2026-11-12",
+          "place": "Austin United States",
+          "link": "https://www.corl.org/",
+          "deadlines": [
+            {
+              "type": "abstract",
+              "label": "Abstract submission deadline",
+              "date": "2026-05-26T11:59:00",
+              "source": "ai-deadlines",
+              "timezone": "UTC"
+            },
+            {
+              "type": "paper",
+              "label": "Paper submission deadline",
+              "date": "2026-05-29T11:59:00",
+              "source": "ai-deadlines",
+              "timezone": "UTC"
+            },
+            {
+              "type": "camera_ready",
+              "label": "Camera-ready deadline",
+              "date": "2026-10-12T23:59:59",
+              "source": "ai-deadlines",
+              "timezone": "AoE"
+            }
+          ],
+          "primary_deadline": "2026-05-29T11:59:00",
+          "source": "ai-deadlines"
+        }
+      ]
+    },
+    {
+      "abbr": "IROS",
+      "abbr_group": "iros",
+      "full_name": "IEEE/RSJ International Conference on Intelligent Robots and Systems",
+      "grade": "최우수",
+      "ai_specialist": true,
+      "field": "Robotics",
+      "homepage": "https://www.ieee-ras.org/conferences-workshops/financially-co-sponsored/iros/",
+      "editions": [
+        {
+          "year": 2025,
+          "date_text": "October 19-25, 2025",
+          "start": "2025-10-19",
+          "end": "2025-10-25",
+          "place": "Hangzhou China",
+          "link": "http://www.iros25.org/",
+          "deadlines": [
+            {
+              "type": "paper",
+              "label": "Paper submission deadline",
+              "date": "2025-03-02T23:59:59",
+              "source": "ai-deadlines",
+              "timezone": "PST"
+            },
+            {
+              "type": "notification",
+              "label": "Notification of acceptance",
+              "date": "2025-06-30T23:59:59",
+              "source": "ai-deadlines",
+              "timezone": "AoE"
+            },
+            {
+              "type": "camera_ready",
+              "label": "Final paper submission deadline",
+              "date": "2025-07-31T23:59:59",
+              "source": "ai-deadlines",
+              "timezone": "AoE"
+            }
+          ],
+          "primary_deadline": "2025-03-02T23:59:59",
+          "source": "ai-deadlines"
+        },
+        {
+          "year": 2026,
+          "date_text": "September 27 - October 1, 2026",
+          "start": "2026-09-27",
+          "end": "2026-10-01",
+          "place": "Pittsburgh USA",
+          "link": "https://2026.ieee-iros.org/",
+          "deadlines": [
+            {
+              "type": "paper",
+              "label": "Paper submission deadline",
+              "date": "2026-03-02T23:59:59",
+              "source": "ai-deadlines",
+              "timezone": "AoE"
+            },
+            {
+              "type": "paper",
+              "label": "Paper video submission deadline",
+              "date": "2026-03-07T23:59:59",
+              "source": "ai-deadlines",
+              "timezone": "AoE"
+            },
+            {
+              "type": "notification",
+              "label": "Paper acceptance notification",
+              "date": "2026-06-16T23:59:59",
+              "source": "ai-deadlines",
+              "timezone": "AoE"
+            },
+            {
+              "type": "camera_ready",
+              "label": "Final paper submission deadline",
+              "date": "2026-07-10T23:59:59",
+              "source": "ai-deadlines",
+              "timezone": "AoE"
+            }
+          ],
+          "primary_deadline": "2026-03-07T23:59:59",
+          "source": "ai-deadlines"
+        }
+      ]
+    },
+    {
+      "abbr": "WSDM",
+      "abbr_group": "wsdm",
+      "full_name": "ACM International Conference on Web Search and Data Mining",
+      "grade": "우수",
+      "ai_specialist": true,
+      "field": "DM/IR",
+      "homepage": "https://www.wsdm-conference.org/",
+      "editions": [
+        {
+          "year": 2026,
+          "date_text": "February 22-26, 2026",
+          "start": "2026-02-22",
+          "end": "2026-02-26",
+          "place": "Boise United States",
+          "link": "https://wsdm-conference.org/2026/",
+          "deadlines": [
+            {
+              "type": "abstract",
+              "label": "Abstract submission (full papers)",
+              "date": "2025-08-07T23:59:00",
+              "source": "ai-deadlines",
+              "timezone": "AoE"
+            },
+            {
+              "type": "paper",
+              "label": "Paper submission (full papers)",
+              "date": "2025-08-14T23:59:00",
+              "source": "ai-deadlines",
+              "timezone": "AoE"
+            },
+            {
+              "type": "abstract",
+              "label": "Abstract submission (short papers)",
+              "date": "2025-09-18T23:59:00",
+              "source": "ai-deadlines",
+              "timezone": "AoE"
+            },
+            {
+              "type": "paper",
+              "label": "Paper submission (short papers)",
+              "date": "2025-09-25T23:59:00",
+              "source": "ai-deadlines",
+              "timezone": "AoE"
+            },
+            {
+              "type": "notification",
+              "label": "Author notification (full papers)",
+              "date": "2025-10-23T23:59:59",
+              "source": "ai-deadlines",
+              "timezone": "AoE"
+            },
+            {
+              "type": "notification",
+              "label": "Author notification (short papers)",
+              "date": "2025-11-27T23:59:59",
+              "source": "ai-deadlines",
+              "timezone": "AoE"
+            }
+          ],
+          "primary_deadline": "2025-09-25T23:59:00",
+          "source": "ai-deadlines"
+        },
+        {
+          "year": 2027,
+          "date_text": "February 15-19, 2027",
+          "start": "2027-02-15",
+          "end": "2027-02-19",
+          "place": "Hong Kong Hong Kong",
+          "link": "https://www.wsdm-conference.org/2027/",
+          "deadlines": [
+            {
+              "type": "abstract",
+              "label": "Abstract submission (full papers)",
+              "date": "2026-08-17T23:59:59",
+              "source": "ai-deadlines",
+              "timezone": "AoE"
+            },
+            {
+              "type": "paper",
+              "label": "Paper submission (full papers)",
+              "date": "2026-08-24T23:59:59",
+              "source": "ai-deadlines",
+              "timezone": "AoE"
+            },
+            {
+              "type": "notification",
+              "label": "Author notification (full papers)",
+              "date": "2026-11-02T23:59:59",
+              "source": "ai-deadlines",
+              "timezone": "AoE"
+            },
+            {
+              "type": "paper",
+              "label": "Paper submission (short papers)",
+              "date": "2026-11-17T23:59:59",
+              "source": "ai-deadlines",
+              "timezone": "AoE"
+            },
+            {
+              "type": "notification",
+              "label": "Author notification (short papers)",
+              "date": "2026-12-18T23:59:59",
+              "source": "ai-deadlines",
+              "timezone": "AoE"
+            }
+          ],
+          "primary_deadline": "2026-11-17T23:59:59",
+          "source": "ai-deadlines"
+        }
+      ]
+    },
+    {
+      "abbr": "RSS",
+      "abbr_group": "rss",
+      "full_name": "Robotics: Science and Systems Conference",
+      "grade": "우수",
+      "ai_specialist": true,
+      "field": "Robotics",
+      "homepage": "https://roboticsconference.org/",
+      "editions": [
+        {
+          "year": 2026,
+          "date_text": "July 13-17, 2026",
+          "start": "2026-07-13",
+          "end": "2026-07-17",
+          "place": "Sydney Australia",
+          "link": "https://roboticsconference.org",
+          "deadlines": [
+            {
+              "type": "abstract",
+              "label": "Abstract Submission",
+              "date": "2026-01-23T23:59:59",
+              "source": "ai-deadlines",
+              "timezone": "AoE"
+            },
+            {
+              "type": "paper",
+              "label": "Paper Submission",
+              "date": "2026-01-30T23:59:59",
+              "source": "ai-deadlines",
+              "timezone": "AoE"
+            },
+            {
+              "type": "supplementary",
+              "label": "Supplementary Materials",
+              "date": "2026-02-06T23:59:59",
+              "source": "ai-deadlines",
+              "timezone": "AoE"
+            },
+            {
+              "type": "review_release",
+              "label": "Reviews Released",
+              "date": "2026-03-20T23:59:59",
+              "source": "ai-deadlines",
+              "timezone": "AoE"
+            },
+            {
+              "type": "rebuttal_start",
+              "label": "Rebuttal Period Starts",
+              "date": "2026-03-20T23:59:59",
+              "source": "ai-deadlines",
+              "timezone": "AoE"
+            },
+            {
+              "type": "rebuttal_end",
+              "label": "Rebuttal Period Ends",
+              "date": "2026-03-27T23:59:59",
+              "source": "ai-deadlines",
+              "timezone": "AoE"
+            },
+            {
+              "type": "notification",
+              "label": "Final Decisions",
+              "date": "2026-04-27T23:59:59",
+              "source": "ai-deadlines",
+              "timezone": "AoE"
+            }
+          ],
+          "primary_deadline": "2026-01-30T23:59:59",
+          "source": "ai-deadlines"
+        }
+      ]
+    },
+    {
+      "abbr": "ICIP",
+      "abbr_group": "icip",
+      "full_name": "IEEE International Conference on Image Processing",
+      "grade": "우수",
+      "ai_specialist": true,
+      "field": "CV",
+      "homepage": "https://signalprocessingsociety.org/event-names/icip",
+      "editions": [
+        {
+          "year": 2025,
+          "date_text": "Sep 14-17, 2025",
+          "start": "2025-09-14",
+          "end": "2025-09-17",
+          "place": "Anchorage Alaska USA",
+          "link": "https://2025.ieeeicip.org/",
+          "deadlines": [
+            {
+              "type": "paper",
+              "label": "Paper",
+              "date": "2025-01-22T23:59:59",
+              "source": "ccfddl",
+              "timezone": "UTC+0"
+            }
+          ],
+          "primary_deadline": "2025-01-22T23:59:59",
+          "source": "ccfddl"
+        },
+        {
+          "year": 2026,
+          "date_text": "Sep 13-17, 2026",
+          "start": "2026-09-13",
+          "end": "2026-09-17",
+          "place": "Tampere Finland",
+          "link": "https://2026.ieeeicip.org/",
+          "deadlines": [
+            {
+              "type": "paper",
+              "label": "Paper",
+              "date": "2026-02-04T23:59:59",
+              "source": "ccfddl",
+              "timezone": "UTC+0"
+            }
+          ],
+          "primary_deadline": "2026-02-04T23:59:59",
+          "source": "ccfddl"
+        }
+      ]
+    },
+    {
+      "abbr": "MLSys",
+      "abbr_group": "mlsys",
+      "full_name": "Conference on Machine Learning and Systems",
+      "grade": "최우수",
+      "ai_specialist": false,
+      "field": "ML",
+      "homepage": "https://mlsys.org/",
+      "editions": [
+        {
+          "year": 2026,
+          "date_text": "May 17-22, 2026",
+          "start": "2026-05-17",
+          "end": "2026-05-22",
+          "place": "Bellevue Washington USA",
+          "link": "https://mlsys.org/",
+          "deadlines": [
+            {
+              "type": "paper",
+              "label": "Paper",
+              "date": "2025-10-30T20:00:00",
+              "source": "ccfddl",
+              "timezone": "AoE"
+            }
+          ],
+          "primary_deadline": "2025-10-30T20:00:00",
+          "source": "ccfddl"
+        }
+      ]
+    },
+    {
+      "abbr": "HRI",
+      "abbr_group": "hri",
+      "full_name": "ACM/IEEE International Conference on Human Robot Interaction",
+      "grade": "우수",
+      "ai_specialist": true,
+      "field": "Robotics",
+      "homepage": "https://humanrobotinteraction.org/",
+      "editions": [
+        {
+          "year": 2026,
+          "date_text": "March 9-12, 2026",
+          "start": "2026-03-09",
+          "end": "2026-03-12",
+          "place": "Christchurch New Zealand",
+          "link": "https://humanrobotinteraction.org/2026/",
+          "deadlines": [
+            {
+              "type": "paper",
+              "label": "Full Paper",
+              "date": "2025-10-01T23:59:59",
+              "source": "manual",
+              "timezone": "AoE"
+            }
+          ],
+          "primary_deadline": "2025-10-01T23:59:59",
+          "source": "manual"
+        }
+      ]
+    },
+    {
+      "abbr": "BigData",
+      "abbr_group": "bigdataconf",
+      "full_name": "IEEE International Conference on Big Data",
+      "grade": "우수",
+      "ai_specialist": true,
+      "field": "DM/IR",
+      "homepage": "https://bigdataieee.org/",
+      "editions": [
+        {
+          "year": 2025,
+          "date_text": "December 8-11, 2025",
+          "start": "2025-12-08",
+          "end": "2025-12-11",
+          "place": "Macau SAR China",
+          "link": "https://conferences.cis.um.edu.mo/ieeebigdata2025/",
+          "deadlines": [
+            {
+              "type": "paper",
+              "label": "Paper",
+              "date": "2025-08-29T23:59:59",
+              "source": "ccfddl",
+              "timezone": "AoE"
+            }
+          ],
+          "primary_deadline": "2025-08-29T23:59:59",
+          "source": "ccfddl"
+        },
+        {
+          "year": 2026,
+          "date_text": "December 14-17, 2026",
+          "start": "2026-12-14",
+          "end": "2026-12-17",
+          "place": "Phoenix Arizona United State",
+          "link": "https://bigdataieee.org/BigData2026/",
+          "deadlines": [
+            {
+              "type": "paper",
+              "label": "Paper",
+              "date": "2026-08-21T23:59:59",
+              "source": "ccfddl",
+              "timezone": "AoE"
+            }
+          ],
+          "primary_deadline": "2026-08-21T23:59:59",
+          "source": "ccfddl"
+        }
+      ]
+    },
+    {
+      "abbr": "UbiComp",
+      "abbr_group": "UbiComp",
+      "full_name": "ACM International Conference on Ubiquitous Computing",
+      "grade": "우수",
+      "ai_specialist": true,
+      "field": "HCI",
+      "homepage": "https://ubicomp.org/",
+      "editions": [
+        {
+          "year": 2025,
+          "date_text": "October 12-16, 2025",
+          "start": "2025-10-12",
+          "end": "2025-10-16",
+          "place": "Espoo Finland",
+          "link": "https://www.ubicomp.org/ubicomp-iswc-2025",
+          "deadlines": [
+            {
+              "type": "paper",
+              "label": "first round",
+              "date": "2025-02-01T23:59:59",
+              "source": "ccfddl",
+              "timezone": "AoE"
+            },
+            {
+              "type": "paper",
+              "label": "second round",
+              "date": "2025-05-01T23:59:59",
+              "source": "ccfddl",
+              "timezone": "AoE"
+            },
+            {
+              "type": "paper",
+              "label": "third round (only for resubmissions after major revisions)",
+              "date": "2025-08-01T23:59:59",
+              "source": "ccfddl",
+              "timezone": "AoE"
+            },
+            {
+              "type": "paper",
+              "label": "fourth round",
+              "date": "2025-11-01T23:59:59",
+              "source": "ccfddl",
+              "timezone": "AoE"
+            }
+          ],
+          "primary_deadline": "2025-11-01T23:59:59",
+          "source": "ccfddl"
+        },
+        {
+          "year": 2026,
+          "date_text": "October 11-15, 2026",
+          "start": "2026-10-11",
+          "end": "2026-10-15",
+          "place": "Shanghai China",
+          "link": "https://www.ubicomp.org/ubicomp-iswc-2026",
+          "deadlines": [
+            {
+              "type": "paper",
+              "label": "first round",
+              "date": "2026-02-01T23:59:59",
+              "source": "ccfddl",
+              "timezone": "AoE"
+            },
+            {
+              "type": "paper",
+              "label": "second round",
+              "date": "2026-05-01T23:59:59",
+              "source": "ccfddl",
+              "timezone": "AoE"
+            },
+            {
+              "type": "paper",
+              "label": "third round (only for resubmissions after major revisions)",
+              "date": "2026-08-01T23:59:59",
+              "source": "ccfddl",
+              "timezone": "AoE"
+            },
+            {
+              "type": "paper",
+              "label": "fourth round",
+              "date": "2026-11-01T23:59:59",
+              "source": "ccfddl",
+              "timezone": "AoE"
+            }
+          ],
+          "primary_deadline": "2026-11-01T23:59:59",
+          "source": "ccfddl"
+        }
+      ]
+    },
+    {
+      "abbr": "RecSys",
+      "abbr_group": "recsys",
+      "full_name": "ACM Conference on Recommender Systems",
+      "grade": "우수",
+      "ai_specialist": true,
+      "field": "DM/IR",
+      "homepage": "https://recsys.acm.org/",
+      "editions": [
+        {
+          "year": 2025,
+          "date_text": "September 22-26, 2025",
+          "start": "2025-09-22",
+          "end": "2025-09-26",
+          "place": "Prague Czech Republic",
+          "link": "https://recsys.acm.org/recsys25",
+          "deadlines": [
+            {
+              "type": "abstract",
+              "label": "Abstract",
+              "date": "2025-04-01T23:59:59",
+              "source": "ccfddl",
+              "timezone": "AoE"
+            },
+            {
+              "type": "paper",
+              "label": "Paper",
+              "date": "2025-04-08T23:59:59",
+              "source": "ccfddl",
+              "timezone": "AoE"
+            }
+          ],
+          "primary_deadline": "2025-04-08T23:59:59",
+          "source": "ccfddl"
+        },
+        {
+          "year": 2026,
+          "date_text": "September 28 - October 2, 2026",
+          "start": "2026-09-28",
+          "end": "2026-10-02",
+          "place": "Minneapolis Minnesota USA",
+          "link": "https://recsys.acm.org/recsys26",
+          "deadlines": [
+            {
+              "type": "abstract",
+              "label": "Abstract",
+              "date": "2026-04-14T23:59:59",
+              "source": "ccfddl",
+              "timezone": "AoE"
+            },
+            {
+              "type": "paper",
+              "label": "Paper",
+              "date": "2026-04-21T23:59:59",
+              "source": "ccfddl",
+              "timezone": "AoE"
+            }
+          ],
+          "primary_deadline": "2026-04-21T23:59:59",
+          "source": "ccfddl"
+        }
+      ]
+    },
+    {
+      "abbr": "IUI",
+      "abbr_group": "iui",
+      "full_name": "Intelligent User Interfaces",
+      "grade": "우수",
+      "ai_specialist": true,
+      "field": "HCI",
+      "homepage": "https://iui.acm.org/",
+      "editions": [
+        {
+          "year": 2026,
+          "date_text": "July 13-16, 2026",
+          "start": "2026-07-13",
+          "end": "2026-07-16",
+          "place": "Limassol Cyprus",
+          "link": "https://iui.acm.org/2026/",
+          "deadlines": [
+            {
+              "type": "abstract",
+              "label": "Abstract submission",
+              "date": "2025-10-03T23:59:59",
+              "source": "ai-deadlines",
+              "timezone": "AoE"
+            },
+            {
+              "type": "paper",
+              "label": "Full paper submission",
+              "date": "2025-10-10T23:59:59",
+              "source": "ai-deadlines",
+              "timezone": "AoE"
+            },
+            {
+              "type": "notification",
+              "label": "Decision notification",
+              "date": "2025-12-12T23:59:59",
+              "source": "ai-deadlines",
+              "timezone": "AoE"
+            },
+            {
+              "type": "camera_ready",
+              "label": "Camera-ready submission",
+              "date": "2026-01-23T23:59:59",
+              "source": "ai-deadlines",
+              "timezone": "AoE"
+            },
+            {
+              "type": "registration",
+              "label": "Author registration deadline",
+              "date": "2026-01-23T23:59:59",
+              "source": "ai-deadlines",
+              "timezone": "AoE"
+            }
+          ],
+          "primary_deadline": "2025-10-10T23:59:59",
+          "source": "ai-deadlines"
+        },
+        {
+          "year": 2027,
+          "date_text": "February 8-11, 2027",
+          "start": "2027-02-08",
+          "end": "2027-02-11",
+          "place": "Helsinki Finland",
+          "link": "https://iui.hosting.acm.org/2027/",
+          "deadlines": [
+            {
+              "type": "abstract",
+              "label": "Abstract",
+              "date": "2026-08-13T23:59:59",
+              "source": "ccfddl",
+              "timezone": "AoE"
+            },
+            {
+              "type": "paper",
+              "label": "Paper",
+              "date": "2026-08-20T23:59:59",
+              "source": "ccfddl",
+              "timezone": "AoE"
+            }
+          ],
+          "primary_deadline": "2026-08-20T23:59:59",
+          "source": "ccfddl"
+        }
+      ]
+    },
+    {
+      "abbr": "UIST",
+      "abbr_group": "uist",
+      "full_name": "User Interface Software and Technology",
+      "grade": "우수",
+      "ai_specialist": true,
+      "field": "HCI",
+      "homepage": "https://uist.acm.org/",
+      "editions": [
+        {
+          "year": 2025,
+          "date_text": "Sep 28 - Oct 1, 2025",
+          "start": "2025-09-28",
+          "end": "2025-10-01",
+          "place": "Busan Korea",
+          "link": "https://uist.acm.org/2025/",
+          "deadlines": [
+            {
+              "type": "paper",
+              "label": "abstract deadline",
+              "date": "2025-04-02T17:00:00",
+              "source": "ccfddl",
+              "timezone": "UTC-8"
+            },
+            {
+              "type": "paper",
+              "label": "paper deadline",
+              "date": "2025-04-09T17:00:00",
+              "source": "ccfddl",
+              "timezone": "UTC-8"
+            }
+          ],
+          "primary_deadline": "2025-04-09T17:00:00",
+          "source": "ccfddl"
+        },
+        {
+          "year": 2026,
+          "date_text": "November 2 - 5, 2026",
+          "start": "2026-11-02",
+          "end": "2026-11-05",
+          "place": "GM Renaissance Center Detroit MI USA",
+          "link": "https://uist.acm.org/2026/",
+          "deadlines": [
+            {
+              "type": "abstract",
+              "label": "Abstract",
+              "date": "2026-03-24T23:59:59",
+              "source": "ccfddl",
+              "timezone": "AoE"
+            },
+            {
+              "type": "paper",
+              "label": "Paper",
+              "date": "2026-03-31T23:59:59",
+              "source": "ccfddl",
+              "timezone": "AoE"
+            }
+          ],
+          "primary_deadline": "2026-03-31T23:59:59",
+          "source": "ccfddl"
+        }
+      ]
+    },
+    {
+      "abbr": "ICME",
+      "abbr_group": "ICME",
+      "full_name": "IEEE International Conference on Multimedia and Expo",
+      "grade": "우수",
+      "ai_specialist": true,
+      "field": "Multimedia",
+      "homepage": "https://signalprocessingsociety.org/event-names/icme",
+      "editions": [
+        {
+          "year": 2026,
+          "date_text": "July 6 - July 10, 2026",
+          "start": "2026-07-06",
+          "end": "2026-07-10",
+          "place": "Bangkok Thailand",
+          "link": "https://2026.ieeeicme.org/",
+          "deadlines": [
+            {
+              "type": "paper",
+              "label": "Paper",
+              "date": "2025-12-31T23:59:59",
+              "source": "ccfddl",
+              "timezone": "UTC-12"
+            }
+          ],
+          "primary_deadline": "2025-12-31T23:59:59",
+          "source": "ccfddl"
+        }
+      ]
+    },
+    {
+      "abbr": "SLT",
+      "abbr_group": "asru/slt",
+      "full_name": "IEEE Workshop on Automatic Speech Recognition & Understanding / IEEE Spoken Language Technology Workshop",
+      "grade": "우수",
+      "ai_specialist": true,
+      "field": "Speech",
+      "homepage": "https://signalprocessingsociety.org/community-involvement/speech-and-language-processing",
+      "editions": [
+        {
+          "year": 2026,
+          "date_text": "December 13-16, 2026",
+          "start": "2026-12-13",
+          "end": "2026-12-16",
+          "place": "Palermo Sicily Italy",
+          "link": "https://attend.ieee.org/slt-2026/",
+          "deadlines": [
+            {
+              "type": "paper",
+              "label": "Paper",
+              "date": "2026-06-17T23:59:59",
+              "source": "ccfddl",
+              "timezone": "AoE"
+            }
+          ],
+          "primary_deadline": "2026-06-17T23:59:59",
+          "source": "ccfddl"
+        }
+      ]
+    },
+    {
+      "abbr": "IEEE VR",
+      "abbr_group": "vr",
+      "full_name": "IEEE Virtual Reality Conference",
+      "grade": "우수",
+      "ai_specialist": true,
+      "field": "AR/VR",
+      "homepage": "https://ieeevr.org/",
+      "editions": [
+        {
+          "year": 2026,
+          "date_text": "March 21 - 25, 2026",
+          "start": "2026-03-21",
+          "end": "2026-03-25",
+          "place": "Daegu Korea",
+          "link": "https://ieeevr.org/2026/",
+          "deadlines": [
+            {
+              "type": "abstract",
+              "label": "Abstract",
+              "date": "2025-09-05T23:59:59",
+              "source": "ccfddl",
+              "timezone": "AoE"
+            },
+            {
+              "type": "paper",
+              "label": "Paper",
+              "date": "2025-09-12T23:59:59",
+              "source": "ccfddl",
+              "timezone": "AoE"
+            }
+          ],
+          "primary_deadline": "2025-09-12T23:59:59",
+          "source": "ccfddl"
+        },
+        {
+          "year": 2027,
+          "date_text": "February 27 - March 3, 2027",
+          "start": "2027-02-27",
+          "end": "2027-03-03",
+          "place": "Melbourne Australia",
+          "link": "https://ieeevr.org/2027/",
+          "deadlines": [
+            {
+              "type": "abstract",
+              "label": "Abstract",
+              "date": "2026-08-24T23:59:59",
+              "source": "ccfddl",
+              "timezone": "AoE"
+            },
+            {
+              "type": "paper",
+              "label": "Paper",
+              "date": "2026-08-31T23:59:59",
+              "source": "ccfddl",
+              "timezone": "AoE"
+            }
+          ],
+          "primary_deadline": "2026-08-31T23:59:59",
+          "source": "ccfddl"
+        }
+      ]
+    },
+    {
+      "abbr": "ISMAR",
+      "abbr_group": "ismar",
+      "full_name": "IEEE International Symposium on Mixed and Augmented Reality",
+      "grade": "우수",
+      "ai_specialist": false,
+      "field": "AR/VR",
+      "homepage": "https://ismar.net/",
+      "editions": [
+        {
+          "year": 2025,
+          "date_text": "Oct 8-12, 2025",
+          "start": "2025-10-08",
+          "end": "2025-10-12",
+          "place": "Daejeon South Korea",
+          "link": "https://www.ieeeismar.net/2025/",
+          "deadlines": [
+            {
+              "type": "abstract",
+              "label": "Abstract",
+              "date": "2025-04-04T23:59:59",
+              "source": "ccfddl",
+              "timezone": "AoE"
+            },
+            {
+              "type": "paper",
+              "label": "Paper",
+              "date": "2025-04-11T23:59:59",
+              "source": "ccfddl",
+              "timezone": "AoE"
+            }
+          ],
+          "primary_deadline": "2025-04-11T23:59:59",
+          "source": "ccfddl"
+        },
+        {
+          "year": 2026,
+          "date_text": "Oct 5-9, 2026",
+          "start": "2026-10-05",
+          "end": "2026-10-09",
+          "place": "Bari Italy",
+          "link": "https://www.ieeeismar.net/2026/",
+          "deadlines": [
+            {
+              "type": "abstract",
+              "label": "Abstract",
+              "date": "2026-03-09T23:59:59",
+              "source": "ccfddl",
+              "timezone": "AoE"
+            },
+            {
+              "type": "paper",
+              "label": "Paper",
+              "date": "2026-03-16T23:59:59",
+              "source": "ccfddl",
+              "timezone": "AoE"
+            }
+          ],
+          "primary_deadline": "2026-03-16T23:59:59",
+          "source": "ccfddl"
+        }
+      ]
+    },
+    {
+      "abbr": "SIGGRAPH Asia",
+      "abbr_group": "siggrapha",
+      "full_name": "ACM SIGGRAPH Conference in Asia",
+      "grade": "우수",
+      "ai_specialist": true,
+      "field": "Graphics",
+      "homepage": "https://asia.siggraph.org/",
+      "editions": [
+        {
+          "year": 2025,
+          "date_text": "December 15-18, 2025",
+          "start": "2025-12-15",
+          "end": "2025-12-18",
+          "place": "Hong Kong China",
+          "link": "https://asia.siggraph.org/2025/",
+          "deadlines": [
+            {
+              "type": "abstract",
+              "label": "Abstract",
+              "date": "2025-05-16T23:59:00",
+              "source": "ccfddl",
+              "timezone": "UTC-12"
+            },
+            {
+              "type": "paper",
+              "label": "Paper",
+              "date": "2025-05-23T23:59:00",
+              "source": "ccfddl",
+              "timezone": "UTC-12"
+            }
+          ],
+          "primary_deadline": "2025-05-23T23:59:00",
+          "source": "ccfddl"
+        },
+        {
+          "year": 2026,
+          "date_text": "December 1-4, 2026",
+          "start": "2026-12-01",
+          "end": "2026-12-04",
+          "place": "KLCC Kuala Lumpur Malaysia",
+          "link": "https://asia.siggraph.org/2026/",
+          "deadlines": [
+            {
+              "type": "abstract",
+              "label": "Abstract",
+              "date": "2026-05-05T23:59:00",
+              "source": "ccfddl",
+              "timezone": "UTC-12"
+            },
+            {
+              "type": "paper",
+              "label": "Paper",
+              "date": "2026-05-12T23:59:00",
+              "source": "ccfddl",
+              "timezone": "UTC-12"
+            }
+          ],
+          "primary_deadline": "2026-05-12T23:59:00",
+          "source": "ccfddl"
+        }
+      ]
+    }
+  ],
+  "unresolved": [
+    {
+      "abbr": "Humanoids",
+      "reason": "소스에 회차 정보가 없음"
+    }
+  ]
+}

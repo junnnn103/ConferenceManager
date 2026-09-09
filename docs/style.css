@@ -203,6 +203,23 @@ a.abbr:hover { color: var(--accent); text-decoration: underline; }
 }
 /* 자동 추출은 실선이 아닌 점선으로 구분한다. */
 .stage.scraped { border-left-style: dashed; border-left-color: var(--accent); }
+/* 셀에 실제로 뜨는 대표 마감(current)은 목록의 기준점이므로 다른 단계보다
+   살짝 강조한다 - 테두리를 굵게 하고 옅은 배경을 준다. .scraped(점선)와는
+   굵기/배경으로 구분되므로 동시에 적용돼도(현재 표시 + 자동 추출) 둘 다
+   눈에 띈다 - border-left-*를 개별 속성으로 합쳐 순서에 기대지 않는다. */
+.stage.current {
+  border-left-width: 3px;
+  border-left-style: solid;
+  border-left-color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 8%, transparent);
+}
+.stage.current.scraped { border-left-style: dashed; }
+.stage.current .stage-label { font-weight: 600; color: var(--text); }
+.stage-current-badge {
+  background: color-mix(in srgb, var(--accent) 18%, transparent);
+  color: var(--accent);
+  font-weight: 600;
+}
 .stage-label { min-width: 180px; color: var(--text); }
 .stage-date { color: var(--text-dim); }
 .stage-dday.upcoming { color: var(--accent); }

@@ -149,21 +149,47 @@ export function formatDeadline(edition, now) {
 }
 
 /**
- * 제출마감 칸에 이미 보이는 주 마감을 뺀 나머지 단계를 시간순으로 돌려준다.
- * 토글을 펼쳤을 때 보여줄 목록이다.
+ * 회차의 모든 단계를 시간순으로 돌려준다. 셀에 뜨는 주 마감을 포함해
+ * 아무것도 빼지 않는다 - 토글을 펼쳤을 때 보여줄 전체 일정표다.
  *
- * 셀에 뜨는 값은 primary_deadline이 아니라 nextDeadline(edition, now)이 고른
- * 것이므로(롤링 마감 학회는 이 둘이 다르다), 뺄 항목도 nextDeadline이 고른
- * 바로 그 객체(참조)로 판단한다. 날짜 값으로 비교하면 같은 시각에 걸린
- * 서로 다른 두 단계가 있을 때(예: paper와 abstract가 같은 마감일) 아직
- * 보여줘야 할 그 다른 단계까지 함께 사라진다.
+ * 예전 이름은 extraDeadlines였고 nextDeadline이 고른 항목을 뺐다. 그런데
+ * ECCV(12단계 중 11개만 노출), UbiComp(4개 중 3개), WACV(11개 중 10개)처럼
+ * 뺀 항목이 하필 가장 중요한 '본 마감'이라, 펼쳤을 때 일정표에 정작 지금
+ * 다가오는 마감이 빠진 구멍이 생겼다. 어느 게 대표인지는 렌더러가
+ * isFeaturedDeadline로 표시만 하고, 목록 자체는 항상 전부를 보여준다.
+ *
+ * now를 받지 않는다 - 정렬은 날짜값 비교만으로 끝나고 '오늘'과 무관하며,
+ * 무엇을 뺄지 판단하던 로직(그게 now를 썼던 유일한 이유)이 이제 없다.
  */
-export function extraDeadlines(edition, now) {
+export function allDeadlines(edition) {
   if (!edition || !edition.deadlines) return [];
-  const chosen = nextDeadline(edition, now);
   return edition.deadlines
-    .filter((d) => d !== chosen)
+    .slice()
     .sort((a, b) => (a.date < b.date ? -1 : a.date > b.date ? 1 : 0));
+}
+
+/**
+ * 이 단계가 셀에 뜨는 대표 마감(nextDeadline이 고른 바로 그 항목)인지
+ * 판단한다. 날짜 값이 아니라 참조 동일성으로 비교한다 - 같은 시각에 걸린
+ * 서로 다른 두 단계가 있어도(예: HRI 2027의 Short Contributions와
+ * alt.HRI가 둘 다 10-01) 날짜만으로는 어느 쪽이 대표인지 구분할 수 없기
+ * 때문이다. extraDeadlines가 쓰던 것과 같은 판단 기준을 그대로 옮겼다.
+ *
+ * nextDeadline은 edition.deadlines가 완전히 비어 있을 때만 primary_deadline
+ * 으로 새 객체를 합성해 돌려준다 - 그 객체는 deadlines의 어떤 원소와도
+ * 동일한 참조가 아니므로 이 함수는 항상 false를 돌려주게 된다. 이 함수를
+ * 부르는 쪽(allDeadlines가 목록을 채운 경우)은 deadlines가 비어 있지
+ * 않다는 뜻이라 그 경로를 절대 타지 않아야 맞지만, 가정에 기대는 대신
+ * 여기서 단언해 어긋나면 콘솔에 드러나게 한다.
+ */
+export function isFeaturedDeadline(deadline, edition, now) {
+  console.assert(
+    (edition?.deadlines?.length ?? 0) > 0,
+    "isFeaturedDeadline: edition.deadlines가 비어 있다 - nextDeadline이 " +
+      "합성한 객체와 비교하게 되어 항상 false만 나온다. allDeadlines가 이미 " +
+      "빈 목록을 돌려줘야 할 상황인데 이 함수가 불렸다는 뜻이다."
+  );
+  return deadline === nextDeadline(edition, now);
 }
 
 /** 개최일 표시. 소스가 준 원문이 있으면 그대로 쓴다. */

@@ -2,11 +2,12 @@ import assert from "node:assert/strict";
 import { test } from "node:test";
 
 import {
+  allDeadlines,
   compareBy,
   dayDelta,
-  extraDeadlines,
   formatDeadline,
   isEnded,
+  isFeaturedDeadline,
   matchesFilters,
   nextDeadline,
   pickEdition,
@@ -388,11 +389,13 @@ test("formatDeadline shows ECCV's Paper Submission, not the later AI Art Submiss
   assert.equal(result.label, "Paper Submission");
 });
 
-// --- extraDeadlines: 토글에 보여줄 부가 일정 ---
+// --- allDeadlines: 토글에 보여줄 전체 일정 ---
 //
-// 셀에 뜨는 값은 nextDeadline(edition, now)이 고른 것이지 primary_deadline이
-// 아니다(롤링 마감 학회는 둘이 다르다 — 위 UBICOMP 테스트 참고). extraDeadlines는
-// 그 값을 뺀 나머지를 시간순으로 돌려줘야 한다.
+// 예전 이름 extraDeadlines는 셀에 뜨는 항목(nextDeadline의 선택)을 뺐다.
+// 하지만 그게 펼친 목록에서 가장 중요한 항목(본 마감)이 통째로 사라지는
+// 결과였다(ECCV 12개 중 11개, UbiComp 4개 중 3개, WACV 11개 중 10개만
+// 보이던 문제). allDeadlines는 아무것도 빼지 않고 시간순으로 전부 돌려주고,
+// 어느 것이 대표인지는 isFeaturedDeadline이 참조 동일성으로 따로 표시한다.
 
 const multiStage = {
   year: 2026,
@@ -414,31 +417,34 @@ const multiStage = {
   ],
 };
 
-test("extraDeadlines drops the stage the cell shows (nextDeadline's pick), not literally primary_deadline", () => {
-  const types = extraDeadlines(multiStage, NOW).map((d) => d.type);
-  assert.deepEqual(types, ["abstract", "notification", "poster"]);
+test("allDeadlines includes the stage the cell shows too — nothing is dropped", () => {
+  const types = allDeadlines(multiStage).map((d) => d.type);
+  assert.deepEqual(types, ["abstract", "paper", "notification", "poster"]);
 });
 
-test("extraDeadlines sorts chronologically", () => {
-  const dates = extraDeadlines(multiStage, NOW).map((d) => d.date);
+test("allDeadlines sorts chronologically", () => {
+  const dates = allDeadlines(multiStage).map((d) => d.date);
   assert.deepEqual(dates, [...dates].sort());
 });
 
-test("extraDeadlines is empty when only the featured deadline exists", () => {
+test("allDeadlines returns the single stage as-is when only one deadline exists", () => {
+  // 마감이 하나뿐이면 목록도 그 하나뿐이다(빈 배열이 아니다) - 토글을 달지
+  // 말지는 호출하는 쪽(app.js)이 길이로 판단한다.
   const single = { ...multiStage, deadlines: [multiStage.deadlines[1]] };
-  assert.deepEqual(extraDeadlines(single, NOW), []);
+  assert.deepEqual(allDeadlines(single).map((d) => d.type), ["paper"]);
 });
 
-test("extraDeadlines handles an edition with no deadlines", () => {
-  assert.deepEqual(extraDeadlines({ deadlines: [], primary_deadline: null }, NOW), []);
-  assert.deepEqual(extraDeadlines(null, NOW), []);
+test("allDeadlines handles an edition with no deadlines", () => {
+  assert.deepEqual(allDeadlines({ deadlines: [], primary_deadline: null }), []);
+  assert.deepEqual(allDeadlines(null), []);
 });
 
-test("extraDeadlines excludes by identity, not by date — a shared date does not hide two stages", () => {
-  // If dropping "the date equal to the chosen one" instead of "the chosen
-  // object" two stages sharing an exact date would both vanish, hiding a
-  // genuinely different stage. nextDeadline picks one specific object here
-  // (the "paper" entry); only that object should be excluded.
+// --- isFeaturedDeadline: 어느 단계가 셀과 같은 대표 마감인지 ---
+
+test("isFeaturedDeadline marks by identity, not by date — a shared date does not mark two stages", () => {
+  // 날짜값으로 비교하면 같은 시각에 걸린 두 단계가 둘 다 '대표'로 잘못
+  // 표시될 수 있다. nextDeadline은 특정 객체 하나(여기선 "paper" 항목)를
+  // 고르므로, 그 객체만 current여야 한다.
   const sharedDate = "2025-11-13T23:59:59";
   const sharedDateEdition = {
     year: 2026,
@@ -454,8 +460,10 @@ test("extraDeadlines excludes by identity, not by date — a shared date does no
       { type: "abstract", label: "Also due", date: sharedDate, source: "ai-deadlines" },
     ],
   };
-  const types = extraDeadlines(sharedDateEdition, NOW).map((d) => d.type);
-  assert.deepEqual(types, ["abstract"]);
+  const flags = allDeadlines(sharedDateEdition).map(
+    (d) => [d.type, isFeaturedDeadline(d, sharedDateEdition, NOW)]
+  );
+  assert.deepEqual(flags, [["paper", true], ["abstract", false]]);
 });
 
 // --- nextDeadline must not synthesize a featured deadline out of thin air
@@ -463,13 +471,12 @@ test("extraDeadlines excludes by identity, not by date — a shared date does no
 //
 // The empty-deadlines fallback (primary_deadline only, no deadlines array)
 // synthesizes a { type: "paper", ... } object that isn't a member of
-// edition.deadlines — harmless there, since extraDeadlines has nothing to
-// exclude it from. But if deadlines is non-empty and simply has no
-// paper/submission entry (e.g. only notification/camera_ready survived,
-// which is what an LLM-extracted CFP could plausibly produce), that same
-// synthesis would hand extraDeadlines an object that matches nothing in the
-// array by reference, so nothing gets excluded and the featured deadline
-// duplicates into the expander list.
+// edition.deadlines — harmless there, since allDeadlines has nothing to list
+// in that case (edition.deadlines is empty). But if deadlines is non-empty
+// and simply has no paper/submission entry (e.g. only notification/
+// camera_ready survived, which is what an LLM-extracted CFP could plausibly
+// produce), isFeaturedDeadline must not somehow match one of them to that
+// synthesized object — none of them is "featured".
 
 const noPaperTypeEdition = () => ({
   year: 2026,
@@ -490,7 +497,13 @@ test("nextDeadline returns null when deadlines exist but none is paper/submissio
   assert.equal(nextDeadline(noPaperTypeEdition(), NOW), null);
 });
 
-test("extraDeadlines shows every stage without duplication when nextDeadline finds no featured deadline", () => {
-  const types = extraDeadlines(noPaperTypeEdition(), NOW).map((d) => d.type);
+test("allDeadlines shows every stage without duplication when nextDeadline finds no featured deadline", () => {
+  const types = allDeadlines(noPaperTypeEdition()).map((d) => d.type);
   assert.deepEqual(types, ["notification", "camera_ready"]);
+});
+
+test("isFeaturedDeadline marks nothing as current when nextDeadline finds no featured deadline", () => {
+  const edition = noPaperTypeEdition();
+  const flags = allDeadlines(edition).map((d) => isFeaturedDeadline(d, edition, NOW));
+  assert.deepEqual(flags, [false, false]);
 });

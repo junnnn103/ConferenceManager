@@ -1,9 +1,10 @@
 import {
+  allDeadlines,
   compareBy,
-  extraDeadlines,
   formatDateRange,
   formatDeadline,
   isEnded,
+  isFeaturedDeadline,
   matchesFilters,
   pickEdition,
 } from "./lib.js";
@@ -233,16 +234,20 @@ function renderRow(conf, now) {
     label.textContent = info.label;
     deadlineCell.append(label);
   }
-  const extras = extraDeadlines(edition, now);
-  if (extras.length > 0) {
+  // 펼치면 이제 아무것도 빼지 않은 전체 일정을 보여주므로(allDeadlines),
+  // 숫자의 의미도 "숨겨진 개수"에서 "전체 단계 수"로 바뀐다. 마감이 하나뿐인
+  // 학회는 펼쳐봐야 셀에 이미 쓰인 것과 같은 한 줄만 나오므로 여전히 토글을
+  // 달지 않는다 - 추가 정보가 없는 토글은 없느니만 못하다.
+  const stages = allDeadlines(edition);
+  if (stages.length > 1) {
     const toggle = document.createElement("button");
     toggle.type = "button";
     toggle.className = "stage-toggle";
     toggle.dataset.toggle = conf.abbr;
     const open = state.expanded.has(conf.abbr);
     toggle.setAttribute("aria-expanded", String(open));
-    toggle.textContent = `${open ? "▾" : "▸"} +${extras.length}`;
-    toggle.title = "부가 일정 보기";
+    toggle.textContent = `${open ? "▾" : "▸"} 총 ${stages.length}개`;
+    toggle.title = "전체 일정 보기";
     deadlineCell.append(toggle);
   }
   row.append(deadlineCell);
@@ -287,10 +292,14 @@ function renderStageRow(conf, edition, now) {
   const list = document.createElement("ol");
   list.className = "stage-list";
 
-  for (const stage of extraDeadlines(edition, now)) {
+  for (const stage of allDeadlines(edition)) {
     const item = document.createElement("li");
     const scraped = stage.source === "cfp-scrape";
-    item.className = scraped ? "stage scraped" : "stage";
+    // 셀에 뜨는 대표 마감도 이 목록에 그대로 포함된다(더 이상 빼지 않는다) -
+    // 어느 것인지는 클래스와 뱃지로만 표시한다.
+    const current = isFeaturedDeadline(stage, edition, now);
+    item.className = ["stage", current && "current", scraped && "scraped"]
+      .filter(Boolean).join(" ");
 
     const label = document.createElement("span");
     label.className = "stage-label";
@@ -309,6 +318,16 @@ function renderStageRow(conf, edition, now) {
     dday.className = `stage-dday ${info.state}`;
     dday.textContent = info.dday;
     item.append(dday);
+
+    if (current) {
+      // 색만으로 구분하면 색맹/저시력 사용자나 흑백 인쇄에서 안 보이므로
+      // 짧은 한글 라벨도 함께 둔다.
+      const badge = document.createElement("span");
+      badge.className = "badge stage-current-badge";
+      badge.textContent = "현재 표시";
+      badge.title = "제출마감 칸에 뜨는 바로 그 마감입니다";
+      item.append(badge);
+    }
 
     if (scraped) {
       // 자동 추출은 사람이 한 번의 클릭으로 검증할 수 있어야 한다. 다른
@@ -354,7 +373,7 @@ function render() {
       rows.push(renderRow(conf, now));
       if (state.expanded.has(conf.abbr)) {
         const edition = pickEdition(conf.editions, now);
-        if (extraDeadlines(edition, now).length > 0) {
+        if (allDeadlines(edition).length > 1) {
           rows.push(renderStageRow(conf, edition, now));
         }
       }
@@ -497,7 +516,7 @@ function wireEvents() {
     state.expanded.clear();
     if (!anyOpen) {
       for (const conf of state.data.conferences) {
-        if (extraDeadlines(pickEdition(conf.editions, now), now).length > 0) {
+        if (allDeadlines(pickEdition(conf.editions, now)).length > 1) {
           state.expanded.add(conf.abbr);
         }
       }

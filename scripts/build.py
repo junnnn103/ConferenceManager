@@ -207,7 +207,7 @@ def main() -> int:
 
     parser = argparse.ArgumentParser()
     parser.add_argument("--allow-shrink", action="store_true",
-                        help="학회 수가 절반 미만으로 줄어도 기존 파일을 덮어쓴다")
+                        help="학회 수가 이전의 80% 미만으로 줄어도 기존 파일을 덮어쓴다")
     args = parser.parse_args()
 
     session = requests.Session()
@@ -234,7 +234,14 @@ def main() -> int:
 
     previous = _previous_conference_count(OUTPUT_PATH)
     current = len(result["conferences"])
-    if previous and current * 2 < previous and not args.allow_shrink:
+    # 절반(0.5) 기준은 실제로 가장 흔한 장애를 놓친다. 38개 학회 중 19개는
+    # ai-deadlines 없이 ccfddl만으로도 해소되므로, ai-deadlines가 통째로
+    # 죽으면 정확히 19개가 살아남는다 - "19 * 2 < 38"은 거짓이라 게이트를
+    # 그냥 통과해 버리고, 나머지 19개가 unresolved로 조용히 덮어써진다.
+    # 0.8을 기준으로 하면 이 경우(19/38 = 0.5)도 잡아낸다. 이만큼 줄어드는
+    # 정당한 축소(학회가 실제로 여럿 종료되는 등)는 드물고, 그런 경우는
+    # --allow-shrink로 의도를 명시하면 된다.
+    if previous and current < previous * 0.8 and not args.allow_shrink:
         print(f"학회 수가 {previous}개에서 {current}개로 급감했습니다. "
               "소스 장애로 보여 기존 파일을 유지합니다.", file=sys.stderr)
         print("의도한 축소라면 --allow-shrink 를 붙여 다시 실행하세요.", file=sys.stderr)

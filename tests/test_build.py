@@ -286,6 +286,70 @@ def test_allow_shrink_flag_overrides_rejection(tmp_path, monkeypatch):
     assert len(new_content["conferences"]) < 20
 
 
+def test_shrink_guard_catches_ai_deadlines_outage_ratio(tmp_path, monkeypatch):
+    # 실제 등록 현황을 재현한다: 38개 중 19개는 ai-deadlines 없이 manual/
+    # ccfddl만으로 해소되고, 나머지 19개는 ai-deadlines 없이는 전혀 해소되지
+    # 않는다. ai-deadlines가 통째로 죽으면(fetcher가 아무것도 못 돌려주면)
+    # 정확히 19개만 살아남는다.
+    #
+    # 절반(0.5) 기준이었다면 "19 * 2 < 38"은 거짓이라 게이트가 조용히
+    # 통과해 버렸다 - 바로 이 시나리오가 발견된 버그였다. 0.8 기준은
+    # "19 < 38 * 0.8 (=30.4)"가 참이라 이를 잡아낸다.
+    import scripts.build as build_module
+
+    output_file = tmp_path / "conferences.json"
+    monkeypatch.setattr(build_module, "OUTPUT_PATH", output_file)
+
+    registry = [
+        {"abbr": f"resolved{i}", "display": f"RESOLVED{i}", "full_name": "", "grade": "",
+         "ai_specialist": False, "field": "CV", "homepage": None, "members": None,
+         "sources": {"ai_deadlines": None, "ccfddl": None}}
+        for i in range(19)
+    ] + [
+        {"abbr": f"gone{i}", "display": f"GONE{i}", "full_name": "", "grade": "",
+         "ai_specialist": False, "field": "CV", "homepage": None, "members": None,
+         "sources": {"ai_deadlines": f"gone{i}", "ccfddl": None}}
+        for i in range(19)
+    ]
+    manual = {
+        f"resolved{i}": [Edition(
+            year=2024, date_text="Jan 1, 2024", start=date(2024, 1, 1), end=date(2024, 1, 2),
+            place="X", link="https://example.com", deadlines=[], source="manual",
+        )]
+        for i in range(19)
+    }
+    monkeypatch.setattr(build_module, "load_registry", lambda: registry)
+    monkeypatch.setattr(build_module, "load_fields", lambda: _SHRINK_TEST_FIELDS)
+    monkeypatch.setattr(build_module, "load_manual", lambda path: manual)
+    monkeypatch.setattr(build_module, "load_scraped", lambda path: {})
+
+    # ai-deadlines가 죽었다고 가정한다 - main()이 직접 만드는 fetcher가
+    # 이 이름으로 네트워크를 타므로, 여기서 예외를 던지게 바꿔 재현한다.
+    # build()는 소스 하나의 실패를 잡아 건너뛰므로(_gather) 네트워크 없이도
+    # "ai-deadlines만 죽었을 때" 상황이 결정적으로 재현된다.
+    def _dead_aideadlines(conf_id, session):
+        raise RuntimeError("ai-deadlines unreachable")
+
+    monkeypatch.setattr(build_module, "fetch_aideadlines", _dead_aideadlines)
+
+    existing = {
+        "generated_at": "2026-01-01T00:00:00+00:00",
+        "fields": [],
+        "conferences": [{"abbr": f"C{i}", "abbr_group": f"c{i}", "editions": []}
+                        for i in range(38)],
+        "unresolved": [],
+    }
+    output_file.write_text(json.dumps(existing), encoding="utf-8")
+
+    from scripts.build import main
+    monkeypatch.setattr("sys.argv", ["build"])
+    result = main()
+
+    assert result == 1
+    existing_content = json.loads(output_file.read_text(encoding="utf-8"))
+    assert len(existing_content["conferences"]) == 38
+
+
 def test_group_keyed_manual_on_combined_row_is_skipped():
     # 결합 행의 manual 항목이 그룹 키("iccv/eccv")로 적히면 어느 구성원의
     # 회차인지 알 수 없다. 병합하면 엉뚱한 이름표가 붙으므로 버려야 한다.

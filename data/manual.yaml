@@ -33,23 +33,68 @@ conferences:
             label: "Full Paper"
             date: "2025-09-30 23:59:59"
             timezone: AoE
-      # 공식 사이트(https://humanrobotinteraction.org/)에서 확인: "The 22nd
-      # Annual IEEE/ACM International Conference on Human-Robot Interaction
-      # (HRI 2027) will be held in Santa Clara, California, USA, from
-      # March 8-12, 2027." 마감 미발표.
+      # 공식 사이트(https://humanrobotinteraction.org/2027/)에서 확인: "The
+      # 22nd Annual IEEE/ACM International Conference on Human-Robot
+      # Interaction (HRI 2027) will be held in Santa Clara, California, USA,
+      # from March 8-12, 2027." 마감 9개는 각 트랙 페이지에서 확인했고,
+      # full-papers 페이지가 "All deadlines are 23:59 AoE"라고 명시한다.
+      # type은 nextDeadline이 paper 타입을 최우선으로 고르므로 Full Papers
+      # 제출만 paper로 두고, 다른 트랙은 submission/workshop/demo로 구분한다
+      # (docs/lib.js의 paperCandidates, scripts/models.py의 PAPER_TYPES 참고).
       - year: 2027
         date_text: "March 8-12, 2027"
         start: 2027-03-08
         end: 2027-03-12
         place: "Santa Clara, California, USA"
-        link: "https://humanrobotinteraction.org/"
-        deadlines: []
+        link: "https://humanrobotinteraction.org/2027/"
+        deadlines:
+          - type: abstract
+            label: "Abstract"
+            date: "2026-09-11 23:59:59"
+            timezone: AoE
+          - type: paper
+            label: "Full Papers"
+            date: "2026-09-18 23:59:59"
+            timezone: AoE
+          - type: submission
+            label: "Short Contributions"
+            date: "2026-10-01 23:59:59"
+            timezone: AoE
+          - type: submission
+            label: "alt.HRI"
+            date: "2026-10-01 23:59:59"
+            timezone: AoE
+          - type: workshop
+            label: "Workshops & Tutorials"
+            date: "2026-10-05 23:59:59"
+            timezone: AoE
+          - type: submission
+            label: "Industry White Papers"
+            date: "2026-10-10 23:59:59"
+            timezone: AoE
+          - type: submission
+            label: "HRI Pioneers"
+            date: "2026-10-18 23:59:59"
+            timezone: AoE
+          - type: demo
+            label: "Videos and Demos"
+            date: "2026-11-20 23:59:59"
+            timezone: AoE
+          - type: submission
+            label: "Student Design Competition"
+            date: "2026-11-20 23:59:59"
+            timezone: AoE
   ijcai:
     editions:
       # 공식 사이트(https://www.ijcai.org/future_conferences)에서 확인:
       # "The third IJCAI-27 will be held in Kyoto, Japan from August 7th
       # until August 13th, 2027 and in Hengqin, China from August 15th
-      # until August 17th, 2027." 두 도시에 걸친 한 회차로 표시. 마감 미발표.
+      # until August 17th, 2027." 두 도시에 걸친 한 회차로 표시.
+      # 마감: ijcai.org와 future_conferences 페이지를 다시 확인함 - 마감
+      # 언급 없음. IJCAI-27 전용 사이트로 가는 링크도 아직 없음. 검색에
+      # "2027-02-01"을 마감으로 제시하는 결과가 있었으나 출처가 submitforge.
+      # com/mlciv.com 같은 제3자 집계 사이트(추정치)일 뿐 공식 발표가 아니라
+      # 채택하지 않았다.
       - year: 2027
         date_text: "Aug 7-13, 2027 Kyoto, Japan & Aug 15-17, 2027 Hengqin, China"
         start: 2027-08-07
@@ -61,7 +106,10 @@ conferences:
     editions:
       # 공식 사이트(https://roboticsconference.org/)에서 확인: "We look
       # forward to seeing you at RSS 2027 in Athens, Greece, July 6–11,
-      # 2027!" 마감 미발표.
+      # 2027!" 마감: roboticsconference.org와 /information/cfp/ 페이지를
+      # 다시 확인함 - 둘 다 RSS 2026 마감(2026-01-30 등)만 있고 2027 마감
+      # 언급 없음. 검색에 "과거 패턴 기반 예측"이라는 제3자 결과가 있었으나
+      # 공식 발표가 아니라 채택하지 않았다.
       - year: 2027
         date_text: "July 6-11, 2027"
         start: 2027-07-06

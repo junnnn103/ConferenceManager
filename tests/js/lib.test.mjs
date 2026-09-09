@@ -4,6 +4,7 @@ import { test } from "node:test";
 import {
   compareBy,
   dayDelta,
+  extraDeadlines,
   formatDeadline,
   matchesFilters,
   nextDeadline,
@@ -303,4 +304,74 @@ test("nextDeadline prefers paper over a later, unrelated submission-typed entry"
 test("formatDeadline shows ECCV's Paper Submission, not the later AI Art Submission", () => {
   const result = formatDeadline(eccvLikeEdition(), NOW);
   assert.equal(result.label, "Paper Submission");
+});
+
+// --- extraDeadlines: 토글에 보여줄 부가 일정 ---
+//
+// 셀에 뜨는 값은 nextDeadline(edition, now)이 고른 것이지 primary_deadline이
+// 아니다(롤링 마감 학회는 둘이 다르다 — 위 UBICOMP 테스트 참고). extraDeadlines는
+// 그 값을 뺀 나머지를 시간순으로 돌려줘야 한다.
+
+const multiStage = {
+  year: 2026,
+  date_text: "June 3-7, 2026",
+  start: "2026-06-03",
+  end: "2026-06-07",
+  place: "Denver USA",
+  link: null,
+  primary_deadline: "2025-11-13T23:59:59",
+  source: "ai-deadlines",
+  deadlines: [
+    { type: "abstract", label: "Abstract", date: "2025-11-07T23:59:59", source: "ai-deadlines" },
+    { type: "paper", label: "Paper", date: "2025-11-13T23:59:59", source: "ai-deadlines" },
+    { type: "notification", label: "Decisions", date: "2026-02-20T23:59:59", source: "ai-deadlines" },
+    {
+      type: "poster", label: "Posters", date: "2026-04-21T22:00:00", source: "cfp-scrape",
+      evidence: { raw_text: "Posters deadline: April 21, 2026", url: "https://x/" },
+    },
+  ],
+};
+
+test("extraDeadlines drops the stage the cell shows (nextDeadline's pick), not literally primary_deadline", () => {
+  const types = extraDeadlines(multiStage, NOW).map((d) => d.type);
+  assert.deepEqual(types, ["abstract", "notification", "poster"]);
+});
+
+test("extraDeadlines sorts chronologically", () => {
+  const dates = extraDeadlines(multiStage, NOW).map((d) => d.date);
+  assert.deepEqual(dates, [...dates].sort());
+});
+
+test("extraDeadlines is empty when only the featured deadline exists", () => {
+  const single = { ...multiStage, deadlines: [multiStage.deadlines[1]] };
+  assert.deepEqual(extraDeadlines(single, NOW), []);
+});
+
+test("extraDeadlines handles an edition with no deadlines", () => {
+  assert.deepEqual(extraDeadlines({ deadlines: [], primary_deadline: null }, NOW), []);
+  assert.deepEqual(extraDeadlines(null, NOW), []);
+});
+
+test("extraDeadlines excludes by identity, not by date — a shared date does not hide two stages", () => {
+  // If dropping "the date equal to the chosen one" instead of "the chosen
+  // object" two stages sharing an exact date would both vanish, hiding a
+  // genuinely different stage. nextDeadline picks one specific object here
+  // (the "paper" entry); only that object should be excluded.
+  const sharedDate = "2025-11-13T23:59:59";
+  const sharedDateEdition = {
+    year: 2026,
+    date_text: "June 3-7, 2026",
+    start: "2026-06-03",
+    end: "2026-06-07",
+    place: "Denver USA",
+    link: null,
+    primary_deadline: sharedDate,
+    source: "ai-deadlines",
+    deadlines: [
+      { type: "paper", label: "Paper", date: sharedDate, source: "ai-deadlines" },
+      { type: "abstract", label: "Also due", date: sharedDate, source: "ai-deadlines" },
+    ],
+  };
+  const types = extraDeadlines(sharedDateEdition, NOW).map((d) => d.type);
+  assert.deepEqual(types, ["abstract"]);
 });

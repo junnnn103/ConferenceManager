@@ -112,6 +112,24 @@ export function formatDeadline(edition, now) {
   return { state: "past", text, dday: `D+${Math.abs(delta)}`, label: chosen.label };
 }
 
+/**
+ * 제출마감 칸에 이미 보이는 주 마감을 뺀 나머지 단계를 시간순으로 돌려준다.
+ * 토글을 펼쳤을 때 보여줄 목록이다.
+ *
+ * 셀에 뜨는 값은 primary_deadline이 아니라 nextDeadline(edition, now)이 고른
+ * 것이므로(롤링 마감 학회는 이 둘이 다르다), 뺄 항목도 nextDeadline이 고른
+ * 바로 그 객체(참조)로 판단한다. 날짜 값으로 비교하면 같은 시각에 걸린
+ * 서로 다른 두 단계가 있을 때(예: paper와 abstract가 같은 마감일) 아직
+ * 보여줘야 할 그 다른 단계까지 함께 사라진다.
+ */
+export function extraDeadlines(edition, now) {
+  if (!edition || !edition.deadlines) return [];
+  const chosen = nextDeadline(edition, now);
+  return edition.deadlines
+    .filter((d) => d !== chosen)
+    .sort((a, b) => (a.date < b.date ? -1 : a.date > b.date ? 1 : 0));
+}
+
 /** 개최일 표시. 소스가 준 원문이 있으면 그대로 쓴다. */
 export function formatDateRange(edition) {
   if (!edition) return "미정";

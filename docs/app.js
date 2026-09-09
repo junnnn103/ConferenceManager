@@ -1,5 +1,6 @@
 import {
   compareBy,
+  extraDeadlines,
   formatDateRange,
   formatDeadline,
   matchesFilters,
@@ -20,6 +21,8 @@ const state = {
     hidePast: false,
     query: "",
   },
+  // 펼침은 일회성이라 URL이나 localStorage에 저장하지 않는다.
+  expanded: new Set(),
 };
 
 const el = {
@@ -228,6 +231,18 @@ function renderRow(conf, now) {
     label.textContent = info.label;
     deadlineCell.append(label);
   }
+  const extras = extraDeadlines(edition, now);
+  if (extras.length > 0) {
+    const toggle = document.createElement("button");
+    toggle.type = "button";
+    toggle.className = "stage-toggle";
+    toggle.dataset.toggle = conf.abbr;
+    const open = state.expanded.has(conf.abbr);
+    toggle.setAttribute("aria-expanded", String(open));
+    toggle.textContent = `${open ? "▾" : "▸"} +${extras.length}`;
+    toggle.title = "부가 일정 보기";
+    deadlineCell.append(toggle);
+  }
   row.append(deadlineCell);
 
   row.append(linkCell(conf, edition));
@@ -247,6 +262,66 @@ function emptyRow() {
   return row;
 }
 
+// 토글이 펼쳐졌을 때 주 마감 아래로 나머지 단계를 보여주는 행.
+function renderStageRow(conf, edition, now) {
+  const row = document.createElement("tr");
+  row.className = "stage-row";
+
+  const cell = document.createElement("td");
+  cell.colSpan = COLUMN_COUNT;
+
+  const list = document.createElement("ol");
+  list.className = "stage-list";
+
+  for (const stage of extraDeadlines(edition, now)) {
+    const item = document.createElement("li");
+    const scraped = stage.source === "cfp-scrape";
+    item.className = scraped ? "stage scraped" : "stage";
+
+    const label = document.createElement("span");
+    label.className = "stage-label";
+    label.textContent = stage.label;
+    item.append(label);
+
+    const when = document.createElement("span");
+    when.className = "stage-date";
+    when.textContent = new Date(stage.date).toLocaleDateString("en-US", {
+      year: "numeric", month: "short", day: "numeric", timeZone: "UTC",
+    });
+    item.append(when);
+
+    const info = formatDeadline({ primary_deadline: stage.date }, now);
+    const dday = document.createElement("span");
+    dday.className = `stage-dday ${info.state}`;
+    dday.textContent = info.dday;
+    item.append(dday);
+
+    if (scraped) {
+      // 자동 추출은 사람이 한 번의 클릭으로 검증할 수 있어야 한다. 다른
+      // 모든 앵커처럼 이 링크도 safeHref를 거친다 - evidence.url도 CFP
+      // 페이지에서 그대로 가져온 값이라 신뢰할 수 없다.
+      const safeUrl = safeHref(stage.evidence?.url, location.href);
+      const badge = document.createElement(safeUrl ? "a" : "span");
+      badge.className = "badge scraped-badge";
+      badge.textContent = "자동 추출";
+      badge.title = stage.evidence?.raw_text
+        ? `CFP 원문: "${stage.evidence.raw_text}"`
+        : "CFP 페이지에서 자동 추출한 일정";
+      if (safeUrl) {
+        badge.href = safeUrl;
+        badge.target = "_blank";
+        badge.rel = "noopener";
+      }
+      item.append(badge);
+    }
+    list.append(item);
+  }
+
+  cell.append(list);
+  row.append(cell);
+  return row;
+}
+
 // 체크/토글 상태를 시각(.on)과 스크린 리더(aria-pressed) 양쪽에 같이 반영한다.
 function setPressed(button, on) {
   button.classList.toggle("on", on);
@@ -259,9 +334,21 @@ function render() {
     .filter((c) => matchesFilters(c, state.filters, now))
     .sort(compareBy(state.sortKey, state.sortDir, now));
 
-  el.tbody.replaceChildren(
-    ...(visible.length > 0 ? visible.map((c) => renderRow(c, now)) : [emptyRow()])
-  );
+  const rows = [];
+  if (visible.length > 0) {
+    for (const conf of visible) {
+      rows.push(renderRow(conf, now));
+      if (state.expanded.has(conf.abbr)) {
+        const edition = pickEdition(conf.editions, now);
+        if (extraDeadlines(edition, now).length > 0) {
+          rows.push(renderStageRow(conf, edition, now));
+        }
+      }
+    }
+  } else {
+    rows.push(emptyRow());
+  }
+  el.tbody.replaceChildren(...rows);
   el.count.textContent = `${visible.length} / ${state.data.conferences.length}개 표시`;
 
   document.querySelectorAll("#conference-table th[data-sort]").forEach((th) => {
@@ -371,6 +458,30 @@ function wireEvents() {
 
   el.search.addEventListener("input", (event) => {
     state.filters.query = event.target.value;
+    render();
+  });
+
+  el.tbody.addEventListener("click", (event) => {
+    const toggle = event.target.closest("[data-toggle]");
+    if (!toggle) return;
+    const abbr = toggle.dataset.toggle;
+    if (state.expanded.has(abbr)) state.expanded.delete(abbr);
+    else state.expanded.add(abbr);
+    render();
+  });
+
+  document.querySelector("#expand-all").addEventListener("click", (event) => {
+    const now = new Date();
+    const anyOpen = state.expanded.size > 0;
+    state.expanded.clear();
+    if (!anyOpen) {
+      for (const conf of state.data.conferences) {
+        if (extraDeadlines(pickEdition(conf.editions, now), now).length > 0) {
+          state.expanded.add(conf.abbr);
+        }
+      }
+    }
+    event.target.textContent = anyOpen ? "전체 펼치기" : "전체 접기";
     render();
   });
 }

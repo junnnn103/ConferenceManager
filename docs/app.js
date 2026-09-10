@@ -29,6 +29,10 @@ const state = {
     hidePast: false,
     query: "",
   },
+  // AI Specialist 배지를 학회명 옆에 띄울지. 행을 거르는 값이 아니라
+  // 보여주기만 하는 값이라 filters가 아닌 최상위에 둔다 - matchesFilters에
+  // 흘러들면 "필터가 아닌데 필터처럼" 취급되기 때문. 정렬 상태와 같은 급이다.
+  showAiBadge: false,
   // 펼침은 일회성이라 URL이나 localStorage에 저장하지 않는다.
   expanded: new Set(),
 };
@@ -56,6 +60,7 @@ function readStateFromUrl() {
   state.filters.aiOnly = params.get("ai") === "1";
   state.filters.hidePast = params.get("upcoming") === "1";
   state.filters.query = params.get("q") || "";
+  state.showAiBadge = params.get("aibadge") === "1";
   state.sortKey = params.get("sort") || "date";
   state.sortDir = params.get("dir") === "desc" ? "desc" : "asc";
   return true;
@@ -71,6 +76,7 @@ function readStateFromStorage() {
     state.filters.aiOnly = Boolean(saved.aiOnly);
     state.filters.hidePast = Boolean(saved.hidePast);
     state.filters.query = saved.query || "";
+    state.showAiBadge = Boolean(saved.showAiBadge);
     state.sortKey = saved.sortKey || "date";
     state.sortDir = saved.sortDir || "asc";
   } catch {
@@ -86,6 +92,7 @@ function persistState() {
   if (state.filters.aiOnly) params.set("ai", "1");
   if (state.filters.hidePast) params.set("upcoming", "1");
   if (state.filters.query) params.set("q", state.filters.query);
+  if (state.showAiBadge) params.set("aibadge", "1");
   if (state.sortKey !== "date") params.set("sort", state.sortKey);
   if (state.sortDir !== "asc") params.set("dir", state.sortDir);
 
@@ -100,6 +107,7 @@ function persistState() {
       aiOnly: state.filters.aiOnly,
       hidePast: state.filters.hidePast,
       query: state.filters.query,
+      showAiBadge: state.showAiBadge,
       sortKey: state.sortKey,
       sortDir: state.sortDir,
     }));
@@ -204,7 +212,7 @@ function renderRow(conf, now) {
     name.rel = "noopener noreferrer";
   }
   nameCell.append(name);
-  if (conf.ai_specialist) {
+  if (conf.ai_specialist && state.showAiBadge) {
     const badge = document.createElement("span");
     badge.className = "badge ai";
     badge.textContent = "AI Specialist";
@@ -454,6 +462,7 @@ function render() {
     setPressed(chip, state.filters.bkGrades.has(chip.dataset.bkGrade));
   });
   setPressed(document.querySelector("#ai-only"), state.filters.aiOnly);
+  setPressed(document.querySelector("#ai-badge"), state.showAiBadge);
   setPressed(document.querySelector("#hide-past"), state.filters.hidePast);
 
   // 개별 토글로도 state.expanded가 바뀌므로, 전체 펼치기 버튼의 문구는
@@ -543,6 +552,11 @@ function wireEvents() {
 
   document.querySelector("#hide-past").addEventListener("click", () => {
     state.filters.hidePast = !state.filters.hidePast;
+    render();
+  });
+
+  document.querySelector("#ai-badge").addEventListener("click", () => {
+    state.showAiBadge = !state.showAiBadge;
     render();
   });
 

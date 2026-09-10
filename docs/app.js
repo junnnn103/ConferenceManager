@@ -10,7 +10,7 @@ import {
   isFeaturedDeadline,
   matchesFilters,
   pickEdition,
-} from "./lib.js?v=e5dbbccd";
+} from "./lib.js?v=47ffcc6a";
 import { safeHref } from "./url-safety.js?v=5de46b35";
 
 const STORAGE_KEY = "conference-manager-filters";
@@ -22,6 +22,7 @@ const state = {
   filters: {
     fields: new Set(),
     grades: new Set(),
+    bkGrades: new Set(),
     aiOnly: false,
     hidePast: false,
     query: "",
@@ -49,6 +50,7 @@ function readStateFromUrl() {
   if (!params.toString()) return false;
   state.filters.fields = new Set(params.getAll("field"));
   state.filters.grades = new Set(params.getAll("grade"));
+  state.filters.bkGrades = new Set(params.getAll("bk"));
   state.filters.aiOnly = params.get("ai") === "1";
   state.filters.hidePast = params.get("upcoming") === "1";
   state.filters.query = params.get("q") || "";
@@ -63,6 +65,7 @@ function readStateFromStorage() {
     if (!saved) return;
     state.filters.fields = new Set(saved.fields || []);
     state.filters.grades = new Set(saved.grades || []);
+    state.filters.bkGrades = new Set(saved.bkGrades || []);
     state.filters.aiOnly = Boolean(saved.aiOnly);
     state.filters.hidePast = Boolean(saved.hidePast);
     state.filters.query = saved.query || "";
@@ -77,6 +80,7 @@ function persistState() {
   const params = new URLSearchParams();
   state.filters.fields.forEach((f) => params.append("field", f));
   state.filters.grades.forEach((g) => params.append("grade", g));
+  state.filters.bkGrades.forEach((g) => params.append("bk", g));
   if (state.filters.aiOnly) params.set("ai", "1");
   if (state.filters.hidePast) params.set("upcoming", "1");
   if (state.filters.query) params.set("q", state.filters.query);
@@ -90,6 +94,7 @@ function persistState() {
     localStorage.setItem(STORAGE_KEY, JSON.stringify({
       fields: [...state.filters.fields],
       grades: [...state.filters.grades],
+      bkGrades: [...state.filters.bkGrades],
       aiOnly: state.filters.aiOnly,
       hidePast: state.filters.hidePast,
       query: state.filters.query,
@@ -439,6 +444,9 @@ function render() {
   document.querySelectorAll("[data-grade]").forEach((chip) => {
     setPressed(chip, state.filters.grades.has(chip.dataset.grade));
   });
+  document.querySelectorAll("[data-bk-grade]").forEach((chip) => {
+    setPressed(chip, state.filters.bkGrades.has(chip.dataset.bkGrade));
+  });
   setPressed(document.querySelector("#ai-only"), state.filters.aiOnly);
   setPressed(document.querySelector("#hide-past"), state.filters.hidePast);
 
@@ -515,6 +523,13 @@ function wireEvents() {
     });
   });
 
+  document.querySelectorAll("[data-bk-grade]").forEach((chip) => {
+    chip.addEventListener("click", () => {
+      toggleInSet(state.filters.bkGrades, chip.dataset.bkGrade);
+      render();
+    });
+  });
+
   document.querySelector("#ai-only").addEventListener("click", () => {
     state.filters.aiOnly = !state.filters.aiOnly;
     render();
@@ -527,7 +542,7 @@ function wireEvents() {
 
   document.querySelector("#reset").addEventListener("click", () => {
     state.filters = {
-      fields: new Set(), grades: new Set(),
+      fields: new Set(), grades: new Set(), bkGrades: new Set(),
       aiOnly: false, hidePast: false, query: "",
     };
     el.search.value = "";

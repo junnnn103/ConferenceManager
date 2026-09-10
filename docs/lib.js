@@ -402,10 +402,21 @@ export function compareBy(key, direction, now) {
   };
 }
 
-/** 필터 통과 여부. filters.fields와 filters.grades는 Set이며 빈 Set은 '전체'를 뜻한다. */
+/**
+ * 필터 통과 여부. fields/grades/bkGrades는 Set이며 빈 Set은 '전체'를 뜻한다.
+ *
+ * grades(SR)와 bkGrades(BK)는 서로 다른 기준이라 따로 건다. 둘을 함께 켜면
+ * 교집합이 된다 - 예를 들어 SR 우수 + BK S를 고르면 회사 기준으로는 우수인데
+ * BK는 최우수로 보는 학회만 남아, 두 기준이 갈리는 쪽을 골라낼 수 있다.
+ */
 export function matchesFilters(conf, filters, now) {
   if (filters.fields.size > 0 && !filters.fields.has(conf.field)) return false;
   if (filters.grades.size > 0 && !filters.grades.has(conf.grade)) return false;
+  if (filters.bkGrades && filters.bkGrades.size > 0) {
+    // BK 목록에 없는 학회는 '-'로 거른다 - null과 '-'를 같은 값으로 다뤄야
+    // "BK 미등재만 보기"가 가능하다.
+    if (!filters.bkGrades.has(conf.bk_grade || "-")) return false;
+  }
   if (filters.aiOnly && !conf.ai_specialist) return false;
 
   if (filters.hidePast) {

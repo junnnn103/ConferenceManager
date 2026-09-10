@@ -691,3 +691,37 @@ test("UTC-12 표기도 AoE와 같은 시각이므로 함께 환산한다", () =>
   assert.equal(toKst("2026-09-18T00:00:00").toISOString().slice(0, 10), "2026-09-18");
   assert.equal(toKst("2026-09-18T23:59:59").toISOString().slice(0, 10), "2026-09-19");
 });
+
+test("matchesFilters BK 등급으로 거른다", () => {
+  const base = { fields: new Set(), grades: new Set(), aiOnly: false, hidePast: false, query: "" };
+  const sConf = conf({ grade: "우수", bk_grade: "S" });
+  const aConf = conf({ grade: "최우수", bk_grade: "A" });
+  const noneConf = conf({ grade: "우수", bk_grade: null });
+
+  assert.equal(matchesFilters(sConf, { ...base, bkGrades: new Set(["S"]) }, NOW), true);
+  assert.equal(matchesFilters(aConf, { ...base, bkGrades: new Set(["S"]) }, NOW), false);
+  // BK 목록에 없는 학회는 '-'로 거른다 - null과 '-'를 같은 값으로 다뤄야
+  // "BK 미등재만 보기"가 성립한다.
+  assert.equal(matchesFilters(noneConf, { ...base, bkGrades: new Set(["-"]) }, NOW), true);
+  assert.equal(matchesFilters(sConf, { ...base, bkGrades: new Set(["-"]) }, NOW), false);
+  // 빈 Set은 '전체'
+  assert.equal(matchesFilters(aConf, { ...base, bkGrades: new Set() }, NOW), true);
+});
+
+test("matchesFilters SR과 BK 필터를 함께 걸면 교집합이다", () => {
+  // 두 기준이 갈리는 학회를 골라내는 용도다 - SR 우수 + BK S를 고르면
+  // 회사 기준으로는 우수인데 BK는 최우수로 보는 학회만 남는다.
+  const base = { fields: new Set(), aiOnly: false, hidePast: false, query: "" };
+  const split = conf({ grade: "우수", bk_grade: "S" });
+  const agree = conf({ grade: "최우수", bk_grade: "S" });
+  const filters = { ...base, grades: new Set(["우수"]), bkGrades: new Set(["S"]) };
+
+  assert.equal(matchesFilters(split, filters, NOW), true);
+  assert.equal(matchesFilters(agree, filters, NOW), false);
+});
+
+test("matchesFilters bkGrades가 없어도 동작한다", () => {
+  // 저장된 옛 필터 상태에는 bkGrades 키가 없을 수 있다.
+  const filters = { fields: new Set(), grades: new Set(), aiOnly: false, hidePast: false, query: "" };
+  assert.equal(matchesFilters(conf({ bk_grade: "S" }), filters, NOW), true);
+});

@@ -80,6 +80,34 @@ Pages 소스는 `feature/conference-tracker` 브랜치의 `/docs`이므로 maste
 | 축소 방어 강화 | 0.8 비율 — ai-deadlines 장애 시 19개 유실을 막는다 |
 | 장소 표기 통일 | `normalize_place`를 `Edition.__post_init__`로 이동 |
 
+### 등급(BK) 병기 (2026-09-10)
+
+회사 등급(`26년 우수 학회 List.xlsx`) 옆에 BK 등급을 괄호로 병기한다.
+출처는 `BK학회리스트/SW분야우수학술대회목록_2024.pdf` — 2024년 한국정보과학회
+우수학술대회 목록 216개(S 73 · A 143)이며, S가 최우수, A가 우수다.
+
+표기는 `최우수(S)` · `우수(A)` · BK에 없으면 `우수(-)`. 괄호는 항상 붙인다 —
+없으면 "아직 확인 안 함"과 구분되지 않기 때문이다.
+
+활성 39개 대조 결과:
+
+| 표기 | 수 | 학회 |
+|---|---|---|
+| 최우수(S) | 14 | 두 기준 모두 최고 |
+| 최우수(A) | 7 | ICASSP, ICRA, INTERSPEECH, ACM MM, CoRL, IROS, MLSys |
+| 우수(S) | 7 | NAACL, WSDM, UbiComp, UIST, IEEE VR, ISMAR, SIGGRAPH Asia |
+| 우수(A) | 6 | 두 기준 모두 우수 |
+| 우수(-) | 5 | ICIP, HRI, ICME, ASRU/SLT, Humanoids |
+
+두 기준이 갈리는 것이 14개다. 어느 쪽이 틀린 게 아니라 **기준이 다른 두 문서**이므로
+회사 등급을 기본으로 두고 BK를 참고로 병기한다.
+
+PDF 파싱에서 걸린 두 함정(재발 시 참고):
+- BK에 `ACL Findings` / `NAACL Findings`가 A 등급으로 따로 있다. 본 학회는 둘 다 S다
+- `SIGGRAPH ASIA`는 약어에 공백이 있어 단순 정규식이 놓친다
+
+정렬은 `최우수(S)` → `최우수(A)` → `우수(S)` → `우수(A)` → `우수(-)` 순이다.
+
 ### 남은 개선 후보
 
 1. **`conferences.json` 충돌** — 저장소에 두는 한 Actions 자동 커밋과 로컬 작업이 계속

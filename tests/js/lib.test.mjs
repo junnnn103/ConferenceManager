@@ -271,10 +271,9 @@ test("matchesFilters hidePast follows nextDeadline, not primary_deadline, when t
   assert.equal(matchesFilters(adminOnly, filters, NOW), false);
 });
 
-test("본 논문 마감이 지나도 남은 포스터·워크숍이 있으면 그것을 보여준다", () => {
-  // CHI 2027이 실제로 이 모양이다 - 본 논문 9/10, 워크숍 10/1, 포스터 이듬해
-  // 1/21. 본 논문만 후보로 보면 9/11부터 "마감됨"으로 뜨지만 실제로는 아직
-  // 낼 곳이 두 군데 남아 있다.
+test("본 논문 마감이 지나도 남은 포스터가 있으면 그것을 보여준다", () => {
+  // CHI 2027이 실제로 이 모양이다 - 본 논문 9/10, 포스터 이듬해 1/21.
+  // 본 논문만 후보로 보면 9/11부터 "마감됨"으로 뜨지만 아직 낼 곳이 남아 있다.
   const chiLike = {
     year: 2027,
     date_text: "2027",
@@ -290,19 +289,64 @@ test("본 논문 마감이 지나도 남은 포스터·워크숍이 있으면 �
     primary_deadline: "2026-09-10T23:59:59",
     source: "ccfddl",
   };
-  // 본 논문 마감 전날: 본 논문이 대표
   assert.equal(nextDeadline(chiLike, new Date(2026, 8, 9)).type, "paper");
-  // 본 논문 마감 다음 날: 다음 제출 트랙(워크숍)이 대표
+  // 본 논문 다음은 포스터다. 그 사이의 workshop 제안 마감은 워크숍을 열려는
+  // 조직위의 마감이지 논문을 내는 사람의 마감이 아니라 건너뛴다.
   const afterPaper = nextDeadline(chiLike, new Date(2026, 8, 11));
-  assert.equal(afterPaper.type, "workshop");
-  assert.equal(afterPaper.label, "Workshops");
-  // 워크숍도 지나면 포스터
-  assert.equal(nextDeadline(chiLike, new Date(2026, 9, 2)).type, "poster");
+  assert.equal(afterPaper.type, "poster");
+  assert.equal(afterPaper.label, "Posters");
   // 전부 지나면 본 논문 마감으로 되돌아가 "마감됨"으로 보인다
-  const allPast = nextDeadline(chiLike, new Date(2027, 5, 1));
-  assert.equal(allPast.type, "paper");
+  assert.equal(nextDeadline(chiLike, new Date(2027, 5, 1)).type, "paper");
   assert.equal(formatDeadline(chiLike, new Date(2027, 5, 1)).state, "past");
 });
+
+test("abstract가 본 논문보다 앞서면 abstract를 먼저 보여준다", () => {
+  // 대부분의 학회가 초록을 먼저 등록해야 본문을 낼 수 있게 한다. 초록을
+  // 놓치면 본문을 아예 못 내므로 실질적인 다음 마감은 초록 쪽이다.
+  const withAbstract = {
+    year: 2027,
+    date_text: "2027",
+    start: "2027-04-01",
+    end: "2027-04-05",
+    place: "Somewhere",
+    link: null,
+    deadlines: [
+      { type: "abstract", label: "Abstract Submission", date: "2026-09-18T23:59:59", source: "ai-deadlines" },
+      { type: "paper", label: "Paper Submission", date: "2026-09-25T23:59:59", source: "ai-deadlines" },
+    ],
+    primary_deadline: "2026-09-25T23:59:59",
+    source: "ai-deadlines",
+  };
+  const before = nextDeadline(withAbstract, new Date(2026, 8, 10));
+  assert.equal(before.type, "abstract");
+  assert.equal(before.label, "Abstract Submission");
+  // 초록이 지나면 본 논문으로 넘어간다
+  assert.equal(nextDeadline(withAbstract, new Date(2026, 8, 19)).type, "paper");
+});
+
+test("워크숍 제안 마감은 건너뛰고 채택 발표일을 보여준다", () => {
+  // workshop 제안은 워크숍을 열려는 조직위가 내는 것이라 참가자의 마감이
+  // 아니다. 대신 어떤 워크숍이 채택됐는지 알려주는 notification이 의미 있다.
+  const eccvLike = {
+    year: 2027,
+    date_text: "2027",
+    start: "2027-09-08",
+    end: "2027-09-13",
+    place: "Somewhere",
+    link: null,
+    deadlines: [
+      { type: "paper", label: "Paper Submission", date: "2026-03-05T23:59:59", source: "ai-deadlines" },
+      { type: "submission", label: "Workshop Proposal Submission", date: "2026-02-27T23:59:59", source: "ai-deadlines" },
+      { type: "notification", label: "Tutorial/Workshop Decisions", date: "2026-12-12T23:59:59", source: "ai-deadlines" },
+    ],
+    primary_deadline: "2026-03-05T23:59:59",
+    source: "ai-deadlines",
+  };
+  const chosen = nextDeadline(eccvLike, new Date(2026, 8, 10));
+  assert.equal(chosen.type, "notification");
+  assert.equal(chosen.label, "Tutorial/Workshop Decisions");
+});
+
 
 test("matchesFilters aiOnly keeps only AI Specialist conferences", () => {
   const filters = { fields: new Set(), grades: new Set(), aiOnly: true, hidePast: false, query: "" };

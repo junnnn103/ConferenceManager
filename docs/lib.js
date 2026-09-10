@@ -19,18 +19,32 @@ const BK_RANK = { S: 0, A: 1 };
 // 고르는 다음 회차가 서로 다른 기준으로 어긋나게 된다.
 const PAPER_TYPES = ["paper"];
 const SUBMISSION_FALLBACK_TYPES = ["submission"];
+// abstract는 본 논문의 선행 조건이다. 많은 학회가 초록을 먼저 등록해야
+// 본문을 낼 수 있게 해서(17개 학회가 본 논문 1주 전후로 abstract를 둔다),
+// 실제로 먼저 닥치는 마감은 abstract 쪽이다.
+const ABSTRACT_TYPES = ["abstract"];
 // 본 논문 다음에도 여전히 "낼 수 있는" 트랙들. 논문 마감이 지나도 포스터나
 // 워크숍은 몇 주 더 열려 있는 일이 흔하다(CHI 2027은 본 논문 9/10, 워크숍
 // 10/1, 포스터 이듬해 1/21). 이걸 후보에서 빼면 아직 낼 곳이 있는 학회가
 // "마감됨"으로 보인다.
+// workshop 제안 마감은 뺀다. 그건 워크숍을 열려는 조직위가 내는 것이지
+// 논문을 내는 사람의 마감이 아니다. 대신 "어떤 워크숍이 채택됐는지" 알려주는
+// notification이 참가자에게 의미 있는 날짜라, 그 값이 있으면 그것을 쓴다
+// (workshopNotification 참고).
 const LATE_SUBMISSION_TYPES = [
   "poster",
   "lbw",
-  "workshop",
   "demo",
   "tutorial",
   "doctoral_consortium",
 ];
+
+/** 워크숍 채택 결과 발표일. 라벨에 workshop이 들어간 notification을 찾는다. */
+function workshopNotifications(deadlines) {
+  return deadlines.filter(
+    (d) => d.type === "notification" && /workshop/i.test(d.label || ""),
+  );
+}
 
 /**
  * D-day를 셀 후보. 제출 계열만 센다.
@@ -54,14 +68,37 @@ function paperCandidates(deadlines, now) {
   if (!now) return main;
 
   const today = startOfDay(now);
-  const mainOpen = main.some((d) => startOfDay(d.date) >= today);
-  if (mainOpen) return main;
+  const mainOpen = main.filter((d) => startOfDay(d.date) >= today);
+
+  if (mainOpen.length > 0) {
+    // 본 논문이 아직 남았다면, 그보다 앞선 abstract가 있는지 먼저 본다.
+    // 초록을 놓치면 본문을 아예 못 내므로 그쪽이 실질적인 마감이다.
+    const earliestMain = mainOpen
+      .map((d) => startOfDay(d.date))
+      .reduce((a, b) => Math.min(a, b));
+    const abstracts = deadlines.filter(
+      (d) =>
+        ABSTRACT_TYPES.includes(d.type) &&
+        startOfDay(d.date) >= today &&
+        startOfDay(d.date) <= earliestMain,
+    );
+    return abstracts.length > 0 ? abstracts : main;
+  }
 
   const late = deadlines.filter((d) => LATE_SUBMISSION_TYPES.includes(d.type));
   const lateOpen = late.filter((d) => startOfDay(d.date) >= today);
-  // 후발 트랙도 전부 지났으면 본 논문 계열을 그대로 둔다 - 셀이 "마감됨"으로
-  // 보여야 하고, 그 기준은 후발 트랙의 마지막 날이 아니라 본 논문 마감이다.
-  return lateOpen.length > 0 ? lateOpen : main;
+  if (lateOpen.length > 0) return lateOpen;
+
+  // 남은 제출 트랙이 없으면 워크숍 채택 발표를 본다 - 참가를 저울질하는
+  // 사람에게는 그것이 다음에 확인할 날짜다.
+  const wsOpen = workshopNotifications(deadlines).filter(
+    (d) => startOfDay(d.date) >= today,
+  );
+  if (wsOpen.length > 0) return wsOpen;
+
+  // 전부 지났으면 본 논문 계열을 그대로 둔다 - 셀이 "마감됨"으로 보여야 하고,
+  // 그 기준은 후발 트랙의 마지막 날이 아니라 본 논문 마감이다.
+  return main;
 }
 
 /**

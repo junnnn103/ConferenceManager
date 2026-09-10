@@ -186,7 +186,10 @@ export function formatDeadline(edition, now) {
     timeZone: "UTC",
   });
   if (delta >= 0) return { state: "upcoming", text, dday: `D-${delta}`, label: chosen.label };
-  return { state: "past", text, dday: `D+${Math.abs(delta)}`, label: chosen.label };
+  // 이미 지난 마감에는 D-day를 붙이지 않는다. 남은 제출 트랙이 하나도 없어
+  // 이 회차에 더 낼 곳이 없다는 뜻이고, "며칠 전에 끝났는지"는 셀에 이미
+  // 취소선과 날짜로 드러난다. D+ 숫자는 아직 셀 것이 있다는 오해만 준다.
+  return { state: "past", text, dday: "", label: chosen.label };
 }
 
 /**

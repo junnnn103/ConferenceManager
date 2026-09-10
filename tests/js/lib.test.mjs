@@ -114,11 +114,15 @@ test("formatDeadline marks a future deadline as upcoming", () => {
   assert.equal(result.dday, "D-84");
 });
 
-test("formatDeadline marks a passed deadline with a plus sign", () => {
+test("formatDeadline drops the D-day once every submission deadline has passed", () => {
+  // 지난 마감에 D+ 숫자를 붙이면 아직 셀 것이 남은 것처럼 읽힌다. 이 상태의
+  // 뜻은 "이 회차에 더 낼 곳이 없다"이고, 그건 취소선과 날짜로 이미 드러난다.
   const result = formatDeadline(edition(2026, "2026-10-24", "2026-10-29", "2026-05-25T23:59:59"), NOW);
   assert.equal(result.state, "past");
-  assert.equal(result.dday, "D+106");
+  assert.equal(result.dday, "");
+  assert.equal(result.text, "May 25, 2026");
 });
+
 
 test("formatDeadline reports unknown when there is no deadline", () => {
   const result = formatDeadline(edition(2026, "2026-10-24", "2026-10-29", null), NOW);

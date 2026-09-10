@@ -10,7 +10,7 @@ import {
   isFeaturedDeadline,
   matchesFilters,
   pickEdition,
-} from "./lib.js?v=e4cc5415";
+} from "./lib.js?v=7ef07593";
 import { safeHref } from "./url-safety.js?v=5de46b35";
 
 const STORAGE_KEY = "conference-manager-filters";
@@ -152,14 +152,44 @@ function linkCell(conf, edition) {
 // 구분해 주는 라벨만 남기기 위해, 정보가 없는 단어를 지우고 남는 게 있는지로
 // 판단한다 — 문자열 전체를 통째로 비교하면 문구가 조금만 달라도(마침표, 어순,
 // deadline 유무) 걸러지지 않기 때문이다.
+// 원문 라벨에서 정보를 담지 않는 단어들. 이것만 남으면 "본 논문"을 뜻한다.
 const DEADLINE_LABEL_STOPWORDS = new Set([
   "full", "paper", "papers", "submission", "submissions",
   "deadline", "due", "research",
 ]);
 
-function isGenericDeadlineLabel(label) {
-  const words = label.toLowerCase().split(/[^a-z0-9]+/).filter(Boolean);
-  return words.every((w) => DEADLINE_LABEL_STOPWORDS.has(w));
+/**
+ * 마감 셀에 붙일 한국어 라벨.
+ *
+ * 원문 표기가 학회마다 제각각이다 - 같은 "본 논문 마감"을 두고 "Paper",
+ * "Full Papers", "Paper submission deadline", "Full Paper Due"처럼 여섯 가지로
+ * 쓴다. 예전에는 이런 라벨을 아예 숨겼는데, 포스터·워크숍 마감에는 라벨이
+ * 붙고 본 논문에만 안 붙으니 "라벨 없음 = 본 논문"이라는 암묵적 규칙이
+ * 생겨버렸다. 어느 마감인지는 늘 명시하는 편이 낫다.
+ *
+ * 그래서 본 논문 계열은 "본 논문"으로 통일하고, 라운드 구분이나 트랙 이름처럼
+ * 실제 정보가 담긴 라벨만 원문 그대로 둔다.
+ */
+function deadlineLabelText(info) {
+  const TRACK_LABELS = {
+    poster: "포스터",
+    lbw: "Late-Breaking Work",
+    workshop: "워크숍",
+    demo: "데모",
+    tutorial: "튜토리얼",
+    doctoral_consortium: "박사과정 세션",
+  };
+  const raw = (info.label || "").trim();
+  const words = raw.toLowerCase().split(/[^a-z0-9]+/).filter(Boolean);
+  const generic = words.length > 0 && words.every((w) => DEADLINE_LABEL_STOPWORDS.has(w));
+
+  if (generic || !raw) return "본 논문";
+  // 후발 트랙은 타입이 곧 의미라, 원문이 "Posters"든 "Poster Track"이든
+  // 같은 말로 보여준다. 단 원문에 라운드나 부가 조건이 담겼으면 그쪽이 더
+  // 구체적이므로 원문을 남긴다.
+  const track = TRACK_LABELS[info.type];
+  if (track && generic) return track;
+  return raw;
 }
 
 function renderRow(conf, now) {
@@ -245,14 +275,15 @@ function renderRow(conf, now) {
     dday.textContent = info.dday;
     deadlineCell.append(dday);
   }
-  // info.label은 마감이 여러 라운드나 트랙으로 나뉜 학회에서 이 날짜가
-  // 무엇의 마감인지 알려준다 (예: UbiComp의 "fourth round"). "Paper
-  // Submission Deadline" 류의 정보 없는 라벨은 생략한다.
-  if (info.label && !isGenericDeadlineLabel(info.label)) {
-    const label = document.createElement("div");
-    label.className = "deadline-label";
-    label.textContent = info.label;
-    deadlineCell.append(label);
+  // 어느 마감인지는 항상 밝힌다 - 본 논문이든 포스터든. 본 논문에만 라벨이
+  // 없으면 "라벨 없음 = 본 논문"이라는 암묵적 규칙이 생겨 읽는 사람이
+  // 매번 추론해야 한다.
+  const labelText = deadlineLabelText(info);
+  if (labelText) {
+    const lbl = document.createElement("div");
+    lbl.className = "deadline-label";
+    lbl.textContent = labelText;
+    deadlineCell.append(lbl);
   }
   // 펼치면 이제 아무것도 빼지 않은 전체 일정을 보여주므로(allDeadlines),
   // 숫자의 의미도 "숨겨진 개수"에서 "전체 단계 수"로 바뀐다. 마감이 하나뿐인

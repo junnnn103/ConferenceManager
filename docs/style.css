@@ -139,16 +139,6 @@ thead th button:focus-visible { outline: 2px solid var(--accent); outline-offset
 thead th.active { color: var(--text); }
 .arrow { font-size: 10px; opacity: 0.7; }
 
-/* 등급 헤더만 "등급" 제목 아래에 SR/BK 소제목을 한 줄 더 쌓는다 - 소제목이
-   그 아래 배지 그리드(.grade-grid)와 같은 열 폭을 써서 어느 배지가 SR이고
-   어느 게 BK인지 열 위치로 알 수 있게 한다. */
-.grade-th button { flex-direction: column; align-items: flex-start; gap: 2px; }
-.grade-subheads {
-  font-size: 10px;
-  font-weight: 600;
-  letter-spacing: 0.02em;
-  color: var(--text-dim);
-}
 
 tbody tr:hover { background: var(--surface-alt); }
 tbody tr:last-child td { border-bottom: none; }
@@ -192,13 +182,15 @@ a.abbr:hover { color: var(--accent); text-decoration: underline; }
    다크 9.7~10.6:1이 나온다. */
 .badge.grade.top,
 .badge.grade-bk.grade-s {
-  background: color-mix(in srgb, var(--gold) 18%, transparent);
+  background: color-mix(in srgb, var(--gold) 20%, transparent);
   color: var(--gold-ink);
+  border: 1px solid color-mix(in srgb, var(--gold) 40%, transparent);
 }
 .badge.grade.good,
 .badge.grade-bk.grade-a {
-  background: color-mix(in srgb, var(--silver) 18%, transparent);
+  background: color-mix(in srgb, var(--silver) 20%, transparent);
   color: var(--silver-ink);
+  border: 1px solid color-mix(in srgb, var(--silver) 40%, transparent);
 }
 /* BK 목록에 없는 경우('-')는 세 번째 등급처럼 보이면 안 되므로 채움 없이
    외곽선/텍스트만 쓴다 - "값 없음"이 "값 있음" 배지와 같은 무게로 읽히지
@@ -208,16 +200,11 @@ a.abbr:hover { color: var(--accent); text-decoration: underline; }
   border: 1px solid var(--border);
   color: var(--text-dim);
 }
-/* SR/BK 배지 두 개를 각 행에서 같은 x좌표에 맞추기 위한 고정 폭 그리드.
-   헤더의 SR/BK 소제목(.grade-subheads)도 같은 클래스를 써서 셀 안 배지와
-   폭이 항상 같게 만든다 - 콘텐츠 폭(최우수 vs 우수, S vs -)에 따라 흔들리면
-   행마다 배지 시작 위치가 들쭉날쭉해지기 때문. */
-.grade-grid {
-  display: grid;
-  grid-template-columns: 64px 36px;
-  column-gap: 6px;
-  align-items: center;
-}
+/* 등급 셀은 배지 두 개를 나란히 둘 뿐이다. 고정 폭 그리드를 쓰면 배지가
+   글자보다 넓게 늘어나 분야 배지와 무게가 달라진다 - 분야 배지처럼 내용
+   폭만큼만 차지하게 두고, 간격만 준다. */
+.grade-col { white-space: nowrap; }
+.grade-col .badge + .badge { margin-left: 4px; }
 
 .deadline-col { white-space: nowrap; }
 .deadline-date.past { text-decoration: line-through; color: var(--text-dim); }

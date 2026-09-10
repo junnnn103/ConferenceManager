@@ -200,36 +200,28 @@ function renderRow(conf, now) {
   fieldCell.append(fieldBadge);
   row.append(fieldCell);
 
-  // 등급 칸은 회사 등급(SR)과 BK 등급을 나란한 배지 두 개로 보여준다. 예전엔
-  // BK를 배지 "밖" 괄호 텍스트로 붙였는데(예: "[최우수] (S)") 두 값의 시각적
-  // 무게가 달라 붙지 않고 떠 보였다 - 이제 둘 다 같은 모양의 배지로 만들어
-  // 헤더의 SR/BK 소제목과 짝을 이루게 한다. 정렬 폭을 행마다 맞추기 위해
-  // .grade-grid(고정 폭 그리드)를 헤더 소제목과 동일하게 재사용한다.
+  // 등급 칸은 회사 등급(SR)과 BK 등급을 나란한 배지 두 개로 보여준다.
   const gradeCell = document.createElement("td");
-  gradeCell.title = `SR·BK 등급: ${gradeCellText(conf)}`;
-  const gradeGrid = document.createElement("span");
-  gradeGrid.className = "grade-grid";
-
+  gradeCell.className = "grade-col";
+  gradeCell.title = gradeCellText(conf);
+  // SR(회사) 배지와 BK(한국정보과학회) 배지를 순서대로 나란히 둔다. 헤더가
+  // "등급 (SR/BK)"라 순서로 어느 쪽인지 알 수 있으므로 배지에 라벨을 넣지
+  // 않는다 - 넣으면 열이 넓어지고 분야 배지와 무게가 달라진다.
   const srBadge = document.createElement("span");
   srBadge.className = `badge grade ${conf.grade === "최우수" ? "top" : "good"}`;
   srBadge.textContent = conf.grade;
-  srBadge.setAttribute("aria-label", `SR(Samsung Research) 등급: ${conf.grade}`);
-  gradeGrid.append(srBadge);
+  srBadge.setAttribute("aria-label", `SR 등급 ${conf.grade}`);
+  gradeCell.append(srBadge);
 
-  // BK(한국정보과학회 우수학술대회 목록) 등급. S/A는 회사 등급과 같은
-  // gold/silver 언어를 쓰고, 목록에 없으면('-') 채움 없는 외곽선만 써서
-  // "등급 없음"이 세 번째 등급처럼 보이지 않게 한다.
   const bkLabel = bkGradeLabel(conf);
   const bkBadge = document.createElement("span");
   bkBadge.className = `badge grade-bk ${bkGradeBadgeClass(conf)}`;
   bkBadge.textContent = bkLabel;
   bkBadge.setAttribute(
     "aria-label",
-    `BK(한국정보과학회 우수학술대회 목록) 등급: ${bkLabel === "-" ? "목록에 없음" : bkLabel}`
+    bkLabel === "-" ? "BK 목록에 없음" : `BK 등급 ${bkLabel}`,
   );
-  gradeGrid.append(bkBadge);
-
-  gradeCell.append(gradeGrid);
+  gradeCell.append(bkBadge);
   row.append(gradeCell);
 
   const dateCell = document.createElement("td");

@@ -7,8 +7,16 @@ on:
     # 이 실행이 하는 일은 업스트림 두 저장소의 변경을 받아오는 것뿐이다.
     - cron: "0 21 * * 0"
   workflow_dispatch:
+  # push마다 돌 필요는 없다. 이 워크플로가 하는 일은 업스트림 데이터를 받아오는
+  # 것이라 사이트 코드(docs/, tests/)만 고친 push에서는 할 일이 없고, 실패하면
+  # 알림 메일만 쌓인다. 데이터·빌드 로직이 바뀐 push에서만 돈다.
   push:
     branches: [master, main, feature/conference-tracker]
+    paths:
+      - "data/**"
+      - "scripts/**"
+      - "pyproject.toml"
+      - ".github/workflows/build.yml"
 
 permissions:
   contents: write

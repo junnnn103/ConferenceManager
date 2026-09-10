@@ -13,6 +13,10 @@
   --accent: #2563eb;
   --danger: #dc2626;
   --gold: #b45309;
+  /* 배지 글자용 진한 톤. 옅은 배경 위에서 같은 계열 색을 그대로 쓰면
+     대비가 3.8~3.9:1로 기준(4.5:1)에 못 미쳐, 한 단계 진한 값을 따로 둔다. */
+  --gold-ink: #7c3a06;
+  --silver-ink: #3f4b5e;
   --silver: #64748b;
   --radius: 6px;
 }
@@ -28,6 +32,8 @@
     --accent: #60a5fa;
     --danger: #f87171;
     --gold: #fbbf24;
+    --gold-ink: #fde3a7;
+    --silver-ink: #cbd5e1;
     --silver: #94a3b8;
   }
 }
@@ -176,20 +182,24 @@ a.abbr:hover { color: var(--accent); text-decoration: underline; }
   background: color-mix(in srgb, var(--accent) 18%, transparent);
   color: var(--accent);
 }
-/* SR(회사 자체 등급)/BK(한국정보과학회 우수학술대회 목록) 등급 배지.
-   예전엔 gold/silver를 옅게(18%) 배경에 섞고 글자에 그 원색을 그대로 썼는데,
-   그러면 글자와 배경이 같은 색 계열이라 라이트 모드에서 대비가 3.5~3.75:1까지
-   떨어졌다(우수 배지는 --silver와 --text-dim이 같은 값이라 옆 텍스트와도
-   구분이 안 됐다). 대신 원색을 배지 배경에 꽉 채우고 글자는 var(--bg)를
-   쓴다 - var(--bg)는 라이트에서 흰색, 다크에서 짙은 남색이라 두 모드 모두
-   자동으로 밝기가 반대인 글자색이 되고, 배지가 불투명해서 tr.ended의 회색
-   섞임 배경 위에서도(투명도가 없으니) 대비가 그대로 유지된다. 계산 결과
-   라이트 gold 5.02:1 / silver 4.76:1, 다크 gold 11.47:1 / silver 7.47:1로
-   행 상태와 무관하게 모두 4.5:1을 넘는다. */
+/* SR(회사)과 BK(한국정보과학회) 등급 배지는 같은 색 언어를 쓴다 - 최우수와 S는
+   금색, 우수와 A는 은색. 두 배지 색이 같으면 두 기준이 일치, 다르면 갈린다는
+   것이 한눈에 읽힌다.
+
+   배경은 옅게 깔고 글자는 --*-ink(한 단계 진한 톤)를 쓴다. 배경과 같은 계열
+   색을 그대로 글자에 쓰면 대비가 3.8~3.9:1까지 떨어지는데, 실제로 이 프로젝트에서
+   두 번 그렇게 만들어 글자가 배경에 묻혔다. ink 값으로는 라이트 6.6~7.1:1,
+   다크 9.7~10.6:1이 나온다. */
 .badge.grade.top,
-.badge.grade-bk.grade-s { background: var(--gold); color: var(--bg); }
+.badge.grade-bk.grade-s {
+  background: color-mix(in srgb, var(--gold) 18%, transparent);
+  color: var(--gold-ink);
+}
 .badge.grade.good,
-.badge.grade-bk.grade-a { background: var(--silver); color: var(--bg); }
+.badge.grade-bk.grade-a {
+  background: color-mix(in srgb, var(--silver) 18%, transparent);
+  color: var(--silver-ink);
+}
 /* BK 목록에 없는 경우('-')는 세 번째 등급처럼 보이면 안 되므로 채움 없이
    외곽선/텍스트만 쓴다 - "값 없음"이 "값 있음" 배지와 같은 무게로 읽히지
    않게 하는 것이 목적이다. */

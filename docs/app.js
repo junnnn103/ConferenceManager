@@ -10,7 +10,9 @@ import {
   isFeaturedDeadline,
   matchesFilters,
   pickEdition,
-} from "./lib.js?v=47ffcc6a";
+  srGradeBadgeClass,
+  srGradeLabel,
+} from "./lib.js?v=81e46a73";
 import { safeHref } from "./url-safety.js?v=5de46b35";
 
 const STORAGE_KEY = "conference-manager-filters";
@@ -229,10 +231,14 @@ function renderRow(conf, now) {
   // SR(회사) 배지와 BK(한국정보과학회) 배지를 순서대로 나란히 둔다. 헤더가
   // "등급 (SR/BK)"라 순서로 어느 쪽인지 알 수 있으므로 배지에 라벨을 넣지
   // 않는다 - 넣으면 열이 넓어지고 분야 배지와 무게가 달라진다.
+  const srLabel = srGradeLabel(conf);
   const srBadge = document.createElement("span");
-  srBadge.className = `badge grade ${conf.grade === "최우수" ? "top" : "good"}`;
-  srBadge.textContent = conf.grade;
-  srBadge.setAttribute("aria-label", `SR 등급 ${conf.grade}`);
+  srBadge.className = `badge grade ${srGradeBadgeClass(conf)}`;
+  srBadge.textContent = srLabel;
+  srBadge.setAttribute(
+    "aria-label",
+    srLabel === "-" ? "SR 목록에 없음" : `SR 등급 ${srLabel}`,
+  );
   gradeCell.append(srBadge);
 
   const bkLabel = bkGradeLabel(conf);

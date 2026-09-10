@@ -192,9 +192,10 @@ a.abbr:hover { color: var(--accent); text-decoration: underline; }
   color: var(--silver-ink);
   border: 1px solid color-mix(in srgb, var(--silver) 40%, transparent);
 }
-/* BK 목록에 없는 경우('-')는 세 번째 등급처럼 보이면 안 되므로 채움 없이
+/* 목록에 없는 경우('-')는 세 번째 등급처럼 보이면 안 되므로 채움 없이
    외곽선/텍스트만 쓴다 - "값 없음"이 "값 있음" 배지와 같은 무게로 읽히지
    않게 하는 것이 목적이다. */
+.badge.grade.grade-none,
 .badge.grade-bk.grade-none {
   background: transparent;
   border: 1px solid var(--border);

@@ -15,6 +15,8 @@ import {
   matchesFilters,
   nextDeadline,
   pickEdition,
+  srGradeBadgeClass,
+  srGradeLabel,
   toKst,
 } from "../../docs/lib.js";
 
@@ -724,4 +726,28 @@ test("matchesFilters bkGrades가 없어도 동작한다", () => {
   // 저장된 옛 필터 상태에는 bkGrades 키가 없을 수 있다.
   const filters = { fields: new Set(), grades: new Set(), aiOnly: false, hidePast: false, query: "" };
   assert.equal(matchesFilters(conf({ bk_grade: "S" }), filters, NOW), true);
+});
+
+test("SR 목록에 없는 학회는 '-' 배지가 된다", () => {
+  // EACL/CSCW는 BK 목록에만 있어 grade가 빈 문자열이다. 그대로 배지에 넣으면
+  // 글자 없는 은색 배지가 떠서 "우수"처럼 보인다 - BK 쪽과 똑같이 "-"로 세운다.
+  const bkOnly = conf({ grade: "", bk_grade: "A" });
+  assert.equal(srGradeLabel(bkOnly), "-");
+  assert.equal(srGradeBadgeClass(bkOnly), "grade-none");
+  assert.equal(gradeCellText(bkOnly), "-(A)");
+
+  assert.equal(srGradeBadgeClass(conf({ grade: "최우수" })), "top");
+  assert.equal(srGradeBadgeClass(conf({ grade: "우수" })), "good");
+  assert.equal(gradeCellText(conf({ grade: "최우수", bk_grade: "S" })), "최우수(S)");
+});
+
+test("SR 미등재를 필터로 고를 수 있다", () => {
+  const base = { fields: new Set(), bkGrades: new Set(), aiOnly: false, hidePast: false, query: "" };
+  const bkOnly = conf({ grade: "", bk_grade: "A" });
+  const graded = conf({ grade: "우수", bk_grade: "A" });
+
+  assert.equal(matchesFilters(bkOnly, { ...base, grades: new Set(["-"]) }, NOW), true);
+  assert.equal(matchesFilters(graded, { ...base, grades: new Set(["-"]) }, NOW), false);
+  // 등급 있는 학회를 고르면 미등재는 빠진다
+  assert.equal(matchesFilters(bkOnly, { ...base, grades: new Set(["우수"]) }, NOW), false);
 });

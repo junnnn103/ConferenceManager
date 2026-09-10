@@ -323,9 +323,27 @@ export function bkGradeLabel(conf) {
   return conf.bk_grade ?? "-";
 }
 
-/** 등급(BK) 칸에 실제로 표시되는 전체 텍스트, 예: "최우수(S)", "우수(-)". */
+/**
+ * SR(회사) 등급. 26년 우수 학회 List에 없으면 "-".
+ *
+ * BK 목록에만 있고 회사 목록에는 없는 학회가 있다(EACL, CSCW). 그런 행에서
+ * conf.grade는 빈 문자열인데, 이걸 그대로 배지에 넣으면 글자 없는 은색
+ * 배지가 떠서 "우수"처럼 보인다 - BK 쪽과 똑같이 "-"로 세운다.
+ */
+export function srGradeLabel(conf) {
+  return conf.grade || "-";
+}
+
+/** SR 등급을 배지 시각 클래스로 매핑한다. bkGradeBadgeClass와 짝이다. */
+export function srGradeBadgeClass(conf) {
+  if (conf.grade === "최우수") return "top";
+  if (conf.grade === "우수") return "good";
+  return "grade-none";
+}
+
+/** 등급 칸에 실제로 표시되는 전체 텍스트, 예: "최우수(S)", "우수(-)", "-(A)". */
 export function gradeCellText(conf) {
-  return `${conf.grade}(${bkGradeLabel(conf)})`;
+  return `${srGradeLabel(conf)}(${bkGradeLabel(conf)})`;
 }
 
 /** BK 등급을 배지 시각 클래스로 매핑한다. S/A는 SR(회사) 등급과 같은
@@ -411,7 +429,8 @@ export function compareBy(key, direction, now) {
  */
 export function matchesFilters(conf, filters, now) {
   if (filters.fields.size > 0 && !filters.fields.has(conf.field)) return false;
-  if (filters.grades.size > 0 && !filters.grades.has(conf.grade)) return false;
+  // BK 쪽과 같은 규칙: SR 목록에 없으면 '-'로 걸러 "SR 미등재만 보기"가 된다.
+  if (filters.grades.size > 0 && !filters.grades.has(conf.grade || "-")) return false;
   if (filters.bkGrades && filters.bkGrades.size > 0) {
     // BK 목록에 없는 학회는 '-'로 거른다 - null과 '-'를 같은 값으로 다뤄야
     // "BK 미등재만 보기"가 가능하다.

@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-10T05:00:55.154163+00:00",
+  "generated_at": "2026-09-10T17:14:56.292903+00:00",
   "fields": [
     {
       "id": "ML",
@@ -3497,6 +3497,113 @@
             }
           ],
           "primary_deadline": "2026-05-12T23:59:00",
+          "source": "ccfddl"
+        }
+      ]
+    },
+    {
+      "abbr": "EACL",
+      "abbr_group": "eacl",
+      "full_name": "Conference of the European Chapter of the Association for Computational Linguistics",
+      "grade": "",
+      "bk_grade": "A",
+      "ai_specialist": true,
+      "field": "NLP",
+      "homepage": "https://www.eacl.org/",
+      "editions": [
+        {
+          "year": 2026,
+          "date_text": "March 24-29, 2026",
+          "start": "2026-03-24",
+          "end": "2026-03-29",
+          "place": "Rabat Morocco",
+          "link": "https://2026.eacl.org/",
+          "deadlines": [
+            {
+              "type": "paper",
+              "label": "Paper",
+              "date": "2025-10-06T23:59:59",
+              "source": "ccfddl",
+              "timezone": "AoE"
+            }
+          ],
+          "primary_deadline": "2025-10-06T23:59:59",
+          "source": "ccfddl"
+        },
+        {
+          "year": 2027,
+          "date_text": "March 9-14, 2027",
+          "start": "2027-03-09",
+          "end": "2027-03-14",
+          "place": "Athens Greece",
+          "link": "https://2027.eacl.org/",
+          "deadlines": [
+            {
+              "type": "paper",
+              "label": "ARR Submission; commitment deadline: 2026-10-11",
+              "date": "2026-08-03T23:59:59",
+              "source": "ccfddl",
+              "timezone": "UTC-12"
+            }
+          ],
+          "primary_deadline": "2026-08-03T23:59:59",
+          "source": "ccfddl"
+        }
+      ]
+    },
+    {
+      "abbr": "CSCW",
+      "abbr_group": "cscw",
+      "full_name": "ACM Conference on Computer Supported Cooperative Work and Social Computing",
+      "grade": "",
+      "bk_grade": "A",
+      "ai_specialist": true,
+      "field": "HCI",
+      "homepage": "https://cscw.acm.org/",
+      "editions": [
+        {
+          "year": 2025,
+          "date_text": "October 18-22, 2025",
+          "start": "2025-10-18",
+          "end": "2025-10-22",
+          "place": "Bergen Norway",
+          "link": "https://cscw.acm.org/2025/",
+          "deadlines": [
+            {
+              "type": "paper",
+              "label": "JULY 2024 CYCLE",
+              "date": "2024-07-02T23:59:59",
+              "source": "ccfddl",
+              "timezone": "AoE"
+            },
+            {
+              "type": "paper",
+              "label": "OCTOBER 2024 CYCLE",
+              "date": "2024-10-29T23:59:59",
+              "source": "ccfddl",
+              "timezone": "AoE"
+            }
+          ],
+          "primary_deadline": "2024-10-29T23:59:59",
+          "source": "ccfddl"
+        },
+        {
+          "year": 2026,
+          "date_text": "October 10-14, 2026",
+          "start": "2026-10-10",
+          "end": "2026-10-14",
+          "place": "Salt Lake City Utah USA",
+          "link": "https://cscw.acm.org/2026/",
+          "deadlines": [
+            {
+              "type": "paper",
+              "label": "MAY 2025 SUBMISSION CYCLE",
+              "date": "2025-05-13T23:59:59",
+              "source": "ccfddl",
+              "timezone": "AoE"
+            }
+          ],
+          "primary_deadline": "2025-05-13T23:59:59",
           "source": "ccfddl"
         }
       ]

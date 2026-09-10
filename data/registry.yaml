@@ -1158,3 +1158,36 @@ conferences:
   sources:
     ai_deadlines: null
     ccfddl: null
+
+# --- BK 목록에만 있는 학회 ---
+# 아래 두 개는 26년 우수 학회 List(SR)에는 없고 BK 목록에만 A(우수)로 있다.
+# 둘 다 AI Specialist 인정 목록에는 포함된다. grade가 비어 있으므로 화면에는
+# SR 배지가 "-"로 뜬다.
+#
+# 주의: scripts/bootstrap_registry.py는 엑셀만 보고 이 파일을 통째로 다시 쓰므로
+# 그냥 재실행하면 이 두 항목이 사라진다. 반드시 --diff로 "삭제:" 줄을 먼저
+# 확인하고, 재생성했다면 이 블록을 다시 붙여야 한다.
+# tests/test_registry_completeness.py가 이름으로 못박아 두었다.
+- abbr: eacl
+  display: EACL
+  full_name: Conference of the European Chapter of the Association for Computational
+    Linguistics
+  grade: null
+  bk_grade: A
+  ai_specialist: true
+  field: NLP
+  homepage: https://www.eacl.org/
+  members: null
+  sources:
+    ccfddl: eacl
+- abbr: cscw
+  display: CSCW
+  full_name: ACM Conference on Computer Supported Cooperative Work and Social Computing
+  grade: null
+  bk_grade: A
+  ai_specialist: true
+  field: HCI
+  homepage: https://cscw.acm.org/
+  members: null
+  sources:
+    ccfddl: cscw

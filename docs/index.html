@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>학회 일정</title>
-  <link rel="stylesheet" href="style.css?v=b1664b30">
+  <link rel="stylesheet" href="style.css?v=2058e563">
 </head>
 <body>
   <header class="page-header">
@@ -16,30 +16,38 @@
   </header>
 
   <section class="controls" aria-label="필터">
-    <input type="search" id="search" placeholder="학회명 검색" autocomplete="off">
-
-    <div class="filter-group" id="field-filters" role="group" aria-label="분야"></div>
-
-    <div class="filter-group" role="group" aria-label="SR 등급">
-      <button type="button" class="chip" data-grade="최우수" aria-pressed="false">SR 최우수</button>
-      <button type="button" class="chip" data-grade="우수" aria-pressed="false">SR 우수</button>
-      <button type="button" class="chip" data-grade="-" aria-pressed="false">SR 미등재</button>
+    <!-- 줄바꿈은 .control-row로 명시한다. 예전에는 .controls 하나가 flex-wrap
+         컨테이너라 그룹들이 폭에 따라 되는대로 접혀 - SR 칩이 분야 줄 끝에
+         붙고 BK 칩만 다음 줄로 넘어가는 식으로 - 같은 기준끼리 흩어졌다. -->
+    <div class="control-row">
+      <input type="search" id="search" placeholder="학회명 검색" autocomplete="off">
+      <div class="filter-group" id="field-filters" role="group" aria-label="분야"></div>
     </div>
 
-    <div class="filter-group" role="group" aria-label="BK 등급">
-      <button type="button" class="chip" data-bk-grade="S" aria-pressed="false">BK S</button>
-      <button type="button" class="chip" data-bk-grade="A" aria-pressed="false">BK A</button>
-      <button type="button" class="chip" data-bk-grade="-" aria-pressed="false">BK 미등재</button>
+    <div class="control-row">
+      <div class="filter-group" role="group" aria-label="SR 등급">
+        <button type="button" class="chip" data-grade="최우수" aria-pressed="false">SR 최우수</button>
+        <button type="button" class="chip" data-grade="우수" aria-pressed="false">SR 우수</button>
+        <button type="button" class="chip" data-grade="-" aria-pressed="false">SR 미등재</button>
+      </div>
+
+      <div class="filter-group" role="group" aria-label="BK 등급">
+        <button type="button" class="chip" data-bk-grade="S" aria-pressed="false">BK S</button>
+        <button type="button" class="chip" data-bk-grade="A" aria-pressed="false">BK A</button>
+        <button type="button" class="chip" data-bk-grade="-" aria-pressed="false">BK 미등재</button>
+      </div>
+
+      <div class="filter-group" role="group" aria-label="AI Specialist">
+        <button type="button" class="chip" id="ai-only" aria-pressed="false">AI Specialist만</button>
+      </div>
     </div>
 
-    <div class="filter-group">
-      <button type="button" class="chip" id="ai-only" aria-pressed="false">AI Specialist만</button>
-      <button type="button" class="chip" id="hide-past" aria-pressed="false">마감 지난 것 숨기기</button>
-      <button type="button" class="chip" id="reset">필터 초기화</button>
-    </div>
-
-    <div class="filter-group">
-      <button type="button" class="chip" id="expand-all">전체 펼치기</button>
+    <div class="control-row">
+      <div class="filter-group" role="group" aria-label="표시">
+        <button type="button" class="chip" id="hide-past" aria-pressed="false">마감 지난 것 숨기기</button>
+        <button type="button" class="chip" id="expand-all">전체 펼치기</button>
+        <button type="button" class="chip" id="reset">필터 초기화</button>
+      </div>
     </div>
   </section>
 

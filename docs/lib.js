@@ -19,11 +19,49 @@ const BK_RANK = { S: 0, A: 1 };
 // 고르는 다음 회차가 서로 다른 기준으로 어긋나게 된다.
 const PAPER_TYPES = ["paper"];
 const SUBMISSION_FALLBACK_TYPES = ["submission"];
+// 본 논문 다음에도 여전히 "낼 수 있는" 트랙들. 논문 마감이 지나도 포스터나
+// 워크숍은 몇 주 더 열려 있는 일이 흔하다(CHI 2027은 본 논문 9/10, 워크숍
+// 10/1, 포스터 이듬해 1/21). 이걸 후보에서 빼면 아직 낼 곳이 있는 학회가
+// "마감됨"으로 보인다.
+const LATE_SUBMISSION_TYPES = [
+  "poster",
+  "lbw",
+  "workshop",
+  "demo",
+  "tutorial",
+  "doctoral_consortium",
+];
 
-function paperCandidates(deadlines) {
+/**
+ * D-day를 셀 후보. 제출 계열만 센다.
+ *
+ * 같은 deadlines 배열에 등록/리뷰공개/통보/camera-ready 같은 행정 일정이
+ * 섞여 있어서, 타입을 가리지 않으면 "다음 마감"이 제출과 무관한 통보일로
+ * 뽑힌다. 반대로 논문 마감 하나만 보면 뒤에 남은 포스터·워크숍을 놓친다.
+ *
+ * 그래서 두 단계로 나눈다. 먼저 본 논문 계열(paper, 없으면 submission)을
+ * 보고, 그것이 전부 지났으면 후발 제출 트랙을 본다. 순서를 이렇게 둔 이유는
+ * 논문 마감이 아직 남아 있을 때 워크숍 마감이 더 이르다고 해서 그걸
+ * 대표로 보여주면 정작 중요한 쪽을 가리기 때문이다.
+ */
+function paperCandidates(deadlines, now) {
   const papers = deadlines.filter((d) => PAPER_TYPES.includes(d.type));
-  if (papers.length > 0) return papers;
-  return deadlines.filter((d) => SUBMISSION_FALLBACK_TYPES.includes(d.type));
+  const main = papers.length > 0
+    ? papers
+    : deadlines.filter((d) => SUBMISSION_FALLBACK_TYPES.includes(d.type));
+
+  // now가 없으면(정렬 등 시점 무관 호출) 기존대로 본 논문 계열만 돌려준다.
+  if (!now) return main;
+
+  const today = startOfDay(now);
+  const mainOpen = main.some((d) => startOfDay(d.date) >= today);
+  if (mainOpen) return main;
+
+  const late = deadlines.filter((d) => LATE_SUBMISSION_TYPES.includes(d.type));
+  const lateOpen = late.filter((d) => startOfDay(d.date) >= today);
+  // 후발 트랙도 전부 지났으면 본 논문 계열을 그대로 둔다 - 셀이 "마감됨"으로
+  // 보여야 하고, 그 기준은 후발 트랙의 마지막 날이 아니라 본 논문 마감이다.
+  return lateOpen.length > 0 ? lateOpen : main;
 }
 
 /**
@@ -108,7 +146,7 @@ export function pickEdition(editions, now) {
  */
 export function nextDeadline(edition, now) {
   const deadlines = edition?.deadlines ?? [];
-  const all = paperCandidates(deadlines);
+  const all = paperCandidates(deadlines, now);
   if (all.length === 0) {
     // 두 경우는 답이 다르다. deadlines가 아예 비어 있으면(마감 배열 없이
     // primary_deadline만 있는 소스) primary_deadline으로 합성해서 보여주는

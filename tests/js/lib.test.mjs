@@ -243,13 +243,12 @@ test("matchesFilters hidePast drops conferences whose deadline has passed", () =
 });
 
 test("matchesFilters hidePast follows nextDeadline, not primary_deadline, when they diverge", () => {
-  // SIGGRAPH/CVPR/ACL 2027처럼 deadlines에 paper/submission 타입이 전혀
-  // 없이 workshop 등만 있으면 셀에는 미정이 뜬다(nextDeadline이 null을
-  // 돌려주므로). 하지만 primary_deadline은 그 workshop 마감 날짜를 그대로
-  // 갖고 있어 아직 미래처럼 보인다. hidePast가 primary_deadline을 기준으로
-  // 판단하면, 화면엔 미정이라고 써 있는 학회가 "곧 마감"인 것처럼 필터를
-  // 통과해 버린다 - 셀과 같은 근거(nextDeadline)를 써야 한다.
-  const workshopOnly = conf({
+  // hidePast는 셀에 뜨는 값과 같은 근거(nextDeadline)로 판단해야 한다.
+  // 여기서는 제출 계열이 하나도 없고 통보/카메라레디만 있는 회차를 쓴다 -
+  // 셀은 미정으로 뜨는데(nextDeadline이 null), primary_deadline은 그 통보
+  // 날짜를 갖고 있어 아직 미래처럼 보인다. primary_deadline을 기준으로
+  // 판단하면 화면엔 미정이라 써 있는 학회가 "곧 마감"인 척 필터를 통과한다.
+  const adminOnly = conf({
     editions: [{
       year: 2027,
       date_text: "2027",
@@ -258,14 +257,47 @@ test("matchesFilters hidePast follows nextDeadline, not primary_deadline, when t
       place: "Somewhere",
       link: null,
       deadlines: [
-        { type: "workshop", label: "Workshop Proposal", date: "2026-12-01T23:59:59", source: "cfp-scrape" },
+        { type: "notification", label: "Notification", date: "2026-12-01T23:59:59", source: "ccfddl" },
       ],
       primary_deadline: "2026-12-01T23:59:59",
       source: "ccfddl",
     }],
   });
   const filters = { fields: new Set(), grades: new Set(), aiOnly: false, hidePast: true, query: "" };
-  assert.equal(matchesFilters(workshopOnly, filters, NOW), false);
+  assert.equal(matchesFilters(adminOnly, filters, NOW), false);
+});
+
+test("본 논문 마감이 지나도 남은 포스터·워크숍이 있으면 그것을 보여준다", () => {
+  // CHI 2027이 실제로 이 모양이다 - 본 논문 9/10, 워크숍 10/1, 포스터 이듬해
+  // 1/21. 본 논문만 후보로 보면 9/11부터 "마감됨"으로 뜨지만 실제로는 아직
+  // 낼 곳이 두 군데 남아 있다.
+  const chiLike = {
+    year: 2027,
+    date_text: "2027",
+    start: "2027-05-10",
+    end: "2027-05-14",
+    place: "Somewhere",
+    link: null,
+    deadlines: [
+      { type: "paper", label: "Full Paper Due", date: "2026-09-10T23:59:59", source: "ccfddl" },
+      { type: "workshop", label: "Workshops", date: "2026-10-01T23:59:59", source: "cfp-scrape" },
+      { type: "poster", label: "Posters", date: "2027-01-21T23:59:59", source: "cfp-scrape" },
+    ],
+    primary_deadline: "2026-09-10T23:59:59",
+    source: "ccfddl",
+  };
+  // 본 논문 마감 전날: 본 논문이 대표
+  assert.equal(nextDeadline(chiLike, new Date(2026, 8, 9)).type, "paper");
+  // 본 논문 마감 다음 날: 다음 제출 트랙(워크숍)이 대표
+  const afterPaper = nextDeadline(chiLike, new Date(2026, 8, 11));
+  assert.equal(afterPaper.type, "workshop");
+  assert.equal(afterPaper.label, "Workshops");
+  // 워크숍도 지나면 포스터
+  assert.equal(nextDeadline(chiLike, new Date(2026, 9, 2)).type, "poster");
+  // 전부 지나면 본 논문 마감으로 되돌아가 "마감됨"으로 보인다
+  const allPast = nextDeadline(chiLike, new Date(2027, 5, 1));
+  assert.equal(allPast.type, "paper");
+  assert.equal(formatDeadline(chiLike, new Date(2027, 5, 1)).state, "past");
 });
 
 test("matchesFilters aiOnly keeps only AI Specialist conferences", () => {

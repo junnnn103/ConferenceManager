@@ -16,6 +16,11 @@ from datetime import date, datetime
 PAPER_TYPES = ("paper",)
 SUBMISSION_FALLBACK_TYPES = ("submission",)
 
+# 참고: docs/lib.js는 여기에 더해 poster/lbw/workshop 등 후발 제출 트랙까지
+# 후보로 본다. 본 논문 마감이 지나도 포스터·워크숍은 몇 주 더 열려 있기
+# 때문인데, 그 판단은 "오늘"에 의존하므로 빌드가 아니라 브라우저의 몫이다.
+# 여기 primary_deadline은 시점과 무관한 고정값(정렬·필터의 폴백)으로 남는다.
+
 
 def normalize_place(value) -> str:
     """'Bari, Italy' -> 'Bari Italy'.

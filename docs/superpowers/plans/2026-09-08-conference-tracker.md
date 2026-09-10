@@ -5215,7 +5215,7 @@ git push -u origin master
 - Branch: `master`, 폴더: `/docs`
 - Save
 
-1~2분 뒤 `https://<사용자명>.github.io/ConferenceManager/` 에서 확인한다.
+1~2분 뒤 `https://<사용자명>.github.io/ConferenceTracker/` 에서 확인한다.
 
 - [ ] **Step 6: Actions 수동 실행으로 검증**
 

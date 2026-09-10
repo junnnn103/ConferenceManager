@@ -324,7 +324,7 @@ CFP 페이지에 poster/LBW 일정이 실제로 적혀 있는지는 학회마다
 ## 8. 저장소 구조
 
 ```
-ConferenceManager/
+ConferenceTracker/
 ├─ 학술연수 학회 리스트/          # 원본 엑셀 — gitignore, 로컬에만 존재
 ├─ data/                         # 커밋됨. 여기가 빌드의 입력 전부
 │  ├─ registry.yaml             # 학회 99개: 약어·full name·등급·AI Specialist·분야

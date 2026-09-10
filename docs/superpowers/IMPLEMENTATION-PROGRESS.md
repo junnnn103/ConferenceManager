@@ -8,7 +8,7 @@
 
 - 스펙: `docs/superpowers/specs/2026-09-08-conference-tracker-design.md`
 - 계획: `docs/superpowers/plans/2026-09-08-conference-tracker.md`
-- 저장소: https://github.com/junnnn103/ConferenceManager
+- 저장소: https://github.com/junnnn103/ConferenceTracker
 
 ## 현재 상태
 
@@ -63,7 +63,7 @@ CFP 추출을 나머지 34개로 넓히는 것, 주 1회 예약 실행을 거는
 
 ## 배포 이후 (2026-09-09)
 
-사이트가 https://junnnn103.github.io/ConferenceManager/ 에 떠 있다.
+사이트가 https://junnnn103.github.io/ConferenceTracker/ 에 떠 있다.
 Pages 소스는 `feature/conference-tracker` 브랜치의 `/docs`이므로 master 병합은 필요 없다.
 갱신은 매주 월요일 06:00 KST(GitHub Actions).
 

@@ -75,6 +75,36 @@ def test_conference_carries_registry_metadata():
     assert conf["editions"][0]["primary_deadline"] == "2025-11-13T23:59:59"
 
 
+def test_bk_grade_survives_the_build():
+    # bk_grade는 registry.yaml -> build -> JSON까지 그대로 흘러야 한다.
+    # null인 학회도 필드 자체는 있어야 한다 - 없으면 프론트가 "BK 목록에
+    # 없음"과 "아직 값이 안 채워짐"을 구분하지 못한다.
+    registry = [
+        {
+            "abbr": "cvpr", "display": "CVPR",
+            "full_name": "Computer Vision and Pattern Recognition",
+            "grade": "최우수", "bk_grade": "S", "ai_specialist": True, "field": "CV",
+            "homepage": "https://cvpr.thecvf.com/", "members": None,
+            "sources": {"ai_deadlines": "cvpr", "ccfddl": "cvpr"},
+        },
+        {
+            "abbr": "icip", "display": "ICIP", "full_name": "Image Processing",
+            "grade": "우수", "bk_grade": None, "ai_specialist": True, "field": "CV",
+            "homepage": "https://example.org/", "members": None,
+            "sources": {"ai_deadlines": None, "ccfddl": "icip"},
+        },
+    ]
+    out = build(
+        registry, FIELDS,
+        make_fetchers(hf={"cvpr": [cvpr_edition()]}, ccf={"icip": [cvpr_edition()]}),
+        manual={}, scraped={}, today=TODAY,
+    )
+    by_abbr = {c["abbr"]: c for c in out["conferences"]}
+    assert by_abbr["CVPR"]["bk_grade"] == "S"
+    assert "bk_grade" in by_abbr["ICIP"]
+    assert by_abbr["ICIP"]["bk_grade"] is None
+
+
 def test_only_the_adjacent_editions_survive():
     # build는 회차를 직전 1개 + 차기 1개로 줄인다. 전부 내보내면 JSON이 부풀고
     # 브라우저가 고르지 말아야 할 오래된 회차까지 후보로 받는다.

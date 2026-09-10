@@ -111,3 +111,25 @@ def test_conference_serializes_nested_editions():
     assert out["abbr"] == "CVPR"
     assert out["editions"][0]["start"] == "2026-06-03"
     assert out["editions"][0]["primary_deadline"] is None
+
+
+def test_conference_bk_grade_defaults_to_none_and_serializes():
+    # bk_grade를 넘기지 않는 기존 호출부(테스트 픽스처 포함)가 깨지지 않아야
+    # 하므로 기본값이 있어야 한다. 동시에 to_dict가 필드를 항상 내보내야
+    # BK 목록에 없는 학회("null")와 아직 채워지지 않은 상태를 프론트에서
+    # 구분할 수 있다.
+    conf = Conference(
+        abbr="ICIP", abbr_group="icip", full_name="Image Processing",
+        grade="우수", ai_specialist=True, field="CV", homepage="https://example.org/",
+    )
+    assert conf.bk_grade is None
+    assert conf.to_dict()["bk_grade"] is None
+
+
+def test_conference_bk_grade_serializes_when_set():
+    conf = Conference(
+        abbr="CVPR", abbr_group="cvpr", full_name="Computer Vision",
+        grade="최우수", ai_specialist=True, field="CV", homepage="https://example.org/",
+        bk_grade="S",
+    )
+    assert conf.to_dict()["bk_grade"] == "S"

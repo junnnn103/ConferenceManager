@@ -1,8 +1,14 @@
+# bk_grade: 한국정보과학회 2024년 우수학술대회(개편) 목록
+# (BK학회리스트/SW분야우수학술대회목록_2024.pdf) 기준 등급이다. S=최우수, A=우수,
+# null=그 목록에 없음. 회사 자체 등급(grade)과 별개 기준이라 서로 불일치할 수 있다
+# (예: WSDM은 회사 기준 우수지만 BK 기준 S). 활성 학회에만 채워져 있다. 새 판이
+# 나오면 이 파일 경로와 연도를 갱신하고 값을 다시 대조해야 한다.
 conferences:
 - abbr: cvpr
   display: CVPR
   full_name: Computer Vision and Pattern Recognition
   grade: 최우수
+  bk_grade: S
   ai_specialist: true
   field: CV
   homepage: https://cvpr.thecvf.com/
@@ -14,6 +20,7 @@ conferences:
   display: NeurIPS
   full_name: Neural Information Processing Systems
   grade: 최우수
+  bk_grade: S
   ai_specialist: true
   field: ML
   homepage: https://neurips.cc/
@@ -25,6 +32,7 @@ conferences:
   display: ICLR
   full_name: International Conference on Learning Representations
   grade: 최우수
+  bk_grade: S
   ai_specialist: true
   field: ML
   homepage: https://iclr.cc/
@@ -37,6 +45,7 @@ conferences:
   full_name: International Conference on Computer Vision / European Conference on
     Computer Vision
   grade: 최우수
+  bk_grade: S
   ai_specialist: true
   field: CV
   homepage: https://www.thecvf.com/
@@ -58,6 +67,7 @@ conferences:
   display: ICML
   full_name: International Conference on Machine Learning
   grade: 최우수
+  bk_grade: S
   ai_specialist: true
   field: ML
   homepage: https://icml.cc/
@@ -69,6 +79,7 @@ conferences:
   display: AAAI
   full_name: AAAI Conference on Artificial Intelligence
   grade: 최우수
+  bk_grade: S
   ai_specialist: true
   field: ML
   homepage: https://aaai.org/conference/aaai/
@@ -80,6 +91,7 @@ conferences:
   display: ACL
   full_name: Association for Computational Linguistics
   grade: 최우수
+  bk_grade: S
   ai_specialist: true
   field: NLP
   homepage: https://www.aclweb.org/
@@ -91,6 +103,7 @@ conferences:
   display: EMNLP
   full_name: Conference on Empirical Methods in Natural Language Processing
   grade: 최우수
+  bk_grade: S
   ai_specialist: true
   field: NLP
   homepage: https://aclanthology.org/venues/emnlp/
@@ -102,6 +115,7 @@ conferences:
   display: IJCAI
   full_name: International Joint Conference on Artificial Intelligence
   grade: 우수
+  bk_grade: A
   ai_specialist: true
   field: ML
   homepage: https://www.ijcai.org/
@@ -113,6 +127,7 @@ conferences:
   display: NAACL
   full_name: North American Chapter of the Association for Computational Linguistics
   grade: 우수
+  bk_grade: S
   ai_specialist: true
   field: NLP
   homepage: https://naacl.org/
@@ -124,6 +139,7 @@ conferences:
   display: CHI
   full_name: International Conference on Human Factors in Computing Systems
   grade: 최우수
+  bk_grade: S
   ai_specialist: true
   field: HCI
   homepage: https://chi.acm.org/
@@ -135,6 +151,7 @@ conferences:
   display: ICASSP
   full_name: International Conference on Acoustics, Speech, and Signal Processing
   grade: 최우수
+  bk_grade: A
   ai_specialist: true
   field: Speech
   homepage: https://signalprocessingsociety.org/event-names/icassp
@@ -146,6 +163,7 @@ conferences:
   display: KDD
   full_name: ACM SIGKDD Conference on Knowledge Discovery and Data Mining
   grade: 최우수
+  bk_grade: S
   ai_specialist: true
   field: DM/IR
   homepage: https://kdd.org/
@@ -157,6 +175,7 @@ conferences:
   display: ICRA
   full_name: IEEE International Conference on Robotics and Automation
   grade: 최우수
+  bk_grade: A
   ai_specialist: true
   field: Robotics
   homepage: https://www.ieee-ras.org/conferences-workshops/fully-sponsored/icra/
@@ -179,6 +198,7 @@ conferences:
   display: WWW
   full_name: World Wide Web Conference Series
   grade: 최우수
+  bk_grade: S
   ai_specialist: true
   field: DM/IR
   homepage: https://www.iw3c2.org/
@@ -190,6 +210,7 @@ conferences:
   display: INTERSPEECH
   full_name: Annual Conference of the International Speech Communication Association
   grade: 최우수
+  bk_grade: A
   ai_specialist: true
   field: Speech
   homepage: https://www.isca-speech.org/
@@ -201,6 +222,7 @@ conferences:
   display: WACV
   full_name: IEEE Winter Conference on Applications of Computer Vision
   grade: 우수
+  bk_grade: A
   ai_specialist: true
   field: CV
   homepage: https://wacv.thecvf.com/
@@ -223,6 +245,7 @@ conferences:
   display: SIGGRAPH
   full_name: ACM SIGGRAPH Conference
   grade: 최우수
+  bk_grade: S
   ai_specialist: true
   field: Graphics
   homepage: https://www.siggraph.org/
@@ -234,6 +257,7 @@ conferences:
   display: SIGIR
   full_name: Research and Development in Information Retrieval
   grade: 최우수
+  bk_grade: S
   ai_specialist: true
   field: DM/IR
   homepage: https://sigir.org/
@@ -245,6 +269,7 @@ conferences:
   display: ACM MM
   full_name: ACM International Conference on Multimedia
   grade: 최우수
+  bk_grade: A
   ai_specialist: true
   field: Multimedia
   homepage: https://www.acmmm.org/
@@ -278,6 +303,7 @@ conferences:
   display: CIKM
   full_name: International Conference on Information and Knowledge Management
   grade: 최우수
+  bk_grade: S
   ai_specialist: true
   field: DM/IR
   homepage: https://dl.acm.org/conference/cikm
@@ -289,6 +315,7 @@ conferences:
   display: CoRL
   full_name: Conference on Robot Learning
   grade: 최우수
+  bk_grade: A
   ai_specialist: true
   field: Robotics
   homepage: https://www.corl.org/
@@ -300,6 +327,7 @@ conferences:
   display: IROS
   full_name: IEEE/RSJ International Conference on Intelligent Robots and Systems
   grade: 최우수
+  bk_grade: A
   ai_specialist: true
   field: Robotics
   homepage: https://www.ieee-ras.org/conferences-workshops/financially-co-sponsored/iros/
@@ -333,6 +361,7 @@ conferences:
   display: WSDM
   full_name: ACM International Conference on Web Search and Data Mining
   grade: 우수
+  bk_grade: S
   ai_specialist: true
   field: DM/IR
   homepage: https://www.wsdm-conference.org/
@@ -421,6 +450,7 @@ conferences:
   display: RSS
   full_name: 'Robotics: Science and Systems Conference'
   grade: 우수
+  bk_grade: A
   ai_specialist: true
   field: Robotics
   homepage: https://roboticsconference.org/
@@ -432,6 +462,7 @@ conferences:
   display: ICIP
   full_name: IEEE International Conference on Image Processing
   grade: 우수
+  bk_grade: null
   ai_specialist: true
   field: CV
   homepage: https://signalprocessingsociety.org/event-names/icip
@@ -532,6 +563,7 @@ conferences:
   display: MLSys
   full_name: Conference on Machine Learning and Systems
   grade: 최우수
+  bk_grade: A
   ai_specialist: false
   field: ML
   homepage: https://mlsys.org/
@@ -566,6 +598,7 @@ conferences:
   display: HRI
   full_name: ACM/IEEE International Conference on Human Robot Interaction
   grade: 우수
+  bk_grade: null
   ai_specialist: true
   field: Robotics
   homepage: https://humanrobotinteraction.org/
@@ -588,6 +621,7 @@ conferences:
   display: BigData
   full_name: IEEE International Conference on Big Data
   grade: 우수
+  bk_grade: A
   ai_specialist: true
   field: DM/IR
   homepage: https://bigdataieee.org/
@@ -599,6 +633,7 @@ conferences:
   display: UbiComp
   full_name: ACM International Conference on Ubiquitous Computing
   grade: 우수
+  bk_grade: S
   ai_specialist: true
   field: HCI
   homepage: https://ubicomp.org/
@@ -610,6 +645,7 @@ conferences:
   display: RecSys
   full_name: ACM Conference on Recommender Systems
   grade: 우수
+  bk_grade: A
   ai_specialist: true
   field: DM/IR
   homepage: https://recsys.acm.org/
@@ -621,6 +657,7 @@ conferences:
   display: IUI
   full_name: Intelligent User Interfaces
   grade: 우수
+  bk_grade: A
   ai_specialist: true
   field: HCI
   homepage: https://iui.acm.org/
@@ -654,6 +691,7 @@ conferences:
   display: UIST
   full_name: User Interface Software and Technology
   grade: 우수
+  bk_grade: S
   ai_specialist: true
   field: HCI
   homepage: https://uist.acm.org/
@@ -721,6 +759,7 @@ conferences:
   display: ICME
   full_name: IEEE International Conference on Multimedia and Expo
   grade: 우수
+  bk_grade: null
   ai_specialist: true
   field: Multimedia
   homepage: https://signalprocessingsociety.org/event-names/icme
@@ -755,6 +794,7 @@ conferences:
   full_name: IEEE Workshop on Automatic Speech Recognition & Understanding / IEEE
     Spoken Language Technology Workshop
   grade: 우수
+  bk_grade: null
   ai_specialist: true
   field: Speech
   homepage: https://signalprocessingsociety.org/community-involvement/speech-and-language-processing
@@ -776,6 +816,7 @@ conferences:
   display: IEEE VR
   full_name: IEEE Virtual Reality Conference
   grade: 우수
+  bk_grade: S
   ai_specialist: true
   field: AR/VR
   homepage: https://ieeevr.org/
@@ -897,6 +938,7 @@ conferences:
   display: ISMAR
   full_name: IEEE International Symposium on Mixed and Augmented Reality
   grade: 우수
+  bk_grade: S
   ai_specialist: false
   field: AR/VR
   homepage: https://ismar.net/
@@ -952,6 +994,7 @@ conferences:
   display: Humanoids
   full_name: IEEE International Conference on Humanoid Robots
   grade: 우수
+  bk_grade: null
   ai_specialist: false
   field: Robotics
   homepage: https://www.ieee-ras.org/humanoid-robotics/
@@ -985,6 +1028,7 @@ conferences:
   display: SIGGRAPH Asia
   full_name: ACM SIGGRAPH Conference in Asia
   grade: 우수
+  bk_grade: S
   ai_specialist: true
   field: Graphics
   homepage: https://asia.siggraph.org/

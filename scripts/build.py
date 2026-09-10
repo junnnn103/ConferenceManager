@@ -185,6 +185,7 @@ def build(
             abbr_group=abbr_group,
             full_name=entry.get("full_name") or "",
             grade=entry.get("grade") or "",
+            bk_grade=entry.get("bk_grade"),
             ai_specialist=bool(entry.get("ai_specialist")),
             field=entry["field"],
             homepage=homepage,

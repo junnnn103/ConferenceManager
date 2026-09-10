@@ -1,5 +1,6 @@
 import {
   allDeadlines,
+  bkGradeLabel,
   compareBy,
   formatDateRange,
   formatDeadline,
@@ -200,7 +201,14 @@ function renderRow(conf, now) {
   const gradeCell = document.createElement("td");
   const gradeBadge = document.createElement("span");
   gradeBadge.className = `badge grade ${conf.grade === "최우수" ? "top" : "good"}`;
-  gradeBadge.textContent = conf.grade;
+  gradeBadge.append(document.createTextNode(conf.grade));
+  // BK(한국정보과학회) 등급은 회사 등급 뒤에 괄호로 덧붙이되, 별도 span으로
+  // 감싸 CSS에서 더 옅은 색을 입힌다 - 같은 배지 안에서 회사 등급이 주,
+  // BK 등급이 종임을 시각적으로도 드러낸다.
+  const bkPart = document.createElement("span");
+  bkPart.className = "badge-bk";
+  bkPart.textContent = `(${bkGradeLabel(conf)})`;
+  gradeBadge.append(bkPart);
   gradeCell.append(gradeBadge);
   row.append(gradeCell);
 

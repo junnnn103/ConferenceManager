@@ -5,6 +5,9 @@
 
 const MS_PER_DAY = 86400000;
 const GRADE_RANK = { 최우수: 0, 우수: 1 };
+// BK(한국정보과학회) 등급. 회사 등급과 별개 기준이라 회사 등급이 같은 학회들
+// 사이의 우선순위를 가르는 2차 기준으로만 쓴다 - sortKey의 "grade" 케이스 참고.
+const BK_RANK = { S: 0, A: 1 };
 
 // primary_deadline을 고를 때 "본 논문 마감"으로 인정하는 타입.
 // 우선순위가 있는 단계별 폴백이다 - 평평한 집합이 아니다. "submission"은
@@ -202,6 +205,17 @@ export function formatDateRange(edition) {
     : edition.start;
 }
 
+/** BK 등급 표시 텍스트. BK 목록에 없는 학회는 "-"로 표시해 값이 아직 없는
+ * 상태(undefined)와 구분한다 - "-"가 없으면 '확인 안 됨'과 헷갈린다. */
+export function bkGradeLabel(conf) {
+  return conf.bk_grade ?? "-";
+}
+
+/** 등급(BK) 칸에 실제로 표시되는 전체 텍스트, 예: "최우수(S)", "우수(-)". */
+export function gradeCellText(conf) {
+  return `${conf.grade}(${bkGradeLabel(conf)})`;
+}
+
 function sortKey(conf, key, now) {
   const edition = pickEdition(conf.editions, now);
   switch (key) {
@@ -209,8 +223,14 @@ function sortKey(conf, key, now) {
       return conf.abbr.toLowerCase();
     case "field":
       return conf.field.toLowerCase();
-    case "grade":
-      return GRADE_RANK[conf.grade] ?? 99;
+    case "grade": {
+      // 회사 등급이 1차 기준, BK 등급은 그 안에서만 순위를 가르는 2차
+      // 기준이다(예: 최우수(S) < 최우수(A) < 최우수(-) < 우수(S) < ...).
+      // BK_RANK 항목 수(2)보다 큰 배수를 쓰면 항상 회사 등급이 우선한다.
+      const companyRank = GRADE_RANK[conf.grade] ?? 99;
+      const bkRank = BK_RANK[conf.bk_grade] ?? 2;
+      return companyRank * 3 + bkRank;
+    }
     case "place":
       return (edition?.place || "").toLowerCase();
     case "deadline": {

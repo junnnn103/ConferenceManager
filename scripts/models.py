@@ -110,6 +110,7 @@ class Conference:
     ai_specialist: bool
     field: str
     homepage: str | None
+    bk_grade: str | None = None
     editions: list[Edition] = dc_field(default_factory=list)
 
     def to_dict(self) -> dict:
@@ -118,6 +119,7 @@ class Conference:
             "abbr_group": self.abbr_group,
             "full_name": self.full_name,
             "grade": self.grade,
+            "bk_grade": self.bk_grade,
             "ai_specialist": self.ai_specialist,
             "field": self.field,
             "homepage": self.homepage,

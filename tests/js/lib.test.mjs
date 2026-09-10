@@ -3,9 +3,11 @@ import { test } from "node:test";
 
 import {
   allDeadlines,
+  bkGradeLabel,
   compareBy,
   dayDelta,
   formatDeadline,
+  gradeCellText,
   isEnded,
   isFeaturedDeadline,
   matchesFilters,
@@ -169,6 +171,36 @@ test("compareBy grade ranks 최우수 above 우수", () => {
   const good = conf({ abbr: "B", grade: "우수" });
   const sorted = [good, top].sort(compareBy("grade", "asc", NOW));
   assert.deepEqual(sorted.map((c) => c.abbr), ["A", "B"]);
+});
+
+test("compareBy grade breaks ties within a company grade using BK: S before A before -", () => {
+  const a = conf({ abbr: "A", grade: "최우수", bk_grade: "A" });
+  const s = conf({ abbr: "S", grade: "최우수", bk_grade: "S" });
+  const dash = conf({ abbr: "D", grade: "최우수", bk_grade: null });
+  const sorted = [dash, a, s].sort(compareBy("grade", "asc", NOW));
+  assert.deepEqual(sorted.map((c) => c.abbr), ["S", "A", "D"]);
+});
+
+test("compareBy grade keeps company grade as the primary key even with BK ties", () => {
+  // 우수(S)는 BK 등급이 최우수(A)보다 높아도 회사 등급이 낮으므로 뒤에 와야 한다.
+  const goodS = conf({ abbr: "GS", grade: "우수", bk_grade: "S" });
+  const topA = conf({ abbr: "TA", grade: "최우수", bk_grade: "A" });
+  const sorted = [goodS, topA].sort(compareBy("grade", "asc", NOW));
+  assert.deepEqual(sorted.map((c) => c.abbr), ["TA", "GS"]);
+});
+
+test("bkGradeLabel shows the BK grade, or - when the conference is not in the BK list", () => {
+  assert.equal(bkGradeLabel(conf({ bk_grade: "S" })), "S");
+  assert.equal(bkGradeLabel(conf({ bk_grade: "A" })), "A");
+  assert.equal(bkGradeLabel(conf({ bk_grade: null })), "-");
+});
+
+test("gradeCellText renders company grade with BK grade in parentheses", () => {
+  assert.equal(gradeCellText(conf({ grade: "최우수", bk_grade: "S" })), "최우수(S)");
+  assert.equal(gradeCellText(conf({ grade: "최우수", bk_grade: "A" })), "최우수(A)");
+  assert.equal(gradeCellText(conf({ grade: "우수", bk_grade: "S" })), "우수(S)");
+  assert.equal(gradeCellText(conf({ grade: "우수", bk_grade: "A" })), "우수(A)");
+  assert.equal(gradeCellText(conf({ grade: "우수", bk_grade: null })), "우수(-)");
 });
 
 test("matchesFilters passes everything when no filter is set", () => {

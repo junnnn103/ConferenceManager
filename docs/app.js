@@ -201,15 +201,16 @@ function renderRow(conf, now) {
   const gradeCell = document.createElement("td");
   const gradeBadge = document.createElement("span");
   gradeBadge.className = `badge grade ${conf.grade === "최우수" ? "top" : "good"}`;
-  gradeBadge.append(document.createTextNode(conf.grade));
-  // BK(한국정보과학회) 등급은 회사 등급 뒤에 괄호로 덧붙이되, 별도 span으로
-  // 감싸 CSS에서 더 옅은 색을 입힌다 - 같은 배지 안에서 회사 등급이 주,
-  // BK 등급이 종임을 시각적으로도 드러낸다.
+  gradeBadge.textContent = conf.grade;
+  gradeCell.append(gradeBadge);
+  // BK(한국정보과학회) 등급은 배지 "밖"에 둔다. 배지 안에 넣으면 배지의 color가
+  // 배경과 같은 계열이라 대비가 3.7:1까지 떨어지고, 특히 우수 배지는 은색과
+  // --text-dim이 같은 값(#64748b)이어서 아예 구분되지 않았다.
   const bkPart = document.createElement("span");
   bkPart.className = "badge-bk";
   bkPart.textContent = `(${bkGradeLabel(conf)})`;
-  gradeBadge.append(bkPart);
-  gradeCell.append(gradeBadge);
+  bkPart.title = `BK 우수학술대회 등급: ${bkGradeLabel(conf) === "-" ? "목록에 없음" : bkGradeLabel(conf)}`;
+  gradeCell.append(bkPart);
   row.append(gradeCell);
 
   const dateCell = document.createElement("td");

@@ -165,11 +165,17 @@ a.abbr:hover { color: var(--accent); text-decoration: underline; }
 }
 .badge.grade.top { background: color-mix(in srgb, var(--gold) 18%, transparent); color: var(--gold); }
 .badge.grade.good { background: color-mix(in srgb, var(--silver) 18%, transparent); color: var(--silver); }
-/* BK(한국정보과학회) 등급은 회사 등급에 딸린 참고 정보라 배지 안에서도
-   더 옅게 - tr.ended가 td 색을 --text-dim으로 덮어써도 badge.grade.*의
-   color가 클래스 3개(specificity 0,3,0)라 더 세서 회사 등급 색은 유지되고,
-   이 span은 애초에 --text-dim이라 같은 값으로 그대로 남는다. */
-.badge-bk { color: var(--text-dim); }
+/* BK(한국정보과학회) 등급. 배지 안이 아니라 옆에 둔다 - 배지 안에서는
+   배경과 글자가 같은 계열이라 대비가 3.7:1까지 떨어지고, 우수 배지의 은색은
+   --text-dim과 값이 같아(#64748b) 아예 보이지 않았다. 배지 밖 흰 배경 위에서는
+   같은 색도 대비 5.0:1로 충분히 읽힌다. */
+.badge-bk {
+  margin-left: 4px;
+  color: var(--text);
+  font-size: 11px;
+  font-weight: 600;
+  white-space: nowrap;
+}
 
 .deadline-col { white-space: nowrap; }
 .deadline-date.past { text-decoration: line-through; color: var(--text-dim); }

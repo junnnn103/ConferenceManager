@@ -7,8 +7,9 @@ GitHub Pages는 style.css / app.js를 10분간 캐시하라고 응답한다. 파
 파일 내용이 바뀌면 해시가 바뀌고 URL이 달라져 브라우저가 새로 받는다.
 내용이 그대로면 URL도 그대로라 캐시가 그대로 쓰인다.
 
-ES 모듈 import 경로(app.js -> lib.js)도 같은 이유로 붙여야 한다. 손으로
-관리하면 반드시 빠뜨리므로 빌드에서 자동으로 처리한다.
+해시는 "자기 내용 + 자기가 참조하는 자원들의 해시"로 계산한다. app.js 자체는
+그대로인데 lib.js만 고친 경우, app.js 해시까지 바뀌지 않으면 브라우저가
+캐시된 옛 app.js를 계속 써서 새 lib.js를 영영 받지 못하기 때문이다.
 """
 
 import hashlib
@@ -16,44 +17,55 @@ import re
 from pathlib import Path
 
 DOCS = Path(__file__).parents[1] / "docs"
-# (파일, 그 파일을 참조하는 파일들)
-ASSETS = {
-    "style.css": ["index.html"],
-    "app.js": ["index.html"],
-    "lib.js": ["app.js"],
-    "url-safety.js": ["app.js"],
+
+# 자원 -> 그 자원이 참조하는 자원들. 의존 방향이며, 순환이 없어야 한다.
+DEPENDENCIES = {
+    "style.css": [],
+    "lib.js": [],
+    "url-safety.js": [],
+    "app.js": ["lib.js", "url-safety.js"],
+    "index.html": ["style.css", "app.js"],
 }
 
+_QUERY = re.compile(r'(["\'])(\./)?([\w.-]+\.(?:js|css))\?v=[a-f0-9]+\1')
 
-def content_hash(name: str) -> str:
-    """쿼리 문자열을 뺀 내용으로 해시를 낸다.
 
-    lib.js처럼 자신도 참조당하고 남을 참조하기도 하는 파일이 있어, 이미 붙은
-    ?v=를 포함해 해시하면 값이 매번 흔들린다.
+def _own_text(name: str) -> str:
+    """이미 붙어 있는 ?v= 를 지운 내용.
+
+    쿼리를 포함해 해시하면 값이 자기 자신에 의존해 매번 흔들린다.
     """
-    raw = (DOCS / name).read_text(encoding="utf-8")
-    stripped = re.sub(r'(["\'])(\./)?([\w.-]+\.(?:js|css))\?v=[a-f0-9]+\1', r"\1\2\3\1", raw)
-    return hashlib.sha1(stripped.encode("utf-8")).hexdigest()[:8]
+    return _QUERY.sub(r"\1\2\3\1", (DOCS / name).read_text(encoding="utf-8"))
+
+
+def content_hash(name: str, _seen: frozenset[str] = frozenset()) -> str:
+    if name in _seen:
+        raise RuntimeError(f"순환 참조: {name}")
+    parts = [_own_text(name)]
+    for dep in DEPENDENCIES.get(name, []):
+        parts.append(content_hash(dep, _seen | {name}))
+    return hashlib.sha1("\x00".join(parts).encode("utf-8")).hexdigest()[:8]
 
 
 def stamp() -> list[str]:
     changed = []
-    for asset, referrers in ASSETS.items():
-        digest = content_hash(asset)
-        pattern = re.compile(
-            r'(["\'])(\./)?' + re.escape(asset) + r'(?:\?v=[a-f0-9]+)?\1'
-        )
-        for referrer in referrers:
-            path = DOCS / referrer
-            before = path.read_text(encoding="utf-8")
-            after = pattern.sub(rf'\g<1>\g<2>{asset}?v={digest}\g<1>', before)
-            if after != before:
-                path.write_text(after, encoding="utf-8")
-                changed.append(f"{referrer}: {asset}?v={digest}")
+    for referrer, deps in DEPENDENCIES.items():
+        path = DOCS / referrer
+        before = path.read_text(encoding="utf-8")
+        after = before
+        for dep in deps:
+            digest = content_hash(dep)
+            pattern = re.compile(
+                r'(["\'])(\./)?' + re.escape(dep) + r'(?:\?v=[a-f0-9]+)?\1'
+            )
+            after = pattern.sub(rf"\g<1>\g<2>{dep}?v={digest}\g<1>", after)
+        if after != before:
+            path.write_text(after, encoding="utf-8")
+            changed.append(referrer)
     return changed
 
 
 if __name__ == "__main__":
-    for line in stamp():
-        print(f"  {line}")
+    for name in stamp():
+        print(f"  {name} 갱신")
     print("정적 자원 버전 도장 완료")

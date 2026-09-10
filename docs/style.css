@@ -7,7 +7,9 @@
   --surface-alt: #f1f5f9;
   --border: #e2e8f0;
   --text: #0f172a;
-  --text-dim: #64748b;
+  /* 회색 처리된 행(tr.ended)의 배경 위에서도 4.5:1을 넘도록 잡은 값.
+     이전 #64748b는 일반 행에서 4.76:1이지만 회색 행에서 4.21:1로 떨어졌다. */
+  --text-dim: #5b6a80;
   --accent: #2563eb;
   --danger: #dc2626;
   --gold: #b45309;

@@ -206,27 +206,61 @@ export function nextDeadline(edition, now) {
   return sorted.find((d) => startOfDay(d.date) >= today) ?? sorted[sorted.length - 1];
 }
 
+// AoE(Anywhere on Earth)는 UTC-12다. 논문 마감은 거의 다 이 기준이라
+// (전체 마감 236건이 AoE 표기) 한국에서 보면 실제 여유가 하루 더 있다 -
+// AoE 9월 18일 23:59는 KST로 9월 19일 20:59까지다. 시차를 모르고 AoE
+// 날짜를 그대로 읽으면 하루를 손해 본다.
+const AOE_TIMEZONES = new Set(["AoE", "AOE", "UTC-12"]);
+const KST_OFFSET_HOURS = 9;
+const AOE_OFFSET_HOURS = -12;
+
+/** 이 마감이 AoE 기준인가. */
+export function isAoeDeadline(deadline) {
+  return AOE_TIMEZONES.has((deadline?.timezone || "").trim());
+}
+
+/**
+ * AoE 마감을 KST 시각으로 옮긴다.
+ *
+ * 마감 문자열("2026-09-18T23:59:59")에는 오프셋이 없고 그 자체가 AoE 벽시계
+ * 시각이다. UTC로 되돌린 뒤(+12h) KST로 옮긴다(+9h) - 합쳐서 21시간이라
+ * 대개 날짜가 하루 밀린다.
+ */
+export function toKst(isoDate) {
+  const [datePart, timePart = "00:00:00"] = String(isoDate).split("T");
+  const [y, m, d] = datePart.split("-").map(Number);
+  const [hh, mm, ss] = timePart.split(":").map((v) => Number(v) || 0);
+  const utcMs = Date.UTC(y, m - 1, d, hh, mm, ss);
+  return new Date(utcMs + (KST_OFFSET_HOURS - AOE_OFFSET_HOURS) * 3600 * 1000);
+}
+
 /** 제출마감 셀에 표시할 값. */
 export function formatDeadline(edition, now) {
   const chosen = nextDeadline(edition, now);
-  if (!chosen) return { state: "unknown", text: "미정", dday: "", label: "" };
+  if (!chosen) return { state: "unknown", text: "미정", dday: "", label: "", aoe: false };
 
-  const delta = dayDelta(chosen.date, now);
+  // AoE 마감은 KST로 옮겨 보여준다. 한국에서 실제로 낼 수 있는 시각이
+  // 하루 뒤이므로, AoE 날짜를 그대로 띄우면 없는 마감 압박을 만든다.
+  const aoe = isAoeDeadline(chosen);
+  const shownDate = aoe ? toKst(chosen.date).toISOString() : chosen.date;
+  const delta = dayDelta(shownDate, now);
   // startOfDay(chosen.date)는 마감의 달력 날짜를 UTC 자정으로 고정해 두므로,
   // 이걸 다시 UTC로 표시하면 뷰어의 시간대와 무관하게 항상 같은 날짜가 나온다.
   // new Date(chosen.date)를 곧바로 넘기면 오프셋 없는 시각이 로컬로 파싱되어
   // 자정 근처 마감(예: 23:59:59)이 시간대에 따라 하루 밀려 보일 수 있다.
-  const text = new Date(startOfDay(chosen.date)).toLocaleDateString("en-US", {
+  const text = new Date(startOfDay(shownDate)).toLocaleDateString("en-US", {
     year: "numeric",
     month: "short",
     day: "numeric",
     timeZone: "UTC",
   });
-  if (delta >= 0) return { state: "upcoming", text, dday: `D-${delta}`, label: chosen.label };
+  if (delta >= 0) {
+    return { state: "upcoming", text, dday: `D-${delta}`, label: chosen.label, aoe };
+  }
   // 이미 지난 마감에는 D-day를 붙이지 않는다. 남은 제출 트랙이 하나도 없어
   // 이 회차에 더 낼 곳이 없다는 뜻이고, "며칠 전에 끝났는지"는 셀에 이미
   // 취소선과 날짜로 드러난다. D+ 숫자는 아직 셀 것이 있다는 오해만 준다.
-  return { state: "past", text, dday: "", label: chosen.label };
+  return { state: "past", text, dday: "", label: chosen.label, aoe };
 }
 
 /**

@@ -10,7 +10,7 @@ import {
   isFeaturedDeadline,
   matchesFilters,
   pickEdition,
-} from "./lib.js?v=4c7f0431";
+} from "./lib.js?v=e5dbbccd";
 import { safeHref } from "./url-safety.js?v=5de46b35";
 
 const STORAGE_KEY = "conference-manager-filters";

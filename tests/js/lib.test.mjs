@@ -9,11 +9,13 @@ import {
   dayDelta,
   formatDeadline,
   gradeCellText,
+  isAoeDeadline,
   isEnded,
   isFeaturedDeadline,
   matchesFilters,
   nextDeadline,
   pickEdition,
+  toKst,
 } from "../../docs/lib.js";
 
 // 로컬 달력 날짜 생성자를 쓴다 - "2026-09-08T00:00:00Z" 같은 UTC 인스턴트
@@ -635,4 +637,57 @@ test("isFeaturedDeadline marks nothing as current when nextDeadline finds no fea
   const edition = noPaperTypeEdition();
   const flags = allDeadlines(edition).map((d) => isFeaturedDeadline(d, edition, NOW));
   assert.deepEqual(flags, [false, false]);
+});
+
+test("AoE 마감은 KST로 옮겨 하루 뒤로 보인다", () => {
+  // AoE(UTC-12) 9월 18일 23:59는 KST로 9월 19일 20:59다. 한국에서 실제로
+  // 낼 수 있는 시각이 하루 뒤이므로, AoE 날짜를 그대로 띄우면 없는 마감
+  // 압박을 만든다.
+  const aoeEdition = {
+    year: 2027,
+    date_text: "2027",
+    start: "2027-04-01",
+    end: "2027-04-05",
+    place: "Somewhere",
+    link: null,
+    deadlines: [
+      { type: "paper", label: "Paper", date: "2026-09-18T23:59:59", timezone: "AoE", source: "ai-deadlines" },
+    ],
+    primary_deadline: "2026-09-18T23:59:59",
+    source: "ai-deadlines",
+  };
+  const result = formatDeadline(aoeEdition, new Date(2026, 8, 10));
+  assert.equal(result.text, "Sep 19, 2026");
+  assert.equal(result.dday, "D-9");
+  assert.equal(result.aoe, true);
+});
+
+test("AoE가 아닌 마감은 원래 날짜 그대로 보인다", () => {
+  // PST나 UTC 표기는 AoE와 달라서 하루를 더해선 안 된다.
+  const pstEdition = {
+    year: 2027,
+    date_text: "2027",
+    start: "2027-04-01",
+    end: "2027-04-05",
+    place: "Somewhere",
+    link: null,
+    deadlines: [
+      { type: "paper", label: "Paper", date: "2026-09-15T23:59:59", timezone: "PST", source: "ai-deadlines" },
+    ],
+    primary_deadline: "2026-09-15T23:59:59",
+    source: "ai-deadlines",
+  };
+  const result = formatDeadline(pstEdition, new Date(2026, 8, 10));
+  assert.equal(result.text, "Sep 15, 2026");
+  assert.equal(result.aoe, false);
+});
+
+test("UTC-12 표기도 AoE와 같은 시각이므로 함께 환산한다", () => {
+  assert.equal(isAoeDeadline({ timezone: "UTC-12" }), true);
+  assert.equal(isAoeDeadline({ timezone: "AoE" }), true);
+  assert.equal(isAoeDeadline({ timezone: "UTC" }), false);
+  assert.equal(isAoeDeadline({}), false);
+  // AoE 자정 마감은 KST로 같은 날 21:00이라 날짜가 안 밀린다
+  assert.equal(toKst("2026-09-18T00:00:00").toISOString().slice(0, 10), "2026-09-18");
+  assert.equal(toKst("2026-09-18T23:59:59").toISOString().slice(0, 10), "2026-09-19");
 });

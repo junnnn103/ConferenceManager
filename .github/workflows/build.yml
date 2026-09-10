@@ -57,6 +57,11 @@ jobs:
       - name: 빌드
         run: python -m scripts.build
 
+      # 정적 자원 URL에 내용 해시를 붙인다. 없으면 GitHub Pages의 10분 캐시 때문에
+      # 배포 후에도 브라우저가 옛 CSS/JS를 계속 쓴다.
+      - name: 정적 자원 버전 도장
+        run: python scripts/stamp_assets.py
+
       - name: 변경분 커밋
         run: |
           # generated_at은 매 빌드마다 바뀌므로 이 줄만 다르면 "변경 없음"으로
@@ -67,13 +72,15 @@ jobs:
           # 줄만 걸러낸다. data/scraped는 generated_at이 없으므로 그대로
           # --quiet로 본다.
           if git diff --quiet -I'"generated_at"' -- docs/data/conferences.json \
-              && git diff --quiet -- data/scraped; then
+              && git diff --quiet -- data/scraped docs/index.html docs/app.js; then
             echo "변경 없음"
             exit 0
           fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add docs/data/conferences.json
+          # 도장 단계가 index.html/app.js의 ?v= 값을 바꿨을 수 있다.
+          git add docs/index.html docs/app.js
           # data/scraped는 마지막 태스크 전까지 저장소에 존재하지 않는다.
           # 없는 경로를 add하면 git이 실패하므로 있을 때만 추가한다.
           if [ -d data/scraped ]; then

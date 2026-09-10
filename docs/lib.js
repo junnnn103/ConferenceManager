@@ -216,6 +216,18 @@ export function gradeCellText(conf) {
   return `${conf.grade}(${bkGradeLabel(conf)})`;
 }
 
+/** BK 등급을 배지 시각 클래스로 매핑한다. S/A는 SR(회사) 등급과 같은
+ * gold/silver 언어를 그대로 쓰고(grade-s/grade-a), 목록에 없으면 채움 없는
+ * grade-none이 된다 - "없음"이 세 번째 등급처럼 보이면 안 되기 때문. app.js가
+ * 이 매핑을 직접 하면 두 곳(어떤 값이 gold/silver인지)이 따로 어긋날 수
+ * 있으므로 여기 한 곳에만 둔다. */
+export function bkGradeBadgeClass(conf) {
+  const label = bkGradeLabel(conf);
+  if (label === "S") return "grade-s";
+  if (label === "A") return "grade-a";
+  return "grade-none";
+}
+
 function sortKey(conf, key, now) {
   const edition = pickEdition(conf.editions, now);
   switch (key) {

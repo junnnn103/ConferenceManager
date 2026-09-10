@@ -3,6 +3,7 @@ import { test } from "node:test";
 
 import {
   allDeadlines,
+  bkGradeBadgeClass,
   bkGradeLabel,
   compareBy,
   dayDelta,
@@ -201,6 +202,22 @@ test("gradeCellText renders company grade with BK grade in parentheses", () => {
   assert.equal(gradeCellText(conf({ grade: "우수", bk_grade: "S" })), "우수(S)");
   assert.equal(gradeCellText(conf({ grade: "우수", bk_grade: "A" })), "우수(A)");
   assert.equal(gradeCellText(conf({ grade: "우수", bk_grade: null })), "우수(-)");
+});
+
+// BK 배지의 색 클래스는 app.js가 직접 고르지 않고 여기서 가져다 쓴다 - 지난
+// 버전은 배지 안 글자색이 배경과 같은 값이 되는 실수가 테스트 없이 그대로
+// 배포됐었다. 세 상태(S/A/미등재)가 각각 다른 클래스로, 그리고 미등재가
+// 등재된 값과 반드시 다른 클래스로 떨어지는지를 여기서 고정해 둔다.
+test("bkGradeBadgeClass maps S/A to the shared gold/silver classes", () => {
+  assert.equal(bkGradeBadgeClass(conf({ bk_grade: "S" })), "grade-s");
+  assert.equal(bkGradeBadgeClass(conf({ bk_grade: "A" })), "grade-a");
+});
+
+test("bkGradeBadgeClass renders the not-listed case distinctly from a graded one", () => {
+  const notListed = bkGradeBadgeClass(conf({ bk_grade: null }));
+  assert.equal(notListed, "grade-none");
+  assert.notEqual(notListed, bkGradeBadgeClass(conf({ bk_grade: "S" })));
+  assert.notEqual(notListed, bkGradeBadgeClass(conf({ bk_grade: "A" })));
 });
 
 test("matchesFilters passes everything when no filter is set", () => {

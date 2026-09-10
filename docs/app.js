@@ -1,9 +1,11 @@
 import {
   allDeadlines,
+  bkGradeBadgeClass,
   bkGradeLabel,
   compareBy,
   formatDateRange,
   formatDeadline,
+  gradeCellText,
   isEnded,
   isFeaturedDeadline,
   matchesFilters,
@@ -198,19 +200,36 @@ function renderRow(conf, now) {
   fieldCell.append(fieldBadge);
   row.append(fieldCell);
 
+  // 등급 칸은 회사 등급(SR)과 BK 등급을 나란한 배지 두 개로 보여준다. 예전엔
+  // BK를 배지 "밖" 괄호 텍스트로 붙였는데(예: "[최우수] (S)") 두 값의 시각적
+  // 무게가 달라 붙지 않고 떠 보였다 - 이제 둘 다 같은 모양의 배지로 만들어
+  // 헤더의 SR/BK 소제목과 짝을 이루게 한다. 정렬 폭을 행마다 맞추기 위해
+  // .grade-grid(고정 폭 그리드)를 헤더 소제목과 동일하게 재사용한다.
   const gradeCell = document.createElement("td");
-  const gradeBadge = document.createElement("span");
-  gradeBadge.className = `badge grade ${conf.grade === "최우수" ? "top" : "good"}`;
-  gradeBadge.textContent = conf.grade;
-  gradeCell.append(gradeBadge);
-  // BK(한국정보과학회) 등급은 배지 "밖"에 둔다. 배지 안에 넣으면 배지의 color가
-  // 배경과 같은 계열이라 대비가 3.7:1까지 떨어지고, 특히 우수 배지는 은색과
-  // --text-dim이 같은 값(#64748b)이어서 아예 구분되지 않았다.
-  const bkPart = document.createElement("span");
-  bkPart.className = "badge-bk";
-  bkPart.textContent = `(${bkGradeLabel(conf)})`;
-  bkPart.title = `BK 우수학술대회 등급: ${bkGradeLabel(conf) === "-" ? "목록에 없음" : bkGradeLabel(conf)}`;
-  gradeCell.append(bkPart);
+  gradeCell.title = `SR·BK 등급: ${gradeCellText(conf)}`;
+  const gradeGrid = document.createElement("span");
+  gradeGrid.className = "grade-grid";
+
+  const srBadge = document.createElement("span");
+  srBadge.className = `badge grade ${conf.grade === "최우수" ? "top" : "good"}`;
+  srBadge.textContent = conf.grade;
+  srBadge.setAttribute("aria-label", `SR(Samsung Research) 등급: ${conf.grade}`);
+  gradeGrid.append(srBadge);
+
+  // BK(한국정보과학회 우수학술대회 목록) 등급. S/A는 회사 등급과 같은
+  // gold/silver 언어를 쓰고, 목록에 없으면('-') 채움 없는 외곽선만 써서
+  // "등급 없음"이 세 번째 등급처럼 보이지 않게 한다.
+  const bkLabel = bkGradeLabel(conf);
+  const bkBadge = document.createElement("span");
+  bkBadge.className = `badge grade-bk ${bkGradeBadgeClass(conf)}`;
+  bkBadge.textContent = bkLabel;
+  bkBadge.setAttribute(
+    "aria-label",
+    `BK(한국정보과학회 우수학술대회 목록) 등급: ${bkLabel === "-" ? "목록에 없음" : bkLabel}`
+  );
+  gradeGrid.append(bkBadge);
+
+  gradeCell.append(gradeGrid);
   row.append(gradeCell);
 
   const dateCell = document.createElement("td");

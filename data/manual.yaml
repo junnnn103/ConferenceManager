@@ -166,3 +166,53 @@ conferences:
         place: "Silicon Valley USA"
         link: "https://sigir2027.org/"
         deadlines: []
+  dis:
+    editions:
+      # ccfddl(conference/HI/dis.yml)은 2026까지만 있어 2027을 여기서 채운다.
+      # 전부 공식 사이트에서 확인한 값이다.
+      #
+      # https://dis.acm.org/2027/call-for-papers/ "Important Dates":
+      #   Title and Abstract | 11 January 2027
+      #   Paper and Pictorial Submission | 18 January 2027
+      #   Acceptance Notification | 19 March 2027
+      #   DIS 2027 Conference | 28 June - 2 July 2027
+      #   "Deadlines are specified as Anywhere on Earth time"
+      # https://dis.acm.org/2027/ 에서 장소 확인:
+      #   "Stockholm, Sweden, June 28th - July 2nd 2027"
+      # https://dis.acm.org/2027/workshops/ "Important Dates":
+      #   Workshop Submission Due February 1st, 2027
+      #   Acceptance Notification February 16th, 2027
+      # https://dis.acm.org/2027/interactivity-arts/ "Important Dates":
+      #   Submission Deadline February 19th, 2027
+      #
+      # 워크숍은 제안 마감(2/1)이 아니라 채택 발표(2/16)를 싣는다 - 제안은
+      # 워크숍 주최자가 내는 것이라, 참가자에게 의미 있는 날은 어떤 워크숍이
+      # 열리는지 알게 되는 날이다. Interactivity & Arts는 본 논문 마감 뒤에도
+      # 남는 제출 트랙이라 demo로 둔다(docs/lib.js의 LATE_SUBMISSION_TYPES).
+      # Doctoral Consortium 페이지에는 아직 날짜가 없어 비워 둔다.
+      - year: 2027
+        date_text: "June 28 - July 2, 2027"
+        start: 2027-06-28
+        end: 2027-07-02
+        place: "Stockholm, Sweden"
+        link: "https://dis.acm.org/2027/"
+        deadlines:
+          - type: abstract
+            label: "Title and Abstract"
+            date: "2027-01-11 23:59:59"
+            timezone: AoE
+          - type: paper
+            label: "Paper and Pictorial Submission"
+            date: "2027-01-18 23:59:59"
+            timezone: AoE
+          - type: demo
+            label: "Interactivity & Arts Submission Deadline"
+            date: "2027-02-19 23:59:59"
+            timezone: AoE
+          - type: notification
+            label: "Workshop Acceptance Notification"
+            date: "2027-02-16"
+          - type: notification
+            label: "Acceptance Notification"
+            date: "2027-03-19"
+

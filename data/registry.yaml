@@ -1159,10 +1159,10 @@ conferences:
     ai_deadlines: null
     ccfddl: null
 
-# --- BK 목록에만 있는 학회 ---
-# 아래 두 개는 26년 우수 학회 List(SR)에는 없고 BK 목록에만 A(우수)로 있다.
-# 둘 다 AI Specialist 인정 목록에는 포함된다. grade가 비어 있으므로 화면에는
-# SR 배지가 "-"로 뜬다.
+# --- SR 등급이 없는 학회 ---
+# 26년 우수 학회 List(SR)에 없는 항목들. grade가 비어 있어 화면에는 SR 배지가
+# "-"로 뜬다. eacl/cscw는 BK 목록에 A(우수)로 있고, dis는 어느 등급 목록에도
+# 없다. 셋 다 AI Specialist 인정 목록에는 포함된다.
 #
 # 주의: scripts/bootstrap_registry.py는 엑셀만 보고 이 파일을 통째로 다시 쓰므로
 # 그냥 재실행하면 이 두 항목이 사라진다. 반드시 --diff로 "삭제:" 줄을 먼저
@@ -1191,3 +1191,16 @@ conferences:
   members: null
   sources:
     ccfddl: cscw
+# DIS는 SR/BK 어느 등급 목록에도 없다. 등급이 아니라 일정을 보려고 넣은
+# 항목이라 grade와 bk_grade가 둘 다 비어 있다 - 이 조합은 DIS가 처음이다.
+- abbr: dis
+  display: DIS
+  full_name: ACM Conference on Designing Interactive Systems
+  grade: null
+  bk_grade: null
+  ai_specialist: true
+  field: HCI
+  homepage: https://dis.acm.org/
+  members: null
+  sources:
+    ccfddl: dis

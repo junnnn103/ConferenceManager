@@ -21,32 +21,43 @@ def active_entries():
     return [e for e in load_registry() if e.get("field") in active]
 
 
-def test_exactly_41_active_conferences():
-    assert len(active_entries()) == 41
+# SR(26년 우수 학회 List) 등급이 없는 항목과 그 근거. 이 표에 없는 학회가
+# 등급 없이 들어오면 실수로 본다.
+#
+# "등급이 하나는 있어야 한다"는 규칙을 한때 테스트로 박아 뒀는데, DIS가
+# 반례였다 - 등급 때문이 아니라 일정이 궁금해서 넣은 학회다. 그래서 규칙이
+# 아니라 이름과 근거를 적는 표로 바꿨다.
+SR_UNLISTED = {
+    "eacl": "BK A(우수). SR 목록에는 없음",
+    "cscw": "BK A(우수). SR 목록에는 없음",
+    "dis": "SR/BK 어느 등급 목록에도 없음. 일정 추적 목적",
+}
+
+# 어느 등급 목록에도 없는 항목. SR_UNLISTED의 부분집합이다.
+UNGRADED = {"dis"}
 
 
-def test_every_active_conference_has_at_least_one_grade():
-    """SR 등급과 BK 등급이 둘 다 비어 있으면 안 된다.
-
-    EACL/CSCW는 26년 우수 학회 List(SR)에는 없고 BK 목록에만 있어 grade가
-    비어 있다 - 그건 정상이다. 하지만 둘 다 비면 이 표에 실릴 근거가 없는
-    학회라는 뜻이라, 실수로 들어온 항목을 잡아낸다.
-    """
-    ungraded = [
-        e["abbr"] for e in active_entries()
-        if not e.get("grade") and not e.get("bk_grade")
-    ]
-    assert ungraded == []
+def test_exactly_42_active_conferences():
+    assert len(active_entries()) == 42
 
 
-def test_bk_only_entries_are_the_expected_two():
-    """SR 등급이 없는 항목은 EACL/CSCW뿐이다.
+def test_sr_unlisted_entries_are_the_expected_ones():
+    """SR 등급이 없는 항목은 표에 적힌 것뿐이다.
 
     bootstrap_registry.py는 엑셀만 보고 registry.yaml을 통째로 다시 쓰므로
-    이 두 항목이 조용히 사라질 수 있다. 개수가 아니라 이름으로 못박는다.
+    이 항목들이 조용히 사라질 수 있다. 개수가 아니라 이름으로 못박는다.
     """
-    bk_only = {e["abbr"] for e in active_entries() if not e.get("grade")}
-    assert bk_only == {"eacl", "cscw"}
+    actual = {e["abbr"] for e in active_entries() if not e.get("grade")}
+    assert actual == set(SR_UNLISTED)
+
+
+def test_entries_with_no_grade_at_all_are_the_expected_ones():
+    actual = {
+        e["abbr"] for e in active_entries()
+        if not e.get("grade") and not e.get("bk_grade")
+    }
+    assert actual == UNGRADED
+    assert UNGRADED <= set(SR_UNLISTED)
 
 
 def test_every_active_conference_has_a_display_name():

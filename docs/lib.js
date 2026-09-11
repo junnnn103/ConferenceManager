@@ -234,19 +234,25 @@ export function toKst(isoDate) {
   return new Date(utcMs + (KST_OFFSET_HOURS - AOE_OFFSET_HOURS) * 3600 * 1000);
 }
 
-/** 제출마감 셀에 표시할 값. */
-export function formatDeadline(edition, now) {
-  const chosen = nextDeadline(edition, now);
-  if (!chosen) return { state: "unknown", text: "미정", dday: "", label: "", aoe: false };
-
+/**
+ * 마감 하나를 화면에 표시할 값으로 바꾼다.
+ *
+ * 제출마감 칸과 펼침 목록이 같이 쓴다. 예전에는 펼침 목록이 app.js에서
+ * 따로 날짜를 만들었는데, 그 쪽만 두 가지가 어긋나 있었다 - AoE->KST 환산을
+ * 하지 않아 같은 마감이 칸에서는 Jan 12, 펼침에서는 Jan 11로 보였고,
+ * new Date(stage.date)로 곧바로 파싱해 시간 없는 날짜가 뷰어 시간대에 따라
+ * 하루 당겨졌다(KST에서 2027-02-16이 Feb 15로). 두 곳이 각자 날짜를 만들면
+ * 한 쪽만 고쳐지므로 계산을 여기 하나로 모은다.
+ */
+export function formatStage(deadline, now) {
   // AoE 마감은 KST로 옮겨 보여준다. 한국에서 실제로 낼 수 있는 시각이
   // 하루 뒤이므로, AoE 날짜를 그대로 띄우면 없는 마감 압박을 만든다.
-  const aoe = isAoeDeadline(chosen);
-  const shownDate = aoe ? toKst(chosen.date).toISOString() : chosen.date;
+  const aoe = isAoeDeadline(deadline);
+  const shownDate = aoe ? toKst(deadline.date).toISOString() : deadline.date;
   const delta = dayDelta(shownDate, now);
-  // startOfDay(chosen.date)는 마감의 달력 날짜를 UTC 자정으로 고정해 두므로,
-  // 이걸 다시 UTC로 표시하면 뷰어의 시간대와 무관하게 항상 같은 날짜가 나온다.
-  // new Date(chosen.date)를 곧바로 넘기면 오프셋 없는 시각이 로컬로 파싱되어
+  // startOfDay는 마감의 달력 날짜를 UTC 자정으로 고정해 두므로, 이걸 다시
+  // UTC로 표시하면 뷰어의 시간대와 무관하게 항상 같은 날짜가 나온다.
+  // new Date(shownDate)를 곧바로 넘기면 오프셋 없는 시각이 로컬로 파싱되어
   // 자정 근처 마감(예: 23:59:59)이 시간대에 따라 하루 밀려 보일 수 있다.
   const text = new Date(startOfDay(shownDate)).toLocaleDateString("en-US", {
     year: "numeric",
@@ -255,12 +261,19 @@ export function formatDeadline(edition, now) {
     timeZone: "UTC",
   });
   if (delta >= 0) {
-    return { state: "upcoming", text, dday: `D-${delta}`, label: chosen.label, aoe };
+    return { state: "upcoming", text, dday: `D-${delta}`, label: deadline.label, aoe };
   }
   // 이미 지난 마감에는 D-day를 붙이지 않는다. 남은 제출 트랙이 하나도 없어
   // 이 회차에 더 낼 곳이 없다는 뜻이고, "며칠 전에 끝났는지"는 셀에 이미
   // 취소선과 날짜로 드러난다. D+ 숫자는 아직 셀 것이 있다는 오해만 준다.
-  return { state: "past", text, dday: "", label: chosen.label, aoe };
+  return { state: "past", text, dday: "", label: deadline.label, aoe };
+}
+
+/** 제출마감 셀에 표시할 값. */
+export function formatDeadline(edition, now) {
+  const chosen = nextDeadline(edition, now);
+  if (!chosen) return { state: "unknown", text: "미정", dday: "", label: "", aoe: false };
+  return formatStage(chosen, now);
 }
 
 /**

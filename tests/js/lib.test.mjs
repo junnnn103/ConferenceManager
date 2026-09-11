@@ -8,6 +8,7 @@ import {
   compareBy,
   dayDelta,
   formatDeadline,
+  formatStage,
   gradeCellText,
   isAoeDeadline,
   isEnded,
@@ -750,4 +751,42 @@ test("SR 미등재를 필터로 고를 수 있다", () => {
   assert.equal(matchesFilters(graded, { ...base, grades: new Set(["-"]) }, NOW), false);
   // 등급 있는 학회를 고르면 미등재는 빠진다
   assert.equal(matchesFilters(bkOnly, { ...base, grades: new Set(["우수"]) }, NOW), false);
+});
+
+test("formatStage: 시간 없는 날짜가 뷰어 시간대에 밀리지 않는다", () => {
+  // 예전 펼침 목록은 new Date(stage.date)로 곧바로 파싱했다. 오프셋 없는
+  // "2027-02-16T00:00:00"은 로컬로 읽힌 뒤 UTC로 표시되어, KST(UTC+9)
+  // 뷰어에게는 Feb 15로 하루 당겨져 보였다.
+  const stage = { type: "notification", label: "Workshop Acceptance Notification",
+    date: "2027-02-16T00:00:00", source: "manual" };
+  assert.equal(formatStage(stage, new Date(2026, 8, 11)).text, "Feb 16, 2027");
+});
+
+test("formatStage: AoE 환산이 대표 마감과 펼침에서 같다", () => {
+  // 같은 마감이 칸에서는 Jan 12, 펼침에서는 Jan 11로 보이던 어긋남을 막는다.
+  const aoeStage = { type: "abstract", label: "Title and Abstract",
+    date: "2027-01-11T23:59:59", timezone: "AoE", source: "manual" };
+  const now = new Date(2026, 8, 11);
+  const stageInfo = formatStage(aoeStage, now);
+
+  // abstract만 있는 회차는 대표 마감이 '미정'이다 - abstract는 아직 열려 있는
+  // 본 논문 마감이 있을 때만 그보다 먼저 보여주는 값이기 때문. 실제 DIS처럼
+  // paper를 함께 둬야 abstract가 대표로 올라온다.
+  const paperStage = { type: "paper", label: "Paper and Pictorial Submission",
+    date: "2027-01-18T23:59:59", timezone: "AoE", source: "manual" };
+  const edition = { year: 2027, date_text: "2027", start: "2027-06-28", end: "2027-07-02",
+    place: "Stockholm, Sweden", link: null, deadlines: [aoeStage, paperStage],
+    primary_deadline: paperStage.date, source: "manual" };
+  const cellInfo = formatDeadline(edition, now);
+
+  assert.equal(stageInfo.text, "Jan 12, 2027");
+  assert.equal(stageInfo.text, cellInfo.text);
+  assert.equal(stageInfo.dday, cellInfo.dday);
+  assert.equal(stageInfo.aoe, true);
+});
+
+test("formatStage: AoE가 아니면 날짜를 그대로 둔다", () => {
+  const stage = { type: "paper", label: "Paper", date: "2027-01-18T23:59:59",
+    timezone: "PST", source: "manual" };
+  assert.equal(formatStage(stage, new Date(2026, 8, 11)).text, "Jan 18, 2027");
 });

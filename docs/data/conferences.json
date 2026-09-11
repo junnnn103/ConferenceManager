@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-10T17:14:56.292903+00:00",
+  "generated_at": "2026-09-11T08:09:46.892642+00:00",
   "fields": [
     {
       "id": "ML",
@@ -3605,6 +3605,89 @@
           ],
           "primary_deadline": "2025-05-13T23:59:59",
           "source": "ccfddl"
+        }
+      ]
+    },
+    {
+      "abbr": "DIS",
+      "abbr_group": "dis",
+      "full_name": "ACM Conference on Designing Interactive Systems",
+      "grade": "",
+      "bk_grade": null,
+      "ai_specialist": true,
+      "field": "HCI",
+      "homepage": "https://dis.acm.org/",
+      "editions": [
+        {
+          "year": 2026,
+          "date_text": "June 13 - 17, 2026",
+          "start": "2026-06-13",
+          "end": "2026-06-17",
+          "place": "Singapore",
+          "link": "https://dis.acm.org/2026/",
+          "deadlines": [
+            {
+              "type": "abstract",
+              "label": "Abstract",
+              "date": "2026-01-09T23:59:59",
+              "source": "ccfddl",
+              "timezone": "AoE"
+            },
+            {
+              "type": "paper",
+              "label": "Paper",
+              "date": "2026-01-19T23:59:59",
+              "source": "ccfddl",
+              "timezone": "AoE"
+            }
+          ],
+          "primary_deadline": "2026-01-19T23:59:59",
+          "source": "ccfddl"
+        },
+        {
+          "year": 2027,
+          "date_text": "June 28 - July 2, 2027",
+          "start": "2027-06-28",
+          "end": "2027-07-02",
+          "place": "Stockholm Sweden",
+          "link": "https://dis.acm.org/2027/",
+          "deadlines": [
+            {
+              "type": "abstract",
+              "label": "Title and Abstract",
+              "date": "2027-01-11T23:59:59",
+              "source": "manual",
+              "timezone": "AoE"
+            },
+            {
+              "type": "paper",
+              "label": "Paper and Pictorial Submission",
+              "date": "2027-01-18T23:59:59",
+              "source": "manual",
+              "timezone": "AoE"
+            },
+            {
+              "type": "demo",
+              "label": "Interactivity & Arts Submission Deadline",
+              "date": "2027-02-19T23:59:59",
+              "source": "manual",
+              "timezone": "AoE"
+            },
+            {
+              "type": "notification",
+              "label": "Workshop Acceptance Notification",
+              "date": "2027-02-16T00:00:00",
+              "source": "manual"
+            },
+            {
+              "type": "notification",
+              "label": "Acceptance Notification",
+              "date": "2027-03-19T00:00:00",
+              "source": "manual"
+            }
+          ],
+          "primary_deadline": "2027-01-18T23:59:59",
+          "source": "manual"
         }
       ]
     }

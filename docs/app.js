@@ -5,6 +5,7 @@ import {
   compareBy,
   formatDateRange,
   formatDeadline,
+  formatStage,
   gradeCellText,
   isEnded,
   isFeaturedDeadline,
@@ -12,7 +13,7 @@ import {
   pickEdition,
   srGradeBadgeClass,
   srGradeLabel,
-} from "./lib.js?v=81e46a73";
+} from "./lib.js?v=ed678b97";
 import { safeHref } from "./url-safety.js?v=5de46b35";
 
 const STORAGE_KEY = "conference-manager-filters";
@@ -363,14 +364,16 @@ function renderStageRow(conf, edition, now) {
     label.textContent = stage.label;
     item.append(label);
 
+    // 날짜와 D-day는 제출마감 칸과 같은 함수로 만든다. 여기서 따로 계산하면
+    // AoE->KST 환산이 빠지거나 시간대에 따라 날짜가 밀리는 식으로 두 곳이
+    // 어긋난다 - 실제로 그랬다(docs/lib.js의 formatStage 주석 참고).
+    const info = formatStage(stage, now);
+
     const when = document.createElement("span");
     when.className = "stage-date";
-    when.textContent = new Date(stage.date).toLocaleDateString("en-US", {
-      year: "numeric", month: "short", day: "numeric", timeZone: "UTC",
-    });
+    when.textContent = info.text;
     item.append(when);
 
-    const info = formatDeadline({ primary_deadline: stage.date }, now);
     const dday = document.createElement("span");
     dday.className = `stage-dday ${info.state}`;
     dday.textContent = info.dday;
